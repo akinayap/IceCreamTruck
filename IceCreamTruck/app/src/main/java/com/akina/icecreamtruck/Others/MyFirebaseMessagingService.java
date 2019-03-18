@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.os.Build;
+import android.os.Debug;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -32,8 +33,15 @@ import com.google.firebase.messaging.RemoteMessage;
         {
 
         }
+        if(MainActivity.isGirl == 1 && remoteMessage.getNotification().getTitle().compareTo("Ah Girl") == 0 )
+        {
+            return;
+        }
 
-
+        if(MainActivity.isGirl == 0 && remoteMessage.getNotification().getTitle().compareTo("Ah Boy") == 0 )
+        {
+            return;
+        }
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, "channel_id")
                 .setContentTitle(remoteMessage.getNotification().getTitle())
                 .setContentText(remoteMessage.getNotification().getBody())
@@ -42,22 +50,6 @@ import com.google.firebase.messaging.RemoteMessage;
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setSmallIcon(R.drawable.ict)
                 .setAutoCancel(true);
-
-        NotificationCompat.BigTextStyle bigText = new NotificationCompat.BigTextStyle();
-        bigText.bigText(remoteMessage.getNotification().getTitle());
-        bigText.setBigContentTitle(remoteMessage.getNotification().getTitle());
-        bigText.setSummaryText(remoteMessage.getNotification().getBody());
-
-        Intent ii = new Intent(this.getApplicationContext(), MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, ii, 0);
-
-        notificationBuilder.setContentIntent(pendingIntent);
-        notificationBuilder.setSmallIcon(R.mipmap.ic_launcher_round);
-        notificationBuilder.setContentTitle("Your Title");
-        notificationBuilder.setContentText("Your text");
-        notificationBuilder.setPriority(Notification.PRIORITY_MAX);
-        notificationBuilder.setStyle(bigText);
-
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);

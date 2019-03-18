@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private static final int SIGN_IN_REQUEST_CODE = 1;
 
+    public static final int isGirl = 1; // 0 means is Ah Boy chat, 1 means is Ah Girl chat
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,9 +132,18 @@ public class MainActivity extends AppCompatActivity {
                     mChatInput = findViewById(R.id.input);
                     ChatMessage data = new ChatMessage();
                     data.setMessage(mChatInput.getText().toString());
-                    data.setIcon(R.drawable.tiger);
                     data.setId("0");
-                    data.setName("Ah Boy");
+
+                    if(isGirl == 1)
+                    {
+                        data.setIcon(R.drawable.otter);
+                        data.setName("Ah Girl");
+                    }
+                    else
+                    {
+                        data.setIcon(R.drawable.tiger);
+                        data.setName("Ah Boy");
+                    }
 
                     mReference.child(String.valueOf(new Date().getTime())).setValue(data);
                     mChatInput.setText("");
