@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Ice Cream Truck V2</string>
+    <string name="fcm_token">FCM Token: %s</string>
+
+    <!-- Navigation -->
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+
+    <!-- Widget -->
+    <string name="add_widget">Add widget</string>
+
+    <!-- Chat -->
+    <string name="chat_input">Enter message here!</string>
+    <string name="chat_init_error">Failed to connect to database!</string>
+    <string name="chat_logout">Logout</string>
+</resources>
