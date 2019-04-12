@@ -1,4 +1,4 @@
-package com.example.icecreamtruckv2;
+package com.example.icecreamtruckv2.Utils;
 
 public interface Constants {
 

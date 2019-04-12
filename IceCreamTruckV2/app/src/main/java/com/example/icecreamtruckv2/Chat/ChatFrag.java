@@ -1,6 +1,8 @@
 package com.example.icecreamtruckv2.Chat;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,18 +10,23 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.icecreamtruckv2.Constants;
+import com.example.icecreamtruckv2.Utils.Constants;
 import com.example.icecreamtruckv2.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.Date;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,18 +34,28 @@ import androidx.recyclerview.widget.RecyclerView;
 public class ChatFrag extends Fragment {
 
     /** Database instance **/
-    private DatabaseReference mReference;
+    private DatabaseReference root, notif;
 
     /** UI Components **/
+    private RecyclerView chat;
     private EditText mChatInput;
     private ChatLogAdapter mAdapter;
 
-    public static final int isGirl = 0; // 0 means is Ah Boy chat, 1 means is Ah Girl chat
-    // The onCreateView method is called when Fragment should create its View object hierarchy,
-    // either dynamically or via XML layout inflation.
+    private FirebaseAuth auth;
+    private FirebaseDatabase db;
+    private FirebaseInstanceId fid;
+
+    private SharedPreferences sharedPreferences;
+    private String userRole;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         // Defines the xml file for the fragment
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        userRole = sharedPreferences.getString("userRole", "null");
+        auth = FirebaseAuth.getInstance();
+        db = FirebaseDatabase.getInstance();
+        fid = FirebaseInstanceId.getInstance();
         return inflater.inflate(R.layout.chat_frag, parent, false);
     }
 
@@ -47,39 +64,40 @@ public class ChatFrag extends Fragment {
     // Any view setup should occur here.  E.g., view lookups and attaching view listeners.
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
-
-        RecyclerView chat = view.findViewById(R.id.list_of_messages);
-        chat.setLayoutManager(new LinearLayoutManager(getContext()));
+        chat = view.findViewById(R.id.list_of_messages);
         mAdapter = new ChatLogAdapter();
         chat.setAdapter(mAdapter);
+        chat.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        mReference = database.getReference(Constants.CHAT_DB);
-        mReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d(Constants.CHAT_LOG_TAG, "SUCCESS!");
-                mAdapter.clearData();
-
-                for (DataSnapshot item : dataSnapshot.getChildren()) {
-                    ChatMessage data = item.getValue(ChatMessage.class);
+        try {
+            root = db.getReference(Constants.CHAT_DB);
+            root.addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    ChatMessage data = dataSnapshot.getValue(ChatMessage.class);
                     mAdapter.addData(data);
-                }
-
-                RecyclerView rv = view.findViewById(R.id.list_of_messages);
-                if(mAdapter.getItemCount() >= 1)
-                {
-                    rv.smoothScrollToPosition(mAdapter.getItemCount() - 1);
+                    chat.smoothScrollToPosition(mAdapter.getItemCount() - 1);
                     mAdapter.notifyDataSetChanged();
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e(Constants.CHAT_LOG_TAG, "ERROR: " + databaseError.getMessage());
-                Toast.makeText(getContext(), R.string.chat_init_error, Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                }
+
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                }
+
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                }
+            });
+        } catch (Exception e) {
+        }
 
         FloatingActionButton fab = view.findViewById(R.id.fab);
 
@@ -91,19 +109,25 @@ public class ChatFrag extends Fragment {
                 data.setMessage(mChatInput.getText().toString());
                 data.setId("0");
 
-                if (isGirl == 1) {
+                userRole = "ahgirl";
+                if (userRole == "ahgirl") {
                     data.setIcon(R.drawable.girl);
                     data.setName("Ah Girl");
+                    notif = db.getReference(Constants.CHAT_DB + "boy");
+                    FirebaseMessaging.getInstance().subscribeToTopic("pushGirlNotifications");
                 } else {
                     data.setIcon(R.drawable.boy);
                     data.setName("Ah Boy");
+                    notif = db.getReference(Constants.CHAT_DB + "girl");
+                    FirebaseMessaging.getInstance().subscribeToTopic("pushBoyNotifications");
                 }
 
-                mReference.child(String.valueOf(new Date().getTime())).setValue(data);
+                notif.child(String.valueOf(new Date().getTime())).setValue(data);
+                root.child(String.valueOf(new Date().getTime())).setValue(data);
                 mChatInput.setText("");
             }
         });
 
-        FirebaseMessaging.getInstance().subscribeToTopic("pushNotifications");
     }
+
 }
