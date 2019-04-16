@@ -1,4 +1,4 @@
-package com.example.icecreamtruckv2.Notification;
+package com.example.icecreamtruckv2.money;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,13 +9,13 @@ import com.example.icecreamtruckv2.R;
 
 import androidx.fragment.app.Fragment;
 
-public class NotificationFrag extends Fragment {
+public class MoneyFrag extends Fragment {
     // The onCreateView method is called when Fragment should create its View object hierarchy,
     // either dynamically or via XML layout inflation.
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         // Defines the xml file for the fragment
-        return inflater.inflate(R.layout.notifications_frag, parent, false);
+        return inflater.inflate(R.layout.money_frag, parent, false);
     }
 
     // This event is triggered soon after onCreateView().

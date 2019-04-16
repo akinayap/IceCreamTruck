@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:dist="http://schemas.android.com/apk/distribution"
     package="com.example.icecreamtruckv2">
 
-    <dist:module dist:instant="true" />
-
     <application
-        android:name=".Utils.FirebasePersistance"
-        android:allowBackup="true"
+        android:name=".utils.FirebasePersistance"
+        android:allowBackup="false"
         android:icon="@drawable/ict"
         android:label="@string/app_name"
         android:roundIcon="@drawable/ict"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <receiver android:name=".Widget.QuickChat">
+        <receiver android:name=".widget.QuickChat">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -22,7 +19,7 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/quick_chat_info" />
         </receiver>
-        <receiver android:name=".Widget.MoneyManager">
+        <receiver android:name=".widget.MoneyManager">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -47,7 +44,6 @@
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -65,8 +61,8 @@
             android:screenOrientation="portrait" />
 
         <service
-            android:name=".Utils.MyFirebaseMessagingService">
-            android:stopWithTask="false">
+            android:name=".utils.MyFirebaseMessagingService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

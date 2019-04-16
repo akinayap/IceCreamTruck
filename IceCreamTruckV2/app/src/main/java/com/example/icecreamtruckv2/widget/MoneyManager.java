@@ -1,4 +1,4 @@
-package com.example.icecreamtruckv2.Widget;
+package com.example.icecreamtruckv2.widget;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;

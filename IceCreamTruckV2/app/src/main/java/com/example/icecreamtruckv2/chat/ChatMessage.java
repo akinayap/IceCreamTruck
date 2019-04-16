@@ -1,4 +1,4 @@
-package com.example.icecreamtruckv2.Chat;
+package com.example.icecreamtruckv2.chat;
 
 public class ChatMessage {
 

@@ -1,4 +1,4 @@
-package com.example.icecreamtruckv2.Utils;
+package com.example.icecreamtruckv2.utils;
 
 import com.google.firebase.database.FirebaseDatabase;
 

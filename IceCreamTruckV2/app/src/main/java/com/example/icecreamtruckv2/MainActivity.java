@@ -5,10 +5,10 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 
-import com.example.icecreamtruckv2.Chat.ChatFrag;
-import com.example.icecreamtruckv2.Home.HomeFrag;
-import com.example.icecreamtruckv2.Money.MoneyFrag;
-import com.example.icecreamtruckv2.Notification.NotificationFrag;
+import com.example.icecreamtruckv2.chat.ChatFrag;
+import com.example.icecreamtruckv2.home.HomeFrag;
+import com.example.icecreamtruckv2.money.MoneyFrag;
+import com.example.icecreamtruckv2.notification.NotificationFrag;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,6 +27,7 @@ import android.util.Log;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
+
     private FirebaseAuth auth;
     private FirebaseDatabase db;
     private FirebaseInstanceId fid;
