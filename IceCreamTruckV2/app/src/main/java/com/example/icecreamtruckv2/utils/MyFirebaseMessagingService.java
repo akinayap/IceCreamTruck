@@ -18,15 +18,25 @@ import android.widget.RemoteViews;
 
 import com.example.icecreamtruckv2.MainActivity;
 import com.example.icecreamtruckv2.R;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.Person;
 import androidx.core.graphics.drawable.IconCompat;
+
+import pl.droidsonroids.gif.GifDrawable;
 
 public class MyFirebaseMessagingService  extends FirebaseMessagingService {
 
@@ -62,11 +72,58 @@ public class MyFirebaseMessagingService  extends FirebaseMessagingService {
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
         Log.e("DEBUG", "onMessageReceived triggered!");
-
-        testNotification(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
+        newNotification(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody(), remoteMessage.getNotification().getTag());
+        //testNotification(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
         //inboxNotification(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
         //defaultNotification(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
         //generateNotification(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
+    }
+
+    private void newNotification(String sender, String msg, String msgType)
+    {
+        msg = msgType.equals("GIF") ? "sent a GIF" : msg;
+        Log.e("sender", sender);
+        Log.e("msg", msg);
+        Log.e("test", msgType);
+        Intent chatIntent  = new Intent(this, MainActivity.class);
+        chatIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        chatIntent.putExtra("FROM", "NOTIF");
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        String CHANNEL_ID = "YOUR_CHANNEL_ID";
+        NotificationCompat.Builder builder;
+
+        Bitmap tiger = BitmapFactory.decodeResource(getResources(), R.drawable.tiger);
+        Bitmap otter = BitmapFactory.decodeResource(getResources(), R.drawable.otter);
+
+        RemoteViews collapsedView = new RemoteViews(getPackageName(), R.layout.view_collapsed_notification);
+        collapsedView.setTextViewText(R.id.timestamp, DateUtils.formatDateTime(this, System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME));
+        collapsedView.setTextViewText(R.id.expand_text, sender + " has sent you a love letter.");
+        collapsedView.setImageViewBitmap(R.id.big_icon, sender.equals("Ah Girl") ? otter : tiger);
+
+        RemoteViews expandedView = new RemoteViews(getPackageName(), R.layout.view_expanded_notification);
+        expandedView.setTextViewText(R.id.timestamp, DateUtils.formatDateTime(this, System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME));
+        expandedView.setTextViewText(R.id.notification_title, sender);
+        expandedView.setTextViewText(R.id.notification_message, msg);
+        expandedView.setImageViewBitmap(R.id.big_icon, sender.equals("Ah Girl") ? otter : tiger);
+
+        builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_pawprint)
+                .setContentTitle(sender)
+                .setContentText(msg)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setCustomContentView(collapsedView)
+                .setCustomBigContentView(expandedView)
+                .setContentIntent(PendingIntent.getActivity(this, 0, chatIntent, 0));
+
+
+        NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
+                "Channel human readable title",
+                NotificationManager.IMPORTANCE_DEFAULT);
+        notificationManager.createNotificationChannel(channel);
+        builder.setChannelId(CHANNEL_ID);
+
+        notificationManager.notify((int)SystemClock.uptimeMillis(), builder.build());
     }
 
     private void testNotification(String sender, String msg) {

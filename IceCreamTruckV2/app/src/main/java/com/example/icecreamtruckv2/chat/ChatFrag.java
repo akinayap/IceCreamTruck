@@ -140,6 +140,9 @@ public class ChatFrag extends Fragment {
                 if (userRole.equals("ahgirl")) {
                     data.setIcon(R.drawable.girl);
                     data.setName("Ah Girl");
+                    //fortestinguse
+                    //notif = db.getReference(Constants.CHAT_DB + "girl");
+
                     notif = db.getReference(Constants.CHAT_DB + "boy");
                     FirebaseMessaging.getInstance().subscribeToTopic("pushGirlNotifications");
                 } else {
@@ -200,6 +203,9 @@ public class ChatFrag extends Fragment {
                 if (userRole.equals("ahgirl")) {
                     data.setIcon(R.drawable.girl);
                     data.setName("Ah Girl");
+                    //fortestinguse
+                    //notif = db.getReference(Constants.CHAT_DB + "girl");
+
                     notif = db.getReference(Constants.CHAT_DB + "boy");
                     FirebaseMessaging.getInstance().subscribeToTopic("pushGirlNotifications");
                 } else {
