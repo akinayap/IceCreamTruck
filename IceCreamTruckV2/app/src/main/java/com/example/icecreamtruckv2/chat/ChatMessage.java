@@ -6,6 +6,7 @@ public class ChatMessage {
     private String mName;
     private String mId;
     private String mMessage;
+    private String mType;
 
     public ChatMessage() {
         // empty constructor
@@ -37,5 +38,12 @@ public class ChatMessage {
     }
     public void setMessage(String message) {
         mMessage = message;
+    }
+
+    public String getType() {
+        return mType;
+    }
+    public void setType(String type) {
+        mType = type;
     }
 }

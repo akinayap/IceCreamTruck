@@ -13,4 +13,7 @@ public interface Constants {
 
     String PIC_DB = "pictures";
     String PIC_LOG_TAG = "FirebasePictures";
+
+    String STICKERS_DB = "stickers";
+    String STICKERs_LOG_TAG = "FirebaseStickers";
 }

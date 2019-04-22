@@ -36,35 +36,31 @@
                 android:layout_marginStart="4dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="4dp"
-                android:layout_marginBottom="4dp"
                 android:paddingStart="3dp"
                 android:paddingEnd="0dp"
-                android:text=""
+                android:text="Ah Girl"
                 android:textColor="@color/colorAccent"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                card_view:layout_constraintBottom_toTopOf="@+id/item_message"
                 card_view:layout_constraintEnd_toEndOf="parent"
                 card_view:layout_constraintHorizontal_bias="0.0"
                 card_view:layout_constraintStart_toEndOf="@+id/item_icon"
-                card_view:layout_constraintTop_toTopOf="parent"
-                card_view:layout_constraintVertical_bias="1.0" />
+                card_view:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/item_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="4dp"
-                android:layout_marginBottom="4dp"
-                android:paddingStart="3dp"
+                android:layout_margin="4dp"
                 android:paddingEnd="0dp"
-                android:text=""
+                android:text="Hello to my ah boy"
                 android:textColor="@color/colorAccent"
                 android:textSize="14sp"
+                android:visibility="gone"
                 card_view:layout_constraintBottom_toBottomOf="parent"
                 card_view:layout_constraintEnd_toEndOf="parent"
-                card_view:layout_constraintStart_toEndOf="@+id/item_icon" />
+                card_view:layout_constraintStart_toEndOf="@+id/item_icon"
+                card_view:layout_constraintTop_toBottomOf="@+id/item_username" />
 
             <ImageView
                 android:id="@+id/item_icon"
@@ -78,6 +74,18 @@
                 card_view:layout_constraintTop_toTopOf="parent"
                 card_view:srcCompat="@drawable/girl"
                 android:tint="@color/colorPrimary"/>
+
+            <pl.droidsonroids.gif.GifImageView
+                android:id="@+id/item_gif"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_margin="4dp"
+                android:background="@drawable/loading"
+                android:visibility="visible"
+                card_view:layout_constraintBottom_toBottomOf="parent"
+                card_view:layout_constraintEnd_toEndOf="parent"
+                card_view:layout_constraintStart_toEndOf="@id/item_icon"
+                card_view:layout_constraintTop_toBottomOf="@+id/item_username" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

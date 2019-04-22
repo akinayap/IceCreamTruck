@@ -16,6 +16,10 @@ android {
         }
     }
 }
+repositories {
+    mavenCentral()
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+}
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -35,6 +39,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-perf:16.2.5'
     implementation 'com.google.firebase:firebase-database:16.1.0'
     implementation 'com.google.firebase:firebase-config:16.5.0'
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.16'
 }
 
 apply plugin: 'com.google.gms.google-services'
