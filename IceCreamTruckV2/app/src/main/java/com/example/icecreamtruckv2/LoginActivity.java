@@ -13,6 +13,10 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -22,17 +26,10 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 public class LoginActivity extends AppCompatActivity {
 
     RelativeLayout rellay1;
     FirebaseAuth auth;
-    private Button btnLogin;
-    private EditText etPassword, etUsername;
-
     Handler handler = new Handler();
     Runnable runnable = new Runnable() {
         @Override
@@ -40,6 +37,8 @@ public class LoginActivity extends AppCompatActivity {
             rellay1.setVisibility(View.VISIBLE);
         }
     };
+    private Button btnLogin;
+    private EditText etPassword, etUsername;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

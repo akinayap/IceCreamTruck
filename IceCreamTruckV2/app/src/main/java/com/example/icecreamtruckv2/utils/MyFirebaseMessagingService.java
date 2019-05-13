@@ -8,35 +8,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Icon;
 import android.media.RingtoneManager;
-import android.os.Build;
 import android.os.SystemClock;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-import com.example.icecreamtruckv2.MainActivity;
-import com.example.icecreamtruckv2.R;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.messaging.FirebaseMessagingService;
-import com.google.firebase.messaging.RemoteMessage;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.Person;
 import androidx.core.graphics.drawable.IconCompat;
 
-import pl.droidsonroids.gif.GifDrawable;
+import com.example.icecreamtruckv2.MainActivity;
+import com.example.icecreamtruckv2.R;
+import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MyFirebaseMessagingService  extends FirebaseMessagingService {
 
@@ -105,6 +93,7 @@ public class MyFirebaseMessagingService  extends FirebaseMessagingService {
         expandedView.setTextViewText(R.id.timestamp, DateUtils.formatDateTime(this, System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME));
         expandedView.setTextViewText(R.id.notification_title, sender);
         expandedView.setTextViewText(R.id.notification_message, msg);
+        expandedView.setTextViewText(R.id.expand_text, sender + " has sent you a love letter.");
         expandedView.setImageViewBitmap(R.id.big_icon, sender.equals("Ah Girl") ? otter : tiger);
 
         builder = new NotificationCompat.Builder(this, CHANNEL_ID)
@@ -114,7 +103,8 @@ public class MyFirebaseMessagingService  extends FirebaseMessagingService {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setCustomContentView(collapsedView)
                 .setCustomBigContentView(expandedView)
-                .setContentIntent(PendingIntent.getActivity(this, 0, chatIntent, 0));
+                .setContentIntent(PendingIntent.getActivity(this, 0, chatIntent, PendingIntent.FLAG_UPDATE_CURRENT))
+                .setAutoCancel(true);
 
 
         NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
@@ -152,7 +142,8 @@ public class MyFirebaseMessagingService  extends FirebaseMessagingService {
 
                 .setContentTitle(sender)
                 .setContentText(msg)
-                .setSmallIcon(R.drawable.ic_pawprint);
+                .setSmallIcon(R.drawable.ic_pawprint)
+                .setAutoCancel(true);
 
         NotificationChannel channel = new NotificationChannel(channelId,
                 "Channel human readable title",

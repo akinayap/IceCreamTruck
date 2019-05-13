@@ -5,14 +5,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.icecreamtruckv2.R;
-
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.icecreamtruckv2.R;
+
 public class HomeFrag extends Fragment {
     ViewPager viewPager;
-    int images[] = {R.drawable.us1, R.drawable.us2};
+    int[] images = {R.drawable.us1, R.drawable.us2};
     PicPagerAdapter picPagerAdapter;
 
     // The onCreateView method is called when Fragment should create its View object hierarchy,

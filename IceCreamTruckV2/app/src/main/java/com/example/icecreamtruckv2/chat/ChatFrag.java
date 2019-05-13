@@ -3,26 +3,27 @@ package com.example.icecreamtruckv2.chat;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Debug;
 import android.preference.PreferenceManager;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.MimeTypeMap;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.example.icecreamtruckv2.utils.Constants;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.icecreamtruckv2.R;
+import com.example.icecreamtruckv2.utils.Constants;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -36,21 +37,11 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.concurrent.atomic.AtomicMarkableReference;
+import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import pl.droidsonroids.gif.GifDrawable;
-import pl.droidsonroids.gif.GifImageButton;
 
 public class ChatFrag extends Fragment {
 
@@ -72,6 +63,9 @@ public class ChatFrag extends Fragment {
     private SharedPreferences sharedPreferences;
     private String userRole;
 
+    public static List<ChatSticker> stickers = new ArrayList<>();
+    public static List<ChatMessage> messages = new ArrayList<>();
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         // Defines the xml file for the fragment
@@ -91,7 +85,7 @@ public class ChatFrag extends Fragment {
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         chat = view.findViewById(R.id.list_of_messages);
-        mAdapter = new ChatLogAdapter();
+        mAdapter = new ChatLogAdapter(messages);
         chat.setAdapter(mAdapter);
         chat.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -101,7 +95,8 @@ public class ChatFrag extends Fragment {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                     ChatMessage data = dataSnapshot.getValue(ChatMessage.class);
-                    mAdapter.addData(data);
+                    messages.add(data);
+                    mAdapter.notifyDataSetChanged();
                     chat.smoothScrollToPosition(mAdapter.getItemCount() - 1);
                     mAdapter.notifyDataSetChanged();
                 }
@@ -112,6 +107,8 @@ public class ChatFrag extends Fragment {
 
                 @Override
                 public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                    mAdapter.removeData(dataSnapshot.getValue(ChatMessage.class).getID());
+                    mAdapter.notifyDataSetChanged();
                 }
 
                 @Override
@@ -127,7 +124,7 @@ public class ChatFrag extends Fragment {
 
 
         sticker = view.findViewById(R.id.rv_stickers);
-        stickerAdapter = new ChatStickersAdapter(new ChatStickersAdapter.OnItemClickListener(){
+        stickerAdapter = new ChatStickersAdapter(stickers, new ChatStickersAdapter.OnItemClickListener(){
             @Override
             public void onItemClick(ChatSticker item) {
                 Log.e("GIF", "SENT");
@@ -135,7 +132,6 @@ public class ChatFrag extends Fragment {
                 ChatMessage data = new ChatMessage();
                 data.setMessage(item.getName());
                 data.setType("GIF");
-                data.setId("0");
 
                 if (userRole.equals("ahgirl")) {
                     data.setIcon(R.drawable.girl);
@@ -158,15 +154,18 @@ public class ChatFrag extends Fragment {
             }
         });
         sticker.setAdapter(stickerAdapter);
-        sticker.setLayoutManager(new GridLayoutManager(getContext(), 3, RecyclerView.HORIZONTAL, false));
+        sticker.setLayoutManager(new GridLayoutManager(getContext(), 2, RecyclerView.HORIZONTAL, false));
 
         try {
             stickerDR = db.getReference(Constants.STICKERS_DB);
             stickerDR.addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    Log.e("Child Added", "HERE");
                     ChatSticker data = dataSnapshot.getValue(ChatSticker.class);
-                    stickerAdapter.addData(data);
+                    data.setContext(getContext());
+                    data.setDrawable();
+                    stickers.add(data);
                     stickerAdapter.notifyDataSetChanged();
                 }
 
@@ -176,6 +175,7 @@ public class ChatFrag extends Fragment {
 
                 @Override
                 public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                    stickerAdapter.notifyItemRemoved(dataSnapshot.getValue(ChatMessage.class).getID());
                 }
 
                 @Override
@@ -198,7 +198,6 @@ public class ChatFrag extends Fragment {
                 ChatMessage data = new ChatMessage();
                 data.setMessage(mChatInput.getText().toString());
                 data.setType("MSG");
-                data.setId("0");
 
                 if (userRole.equals("ahgirl")) {
                     data.setIcon(R.drawable.girl);
@@ -244,8 +243,8 @@ public class ChatFrag extends Fragment {
                     kb.setVisibility(View.GONE);
                 else
                     kb.setVisibility(View.VISIBLE);
-
-                chat.smoothScrollToPosition(mAdapter.getItemCount() - 1);
+                if(mAdapter.getItemCount() > 0)
+                    chat.smoothScrollToPosition(mAdapter.getItemCount() - 1);
                 mAdapter.notifyDataSetChanged();
             }
         });
@@ -305,7 +304,6 @@ public class ChatFrag extends Fragment {
 
         stickerSR = storage.getReference(Constants.STICKERS_DB);
         final ChatSticker imgName = new ChatSticker();
-        imgName.setId("0");
         imgName.setName(String.valueOf(new Date().getTime()));
 
         StorageReference storageRef = stickerSR.child(imgName.getName());

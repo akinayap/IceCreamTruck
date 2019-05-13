@@ -7,17 +7,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.example.icecreamtruckv2.R;
-
 import androidx.viewpager.widget.PagerAdapter;
+
+import com.example.icecreamtruckv2.R;
 
 public class PicPagerAdapter extends PagerAdapter {
     Context context;
-    int images[];
+    int[] images;
     LayoutInflater layoutInflater;
 
 
-    public PicPagerAdapter(Context context, int images[]) {
+    public PicPagerAdapter(Context context, int[] images) {
         this.context = context;
         this.images = images;
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -30,14 +30,14 @@ public class PicPagerAdapter extends PagerAdapter {
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
-        return view == ((RelativeLayout) object);
+        return view == object;
     }
 
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
         View itemView = layoutInflater.inflate(R.layout.pic_pager, container, false);
 
-        ImageView imageView = (ImageView) itemView.findViewById(R.id.imageView);
+        ImageView imageView = itemView.findViewById(R.id.imageView);
         imageView.setImageResource(images[position]);
 
         container.addView(itemView);
@@ -55,6 +55,6 @@ public class PicPagerAdapter extends PagerAdapter {
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        container.removeView((RelativeLayout)object);
+        container.removeView((RelativeLayout) object);
     }
 }

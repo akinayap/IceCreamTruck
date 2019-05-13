@@ -1,14 +1,36 @@
 package com.example.icecreamtruckv2.chat;
 
+import android.content.Context;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+
+import com.example.icecreamtruckv2.utils.Constants;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+
+import pl.droidsonroids.gif.GifDrawable;
+import pl.droidsonroids.gif.GifImageView;
+
 public class ChatMessage {
 
+    private int mID;
     private int mIcon;
-    private String mName;
-    private String mId;
-    private String mMessage;
-    private String mType;
+    private String name;
+    private String message;
+    private String type;
+    private GifDrawable mDrawable;
+    private int TWO_MEGABYTE = 1024 * 1024  * 2;
 
+    private static int counter = 0;
     public ChatMessage() {
+        mID = counter++;
         // empty constructor
     }
 
@@ -20,30 +42,87 @@ public class ChatMessage {
     }
 
     public String getName() {
-        return mName;
+        return name;
     }
-    public void setName(String name) {
-        mName = name;
-    }
-
-    public String getId() {
-        return mId;
-    }
-    public void setId(String id) {
-        mId = id;
+    public void setName(String n) {
+        name = n;
     }
 
     public String getMessage() {
-        return mMessage;
+        return message;
     }
-    public void setMessage(String message) {
-        mMessage = message;
+    public void setMessage(String m) {
+        message = m;
     }
 
     public String getType() {
-        return mType;
+        return type;
     }
-    public void setType(String type) {
-        mType = type;
+    public void setType(String t) {
+        type = t;
+    }
+    public int getID() {
+        return(mID);
+    }
+
+    public void setID(int id) {
+        mID = id;
+    }
+
+    public GifDrawable getDrawable() {
+        return mDrawable;
+    }
+    public void setDrawable(ChatLogAdapter.ChatViewHolder holder) {
+
+        if(getDrawable() != null)
+        {
+            holder.gif.setBackground(mDrawable);
+            return;
+        }
+
+        final int TWO_MEGABYTE = 1024 * 1024 * 2;
+        byte[] bytes = new byte[TWO_MEGABYTE];
+        final String filename = "GIF" + getMessage() + ".txt";
+
+        try {
+            FileInputStream file = holder.itemView.getContext().openFileInput(filename);
+
+            BufferedInputStream buf = new BufferedInputStream(file);
+            buf.read(bytes, 0, bytes.length);
+            buf.close();
+
+            GifDrawable gifFromBytes = new GifDrawable(bytes);
+            mDrawable = gifFromBytes;
+            holder.gif.setBackground(gifFromBytes);
+            Log.e("Success", "DownloadCM");
+        } catch (Exception e) {
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+            StorageReference stickerSR = storage.getReference(Constants.STICKERS_DB).child(getMessage());
+            stickerSR.getBytes(TWO_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    GifDrawable gifFromBytes = null;
+                    try {
+                        FileOutputStream outputStream;
+
+                        outputStream = holder.itemView.getContext().openFileOutput(filename, Context.MODE_PRIVATE);
+                        outputStream.write(bytes);
+                        outputStream.close();
+
+                        Log.e("Success", "convert " + filename);
+                        gifFromBytes = new GifDrawable(bytes);
+                        mDrawable = gifFromBytes;
+                        holder.gif.setBackground(gifFromBytes);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle any errors
+                }
+            });
+        }
     }
 }

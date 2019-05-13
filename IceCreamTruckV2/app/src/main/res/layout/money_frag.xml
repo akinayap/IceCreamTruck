@@ -1,15 +1,361 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/black">
 
     <ImageView
         android:paddingTop="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/tabbed_icon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/money_white"
-        android:tint="@android:color/white"/>
-</LinearLayout>
+        android:tint="@android:color/white" />
+
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:padding="8dp"
+        app:layout_constraintBottom_toTopOf="@id/add_entry"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tabbed_icon">
+
+        <TableLayout
+            android:id="@+id/accounts_table"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp">
+
+            <TableRow
+                android:id="@+id/month"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_column="0"
+                    android:layout_weight="1"
+                    android:text="May"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/white"
+                    android:textSize="20sp" />
+
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/category"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/incomeTitle"
+                    android:layout_width="0dp"
+                    android:layout_column="0"
+                    android:layout_weight="1"
+                    android:background="@drawable/rounded_bubble_purple_box"
+                    android:text="Income"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/expensesTitle"
+                    android:layout_width="0dp"
+                    android:layout_column="1"
+                    android:layout_weight="1"
+                    android:background="@drawable/rounded_bubble_orange_box"
+                    android:text="Expenses"
+                    android:textAlignment="center"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp" />
+            </TableRow>
+            <!--
+                    <TableRow
+                        android:id="@+id/row1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <LinearLayout
+                            android:id="@+id/income1"
+                            android:layout_width="0dp"
+                            android:layout_column="0"
+                            android:layout_weight="1"
+                            android:background="@drawable/rounded_bubble_purple_box"
+                            android:orientation="vertical"
+                            android:padding="3dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Income from work"
+                                android:textColor="@android:color/white" />
+
+                            <CheckBox
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/toggle_bg"
+                                android:text="2900"
+                                android:textColor="@android:color/white" />
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:id="@+id/expense1"
+                            android:layout_width="0dp"
+                            android:layout_column="1"
+                            android:layout_weight="1"
+                            android:background="@drawable/rounded_bubble_orange_box"
+                            android:orientation="vertical"
+                            android:padding="3dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Loan Payment"
+                                android:textAlignment="textEnd"
+                                android:textColor="@android:color/white" />
+
+                            <CheckBox
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/toggle_bg"
+                                android:button="@android:color/transparent"
+                                android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+                                android:text="600"
+                                android:textAlignment="textEnd"
+                                android:textColor="@android:color/white" />
+
+                        </LinearLayout>
+                    </TableRow>
+
+                    <TableRow
+                        android:id="@+id/row2"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <LinearLayout
+                            android:id="@+id/income2"
+                            android:layout_width="0dp"
+                            android:layout_column="0"
+                            android:layout_weight="1"
+                            android:background="@drawable/rounded_bubble_purple_box"
+                            android:orientation="vertical"
+                            android:padding="3dp"
+                            android:visibility="invisible">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@android:color/white" />
+
+                            <CheckBox
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/toggle_bg"
+                                android:textColor="@android:color/white" />
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:id="@+id/expense2"
+                            android:layout_width="0dp"
+                            android:layout_column="1"
+                            android:layout_weight="1"
+                            android:background="@drawable/rounded_bubble_orange_box"
+                            android:orientation="vertical"
+                            android:padding="3dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Give Daddy"
+                                android:textAlignment="textEnd"
+                                android:textColor="@android:color/white" />
+
+                            <CheckBox
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/toggle_bg"
+                                android:button="@android:color/transparent"
+                                android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+                                android:text="500"
+                                android:textAlignment="textEnd"
+                                android:textColor="@android:color/white" />
+
+                        </LinearLayout>
+                    </TableRow>
+
+                    <TableRow
+                        android:id="@+id/row3"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <LinearLayout
+                            android:id="@+id/income3"
+                            android:layout_width="0dp"
+                            android:layout_column="0"
+                            android:layout_weight="1"
+                            android:background="@drawable/rounded_bubble_purple_box"
+                            android:orientation="vertical"
+                            android:padding="3dp"
+                            android:visibility="invisible">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@android:color/white" />
+
+                            <CheckBox
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/toggle_bg"
+                                android:textColor="@android:color/white" />
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:id="@+id/expense3"
+                            android:layout_width="0dp"
+                            android:layout_column="1"
+                            android:layout_weight="1"
+                            android:background="@drawable/rounded_bubble_orange_box"
+                            android:orientation="vertical"
+                            android:padding="3dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Phone Bill"
+                                android:textAlignment="textEnd"
+                                android:textColor="@android:color/white" />
+
+                            <CheckBox
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/toggle_bg"
+                                android:button="@android:color/transparent"
+                                android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+                                android:text="200"
+                                android:textAlignment="textEnd"
+                                android:textColor="@android:color/white" />
+
+                        </LinearLayout>
+                    </TableRow>
+
+                    <TableRow
+                        android:id="@+id/row4"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <LinearLayout
+                            android:id="@+id/income4"
+                            android:layout_width="0dp"
+                            android:layout_column="0"
+                            android:layout_weight="1"
+                            android:background="@drawable/rounded_bubble_purple_box"
+                            android:orientation="vertical"
+                            android:padding="3dp"
+                            android:visibility="invisible">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@android:color/white" />
+
+                            <CheckBox
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/toggle_bg"
+                                android:textColor="@android:color/white" />
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:id="@+id/expense4"
+                            android:layout_width="0dp"
+                            android:layout_column="1"
+                            android:layout_weight="1"
+                            android:background="@drawable/rounded_bubble_orange_box"
+                            android:orientation="vertical"
+                            android:padding="3dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Transport"
+                                android:textAlignment="textEnd"
+                                android:textColor="@android:color/white" />
+
+                            <CheckBox
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/toggle_bg"
+                                android:button="@android:color/transparent"
+                                android:drawableEnd="?android:attr/listChoiceIndicatorMultiple"
+                                android:text="200"
+                                android:textAlignment="textEnd"
+                                android:textColor="@android:color/white" />
+
+                        </LinearLayout>
+                    </TableRow>-->
+        </TableLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/add_entry"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toTopOf="@id/result"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:gravity="center"
+        >
+
+        <Button
+            android:id="@+id/add_income_entry"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_bubble_purple_box"
+            android:text="Add Income"
+            android:textColor="@android:color/white"/>
+        <Button
+            android:id="@+id/add_expenses_entry"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_bubble_orange_box"
+            android:text="Add Expenses"
+            android:textColor="@android:color/white"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/result"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:textColor="@android:color/white"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="MONEY" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

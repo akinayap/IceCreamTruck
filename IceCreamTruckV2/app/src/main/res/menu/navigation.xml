@@ -14,9 +14,9 @@
         android:icon="@drawable/chat_black"
         android:title="Chat" />
     <item
-        android:id="@+id/nav_notifications"
+        android:id="@+id/nav_locations"
         android:icon="@drawable/bell_black"
-        android:title="Notifications" />
+        android:title="Locations" />
 <!--    <item
         android:id="@+id/navigation_home"
         android:icon="@drawable/ic_home_black_24dp"

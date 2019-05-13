@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import com.example.icecreamtruckv2.chat.ChatFrag;
 import com.example.icecreamtruckv2.home.HomeFrag;
 import com.example.icecreamtruckv2.money.MoneyFrag;
-import com.example.icecreamtruckv2.notification.NotificationFrag;
+import com.example.icecreamtruckv2.location.LocationFrag;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -58,8 +58,8 @@ public class MainActivity extends AppCompatActivity {
                     ft.replace(R.id.frag, new ChatFrag());
                     ft.commit();
                     return true;
-                case R.id.nav_notifications:
-                    ft.replace(R.id.frag, new NotificationFrag());
+                case R.id.nav_locations:
+                    ft.replace(R.id.frag, new LocationFrag());
                     ft.commit();
                     return true;
             }
@@ -98,9 +98,11 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 BottomNavigationView navigation = findViewById(R.id.navigation);
-
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.frag, new HomeFrag());
+                if (getIntent().hasExtra("FROM") && getIntent().getStringExtra("FROM").equals("NOTIF"))
+                    ft.replace(R.id.frag, new ChatFrag());
+                else
+                    ft.replace(R.id.frag, new HomeFrag());
                 ft.commit();
 
                 navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
