@@ -61,7 +61,7 @@ public class ChatFrag extends Fragment {
     private FirebaseStorage storage;
 
     private SharedPreferences sharedPreferences;
-    private String userRole;
+    public static String userRole;
 
     public static List<ChatSticker> stickers = new ArrayList<>();
     public static List<ChatMessage> messages = new ArrayList<>();
@@ -103,6 +103,13 @@ public class ChatFrag extends Fragment {
 
                 @Override
                 public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    mAdapter.removeData(dataSnapshot.getValue(ChatMessage.class).getID());
+                    mAdapter.notifyDataSetChanged();
+                    ChatMessage data = dataSnapshot.getValue(ChatMessage.class);
+                    messages.add(data);
+                    mAdapter.notifyDataSetChanged();
+                    chat.smoothScrollToPosition(mAdapter.getItemCount() - 1);
+                    mAdapter.notifyDataSetChanged();
                 }
 
                 @Override

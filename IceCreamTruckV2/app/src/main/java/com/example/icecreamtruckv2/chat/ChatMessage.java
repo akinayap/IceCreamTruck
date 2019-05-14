@@ -72,11 +72,11 @@ public class ChatMessage {
     public GifDrawable getDrawable() {
         return mDrawable;
     }
-    public void setDrawable(ChatLogAdapter.ChatViewHolder holder) {
+    public void setDrawable(ChatLogAdapter.ChatViewHolder holder, GifImageView gif) {
 
         if(getDrawable() != null)
         {
-            holder.gif.setBackground(mDrawable);
+            gif.setBackground(mDrawable);
             return;
         }
 
@@ -93,7 +93,7 @@ public class ChatMessage {
 
             GifDrawable gifFromBytes = new GifDrawable(bytes);
             mDrawable = gifFromBytes;
-            holder.gif.setBackground(gifFromBytes);
+            gif.setBackground(gifFromBytes);
             Log.e("Success", "DownloadCM");
         } catch (Exception e) {
             FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -112,7 +112,7 @@ public class ChatMessage {
                         Log.e("Success", "convert " + filename);
                         gifFromBytes = new GifDrawable(bytes);
                         mDrawable = gifFromBytes;
-                        holder.gif.setBackground(gifFromBytes);
+                        gif.setBackground(gifFromBytes);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
