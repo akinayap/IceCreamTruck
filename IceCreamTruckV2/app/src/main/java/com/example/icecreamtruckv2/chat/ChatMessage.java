@@ -65,22 +65,7 @@ public class ChatMessage {
         return(mID);
     }
 
-    public void setID(int id) {
-        mID = id;
-    }
-
-    public GifDrawable getDrawable() {
-        return mDrawable;
-    }
     public void setDrawable(ChatLogAdapter.ChatViewHolder holder, GifImageView gif) {
-
-        if(getDrawable() != null)
-        {
-            gif.setBackground(mDrawable);
-            return;
-        }
-
-        final int TWO_MEGABYTE = 1024 * 1024 * 2;
         byte[] bytes = new byte[TWO_MEGABYTE];
         final String filename = "GIF" + getMessage() + ".txt";
 
@@ -92,7 +77,6 @@ public class ChatMessage {
             buf.close();
 
             GifDrawable gifFromBytes = new GifDrawable(bytes);
-            mDrawable = gifFromBytes;
             gif.setBackground(gifFromBytes);
             Log.e("Success", "DownloadCM");
         } catch (Exception e) {
@@ -111,7 +95,6 @@ public class ChatMessage {
 
                         Log.e("Success", "convert " + filename);
                         gifFromBytes = new GifDrawable(bytes);
-                        mDrawable = gifFromBytes;
                         gif.setBackground(gifFromBytes);
                     } catch (Exception e) {
                         e.printStackTrace();

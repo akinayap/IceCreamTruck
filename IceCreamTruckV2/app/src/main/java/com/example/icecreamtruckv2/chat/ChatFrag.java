@@ -171,7 +171,6 @@ public class ChatFrag extends Fragment {
                     Log.e("Child Added", "HERE");
                     ChatSticker data = dataSnapshot.getValue(ChatSticker.class);
                     data.setContext(getContext());
-                    data.setDrawable();
                     stickers.add(data);
                     stickerAdapter.notifyDataSetChanged();
                 }

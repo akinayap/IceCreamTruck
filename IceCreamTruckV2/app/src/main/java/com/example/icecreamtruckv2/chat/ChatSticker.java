@@ -40,10 +40,7 @@ public class ChatSticker {
         mName = name;
     }
 
-    public GifDrawable getDrawable() {
-        return mDrawable;
-    }
-    public void setDrawable() {
+    public void setDrawable(GifImageView gif) {
         final String filename = "GIF" + mName + ".txt";
         try {
             FileInputStream file = mContext.openFileInput(filename);
@@ -54,7 +51,7 @@ public class ChatSticker {
             buf.close();
 
             GifDrawable gifFromBytes = new GifDrawable( bytes );
-            mDrawable = gifFromBytes;
+            gif.setBackground(gifFromBytes);
             Log.e("Success", "DownloadCS");
         } catch (Exception e) {
             FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -72,7 +69,7 @@ public class ChatSticker {
 
                         Log.e("Success", "convert2 " + filename);
                         gifFromBytes = new GifDrawable( bytes );
-                        mDrawable = gifFromBytes;
+                        gif.setBackground(gifFromBytes);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

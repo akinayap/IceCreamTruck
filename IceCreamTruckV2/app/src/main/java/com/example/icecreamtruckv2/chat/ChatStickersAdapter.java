@@ -59,7 +59,8 @@ public class ChatStickersAdapter extends RecyclerView.Adapter<ChatStickersAdapte
     public void onBindViewHolder(final ChatStickersViewHolder holder, int position) {
         final ChatSticker data = mData.get(position);
         data.setContext(holder.itemView.getContext());
-        holder.icon.setBackground(data.getDrawable());
+        holder.icon.setBackgroundResource(R.drawable.loading);
+        data.setDrawable(holder.icon);
 
         holder.bind(data, listener);
 /*        holder.icon.setOnLongClickListener(new View.OnLongClickListener() {

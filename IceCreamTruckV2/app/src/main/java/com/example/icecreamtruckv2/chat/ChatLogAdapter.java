@@ -61,8 +61,8 @@ public class ChatLogAdapter extends RecyclerView.Adapter<ChatLogAdapter.ChatView
         if(data.getName().equals("Ah Girl") && ChatFrag.userRole.equals("ahgirl") ||
         data.getName().equals("Ah Boy") && ChatFrag.userRole.equals("ahboy"))
         {
-            holder.ocard.setVisibility(View.GONE);
             holder.mcard.setVisibility(View.VISIBLE);
+            holder.ocard.setVisibility(View.GONE);
 
             holder.mname.setText(data.getName());
             holder.micon.setImageResource(data.getIcon());
@@ -83,8 +83,8 @@ public class ChatLogAdapter extends RecyclerView.Adapter<ChatLogAdapter.ChatView
         }
         else
         {
-            holder.mcard.setVisibility(View.GONE);
             holder.ocard.setVisibility(View.VISIBLE);
+            holder.mcard.setVisibility(View.GONE);
 
             holder.oname.setText(data.getName());
             holder.oicon.setImageResource(data.getIcon());
