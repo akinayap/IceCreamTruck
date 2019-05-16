@@ -25,6 +25,7 @@ public class ChatMessage {
     private String name;
     private String message;
     private String type;
+    private String timestamp;
     private GifDrawable mDrawable;
     private int TWO_MEGABYTE = 1024 * 1024  * 2;
 
@@ -32,6 +33,13 @@ public class ChatMessage {
     public ChatMessage() {
         mID = counter++;
         // empty constructor
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+    public void setTimestamp(String t) {
+        timestamp = t;
     }
 
     public int getIcon() {

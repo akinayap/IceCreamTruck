@@ -66,6 +66,7 @@ public class ChatLogAdapter extends RecyclerView.Adapter<ChatLogAdapter.ChatView
 
             holder.mname.setText(data.getName());
             holder.micon.setImageResource(data.getIcon());
+            holder.mtime.setText(data.getTimestamp());
 
             if (data.getType().equals("GIF")) {
                 holder.mgif.setVisibility(View.VISIBLE);
@@ -88,6 +89,7 @@ public class ChatLogAdapter extends RecyclerView.Adapter<ChatLogAdapter.ChatView
 
             holder.oname.setText(data.getName());
             holder.oicon.setImageResource(data.getIcon());
+            holder.otime.setText(data.getTimestamp());
 
             if (data.getType().equals("GIF")) {
                 holder.ogif.setVisibility(View.VISIBLE);
@@ -114,12 +116,14 @@ public class ChatLogAdapter extends RecyclerView.Adapter<ChatLogAdapter.ChatView
         ImageView micon;
         TextView mname;
         TextView mmessage;
+        TextView mtime;
         GifImageView mgif;
 
         CardView ocard;
         ImageView oicon;
         TextView oname;
         TextView omessage;
+        TextView otime;
         GifImageView ogif;
 
         ChatViewHolder(View view) {
@@ -130,12 +134,14 @@ public class ChatLogAdapter extends RecyclerView.Adapter<ChatLogAdapter.ChatView
             oname = view.findViewById(R.id.other_username);
             omessage = view.findViewById(R.id.other_message);
             ogif = view.findViewById(R.id.other_gif);
+            otime = view.findViewById(R.id.other_time);
 
             mcard = view.findViewById(R.id.my_view);
             micon = view.findViewById(R.id.my_icon);
             mname = view.findViewById(R.id.my_username);
             mmessage = view.findViewById(R.id.my_message);
             mgif = view.findViewById(R.id.my_gif);
+            mtime = view.findViewById(R.id.my_time);
         }
     }
 }

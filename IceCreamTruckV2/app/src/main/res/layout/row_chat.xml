@@ -52,14 +52,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
-                android:paddingEnd="0dp"
                 android:text="Hello to my ah boy"
                 android:textColor="@color/colorAccent"
                 android:textSize="14sp"
-                android:visibility="gone"
-                card_view:layout_constraintBottom_toBottomOf="parent"
-                card_view:layout_constraintEnd_toEndOf="parent"
-                card_view:layout_constraintStart_toEndOf="@+id/other_icon"
+                android:visibility="visible"
+                card_view:layout_constraintBottom_toTopOf="@id/other_time"
+                card_view:layout_constraintStart_toEndOf="@id/other_icon"
                 card_view:layout_constraintTop_toBottomOf="@id/other_username" />
 
             <ImageView
@@ -81,11 +79,28 @@
                 android:layout_height="100dp"
                 android:layout_margin="4dp"
                 android:background="@drawable/loading"
-                android:visibility="visible"
-                card_view:layout_constraintBottom_toBottomOf="parent"
+                android:visibility="gone"
+                card_view:layout_constraintBottom_toTopOf="@id/other_time"
                 card_view:layout_constraintEnd_toEndOf="parent"
                 card_view:layout_constraintStart_toEndOf="@id/other_icon"
                 card_view:layout_constraintTop_toBottomOf="@id/other_username" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/other_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:paddingStart="3dp"
+                android:paddingEnd="0dp"
+                android:text="Time"
+                android:textColor="@color/colorAccent"
+                android:textSize="10sp"
+                card_view:layout_constraintEnd_toEndOf="parent"
+                card_view:layout_constraintHorizontal_bias="0.0"
+                card_view:layout_constraintStart_toEndOf="@id/other_icon"
+                card_view:layout_constraintBottom_toBottomOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
@@ -136,13 +151,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
-                android:paddingEnd="0dp"
                 android:text="Hello to my ah boy"
                 android:textColor="@color/colorAccent"
                 android:textSize="14sp"
-                android:visibility="gone"
-                card_view:layout_constraintBottom_toBottomOf="parent"
-                card_view:layout_constraintEnd_toEndOf="parent"
+                android:visibility="visible"
+                card_view:layout_constraintBottom_toTopOf="@id/my_time"
                 card_view:layout_constraintStart_toEndOf="@id/my_icon"
                 card_view:layout_constraintTop_toBottomOf="@id/my_username" />
 
@@ -165,11 +178,28 @@
                 android:layout_height="100dp"
                 android:layout_margin="4dp"
                 android:background="@drawable/loading"
-                android:visibility="visible"
-                card_view:layout_constraintBottom_toBottomOf="parent"
+                android:visibility="gone"
+                card_view:layout_constraintBottom_toTopOf="@id/my_time"
                 card_view:layout_constraintEnd_toEndOf="parent"
                 card_view:layout_constraintStart_toEndOf="@id/my_icon"
                 card_view:layout_constraintTop_toBottomOf="@id/my_username" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/my_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:paddingStart="3dp"
+                android:paddingEnd="0dp"
+                android:text="Time"
+                android:textColor="@color/colorAccent"
+                android:textSize="10sp"
+                card_view:layout_constraintEnd_toEndOf="parent"
+                card_view:layout_constraintHorizontal_bias="0.0"
+                card_view:layout_constraintStart_toEndOf="@id/my_icon"
+                card_view:layout_constraintBottom_toBottomOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
