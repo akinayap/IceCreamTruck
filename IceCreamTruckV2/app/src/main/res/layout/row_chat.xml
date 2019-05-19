@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -12,95 +11,66 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginStart="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginRight="5dp"
-        card_view:cardBackgroundColor="@color/colorPrimaryDark">
+        android:layout_margin="8dp"
+        card_view:cardBackgroundColor="@color/transparent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@drawable/rounded_bubble_box"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/other_username"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="4dp"
-                android:paddingStart="3dp"
-                android:paddingEnd="0dp"
-                android:text="Ah Girl"
-                android:textColor="@color/colorAccent"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                card_view:layout_constraintEnd_toEndOf="parent"
-                card_view:layout_constraintHorizontal_bias="0.0"
-                card_view:layout_constraintStart_toEndOf="@id/other_icon"
-                card_view:layout_constraintTop_toTopOf="parent" />
+            android:paddingRight="8dp">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/other_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
                 android:text="Hello to my ah boy"
                 android:textColor="@color/colorAccent"
                 android:textSize="14sp"
                 android:visibility="visible"
-                card_view:layout_constraintBottom_toTopOf="@id/other_time"
-                card_view:layout_constraintStart_toEndOf="@id/other_icon"
-                card_view:layout_constraintTop_toBottomOf="@id/other_username" />
+                card_view:layout_constraintBottom_toBottomOf="parent"
+                card_view:layout_constraintStart_toEndOf="@+id/other_icon"
+                card_view:layout_constraintTop_toBottomOf="@+id/other_time" />
 
             <ImageView
                 android:id="@+id/other_icon"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
+                android:layout_margin="8dp"
                 card_view:layout_constraintBottom_toBottomOf="parent"
                 card_view:layout_constraintStart_toStartOf="parent"
-                card_view:layout_constraintTop_toTopOf="parent"
-                card_view:srcCompat="@drawable/girl"
-                android:tint="@color/colorPrimary"/>
+                card_view:layout_constraintTop_toBottomOf="@+id/other_time"
+                card_view:srcCompat="@drawable/boy"
+                android:tint="@color/colorAccent"/>
 
             <pl.droidsonroids.gif.GifImageView
                 android:id="@+id/other_gif"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:layout_margin="4dp"
-                android:background="@drawable/loading"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/loading"
                 android:visibility="gone"
-                card_view:layout_constraintBottom_toTopOf="@id/other_time"
-                card_view:layout_constraintEnd_toEndOf="parent"
-                card_view:layout_constraintStart_toEndOf="@id/other_icon"
-                card_view:layout_constraintTop_toBottomOf="@id/other_username" />
+                card_view:layout_constraintBottom_toBottomOf="parent"
+                card_view:layout_constraintStart_toEndOf="@+id/other_icon"
+                card_view:layout_constraintTop_toBottomOf="@+id/other_time"  />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/other_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="4dp"
-                android:paddingStart="3dp"
-                android:paddingEnd="0dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:text="Time"
                 android:textColor="@color/colorAccent"
                 android:textSize="10sp"
-                card_view:layout_constraintEnd_toEndOf="parent"
-                card_view:layout_constraintHorizontal_bias="0.0"
-                card_view:layout_constraintStart_toEndOf="@id/other_icon"
-                card_view:layout_constraintBottom_toBottomOf="parent" />
+                card_view:layout_constraintStart_toStartOf="parent"
+                card_view:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
@@ -110,96 +80,66 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginStart="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginRight="5dp"
+        android:layout_margin="8dp"
         android:layout_alignParentRight="true"
-        card_view:cardBackgroundColor="@color/colorPrimaryDark">
+        card_view:cardBackgroundColor="@color/transparent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@drawable/rounded_bubble_box"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/my_username"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="4dp"
-                android:paddingStart="3dp"
-                android:paddingEnd="0dp"
-                android:text="Ah Girl"
-                android:textColor="@color/colorAccent"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                card_view:layout_constraintEnd_toEndOf="parent"
-                card_view:layout_constraintHorizontal_bias="0.0"
-                card_view:layout_constraintStart_toEndOf="@id/my_icon"
-                card_view:layout_constraintTop_toTopOf="parent" />
+            android:paddingLeft="8dp">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/my_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="4dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
                 android:text="Hello to my ah boy"
                 android:textColor="@color/colorAccent"
                 android:textSize="14sp"
                 android:visibility="visible"
-                card_view:layout_constraintBottom_toTopOf="@id/my_time"
-                card_view:layout_constraintStart_toEndOf="@id/my_icon"
-                card_view:layout_constraintTop_toBottomOf="@id/my_username" />
+                card_view:layout_constraintBottom_toBottomOf="parent"
+                card_view:layout_constraintEnd_toStartOf="@+id/my_icon"
+                card_view:layout_constraintTop_toBottomOf="@+id/my_time" />
 
             <ImageView
                 android:id="@+id/my_icon"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
+                android:layout_margin="8dp"
                 card_view:layout_constraintBottom_toBottomOf="parent"
-                card_view:layout_constraintStart_toStartOf="parent"
-                card_view:layout_constraintTop_toTopOf="parent"
+                card_view:layout_constraintEnd_toEndOf="parent"
+                card_view:layout_constraintTop_toBottomOf="@+id/my_time"
                 card_view:srcCompat="@drawable/girl"
-                android:tint="@color/colorPrimary"/>
+                android:tint="@color/colorAccent"/>
 
             <pl.droidsonroids.gif.GifImageView
                 android:id="@+id/my_gif"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:layout_margin="4dp"
-                android:background="@drawable/loading"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:src="@drawable/loading"
                 android:visibility="gone"
-                card_view:layout_constraintBottom_toTopOf="@id/my_time"
-                card_view:layout_constraintEnd_toEndOf="parent"
-                card_view:layout_constraintStart_toEndOf="@id/my_icon"
-                card_view:layout_constraintTop_toBottomOf="@id/my_username" />
+                card_view:layout_constraintBottom_toBottomOf="parent"
+                card_view:layout_constraintEnd_toStartOf="@+id/my_icon"
+                card_view:layout_constraintTop_toBottomOf="@+id/my_time"  />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/my_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="4dp"
-                android:paddingStart="3dp"
-                android:paddingEnd="0dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
                 android:text="Time"
                 android:textColor="@color/colorAccent"
                 android:textSize="10sp"
                 card_view:layout_constraintEnd_toEndOf="parent"
-                card_view:layout_constraintHorizontal_bias="0.0"
-                card_view:layout_constraintStart_toEndOf="@id/my_icon"
-                card_view:layout_constraintBottom_toBottomOf="parent" />
+                card_view:layout_constraintTop_toTopOf="parent"  />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

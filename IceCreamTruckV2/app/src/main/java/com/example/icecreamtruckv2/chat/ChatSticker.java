@@ -19,31 +19,35 @@ import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
 
 public class ChatSticker {
-    private String mName;
-    private GifDrawable mDrawable;
     private int TWO_MEGABYTE = 1024 * 1024  * 2;
-    private Context mContext;
+    private Context context;
+    private String name, timestamp;
 
-    public ChatSticker() {
-        // empty constructor
+    public ChatSticker() {}
+
+    public void setContext(Context c)
+    {
+        context = c;
     }
 
-    public void setContext(Context context)
-    {
-        mContext = context;
+    public String getTimestamp() {
+        return timestamp;
+    }
+    public void setTimestamp(String t) {
+        timestamp = t;
     }
 
     public String getName() {
-        return mName;
+        return name;
     }
-    public void setName(String name) {
-        mName = name;
+    public void setName(String n) {
+        name = n;
     }
 
-    public void setDrawable(GifImageView gif) {
-        final String filename = "GIF" + mName + ".txt";
+    public void setDrawable(final GifImageView gif) {
+        final String filename = "GIF" + name + ".txt";
         try {
-            FileInputStream file = mContext.openFileInput(filename);
+            FileInputStream file = context.openFileInput(filename);
 
             BufferedInputStream buf = new BufferedInputStream(file);
             byte[] bytes = new byte[TWO_MEGABYTE];
@@ -51,11 +55,11 @@ public class ChatSticker {
             buf.close();
 
             GifDrawable gifFromBytes = new GifDrawable( bytes );
-            gif.setBackground(gifFromBytes);
+            gif.setImageDrawable(gifFromBytes);
             Log.e("Success", "DownloadCS");
         } catch (Exception e) {
             FirebaseStorage storage = FirebaseStorage.getInstance();
-            StorageReference stickerSR = storage.getReference(Constants.STICKERS_DB).child(mName);
+            StorageReference stickerSR = storage.getReference(Constants.STICKERS_DB).child(name);
             stickerSR.getBytes(TWO_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                 @Override
                 public void onSuccess(byte[] bytes) {
@@ -63,13 +67,13 @@ public class ChatSticker {
                     try {
                         FileOutputStream outputStream;
 
-                        outputStream = mContext.openFileOutput(filename, Context.MODE_PRIVATE);
+                        outputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
                         outputStream.write(bytes);
                         outputStream.close();
 
                         Log.e("Success", "convert2 " + filename);
                         gifFromBytes = new GifDrawable( bytes );
-                        gif.setBackground(gifFromBytes);
+                        gif.setImageDrawable(gifFromBytes);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

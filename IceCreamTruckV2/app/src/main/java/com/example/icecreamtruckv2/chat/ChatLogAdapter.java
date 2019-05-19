@@ -28,10 +28,10 @@ import java.util.List;
 import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
 
+import static com.example.icecreamtruckv2.chat.ChatFrag.userRole;
+
 public class ChatLogAdapter extends RecyclerView.Adapter<ChatLogAdapter.ChatViewHolder> {
-
-    private List<ChatMessage> mData = new ArrayList<>();
-
+    private List<ChatMessage> mData;
     public ChatLogAdapter(List<ChatMessage> msg) {
         mData = msg;
     }
@@ -39,11 +39,6 @@ public class ChatLogAdapter extends RecyclerView.Adapter<ChatLogAdapter.ChatView
         mData.clear();
     }
 
-    public void addData(ChatMessage data) {
-        mData.add(data);
-    }
-
-    // total number of rows
     @Override
     public int getItemCount() {
         return mData.size();
@@ -58,22 +53,25 @@ public class ChatLogAdapter extends RecyclerView.Adapter<ChatLogAdapter.ChatView
     @Override
     public void onBindViewHolder(final ChatViewHolder holder, int position) {
         ChatMessage data = mData.get(position);
-        if(data.getName().equals("Ah Girl") && ChatFrag.userRole.equals("ahgirl") ||
-        data.getName().equals("Ah Boy") && ChatFrag.userRole.equals("ahboy"))
+        int micon = userRole.equals("ahgirl") ? R.drawable.girl : R.drawable.boy;
+        int oicon = userRole.equals("ahgirl") ? R.drawable.boy : R.drawable.girl;
+        if(data.getUsername().equals("ahgirl") && userRole.equals("ahgirl") ||
+        data.getUsername().equals("ahboy") && userRole.equals("ahboy"))
         {
             holder.mcard.setVisibility(View.VISIBLE);
+            holder.mgif.setVisibility(View.GONE);
+            holder.mmessage.setVisibility(View.GONE);
+            holder.ogif.setVisibility(View.GONE);
+            holder.omessage.setVisibility(View.GONE);
             holder.ocard.setVisibility(View.GONE);
-
-            holder.mname.setText(data.getName());
-            holder.micon.setImageResource(data.getIcon());
+            holder.micon.setImageResource(micon);
             holder.mtime.setText(data.getTimestamp());
 
             if (data.getType().equals("GIF")) {
                 holder.mgif.setVisibility(View.VISIBLE);
                 holder.mmessage.setVisibility(View.GONE);
-                holder.mgif.setBackgroundResource(R.drawable.loading);
+                holder.mgif.setImageResource(R.drawable.loading);
                 data.setDrawable(holder, holder.mgif);
-
             } else {
                 if (!data.getMessage().equals("")) {
                     holder.mmessage.setVisibility(View.VISIBLE);
@@ -81,20 +79,20 @@ public class ChatLogAdapter extends RecyclerView.Adapter<ChatLogAdapter.ChatView
                     holder.mmessage.setText(data.getMessage());
                 }
             }
-        }
-        else
-        {
+        } else {
             holder.ocard.setVisibility(View.VISIBLE);
+            holder.mgif.setVisibility(View.GONE);
+            holder.mmessage.setVisibility(View.GONE);
+            holder.ogif.setVisibility(View.GONE);
+            holder.omessage.setVisibility(View.GONE);
             holder.mcard.setVisibility(View.GONE);
-
-            holder.oname.setText(data.getName());
-            holder.oicon.setImageResource(data.getIcon());
+            holder.oicon.setImageResource(oicon);
             holder.otime.setText(data.getTimestamp());
 
             if (data.getType().equals("GIF")) {
                 holder.ogif.setVisibility(View.VISIBLE);
                 holder.omessage.setVisibility(View.GONE);
-                holder.ogif.setBackgroundResource(R.drawable.loading);
+                holder.ogif.setImageResource(R.drawable.loading);
                 data.setDrawable(holder, holder.ogif);
 
             } else {
@@ -107,21 +105,15 @@ public class ChatLogAdapter extends RecyclerView.Adapter<ChatLogAdapter.ChatView
         }
     }
 
-    public void removeData(int id) {
-        mData.remove(id);
-    }
-
     static final class ChatViewHolder extends RecyclerView.ViewHolder {
         CardView mcard;
         ImageView micon;
-        TextView mname;
         TextView mmessage;
         TextView mtime;
         GifImageView mgif;
 
         CardView ocard;
         ImageView oicon;
-        TextView oname;
         TextView omessage;
         TextView otime;
         GifImageView ogif;
@@ -131,18 +123,15 @@ public class ChatLogAdapter extends RecyclerView.Adapter<ChatLogAdapter.ChatView
 
             ocard = view.findViewById(R.id.other_view);
             oicon = view.findViewById(R.id.other_icon);
-            oname = view.findViewById(R.id.other_username);
             omessage = view.findViewById(R.id.other_message);
             ogif = view.findViewById(R.id.other_gif);
             otime = view.findViewById(R.id.other_time);
 
             mcard = view.findViewById(R.id.my_view);
             micon = view.findViewById(R.id.my_icon);
-            mname = view.findViewById(R.id.my_username);
             mmessage = view.findViewById(R.id.my_message);
             mgif = view.findViewById(R.id.my_gif);
             mtime = view.findViewById(R.id.my_time);
         }
     }
 }
-

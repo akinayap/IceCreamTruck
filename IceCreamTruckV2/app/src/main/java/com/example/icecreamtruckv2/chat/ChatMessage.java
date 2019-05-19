@@ -19,21 +19,10 @@ import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
 
 public class ChatMessage {
-
-    private int mID;
-    private int mIcon;
-    private String name;
-    private String message;
-    private String type;
-    private String timestamp;
-    private GifDrawable mDrawable;
+    private String username, message, type, timestamp;
     private int TWO_MEGABYTE = 1024 * 1024  * 2;
 
-    private static int counter = 0;
-    public ChatMessage() {
-        mID = counter++;
-        // empty constructor
-    }
+    public ChatMessage() {}
 
     public String getTimestamp() {
         return timestamp;
@@ -42,18 +31,11 @@ public class ChatMessage {
         timestamp = t;
     }
 
-    public int getIcon() {
-        return mIcon;
+    public String getUsername() {
+        return username;
     }
-    public void setIcon(int icon) {
-        mIcon = icon;
-    }
-
-    public String getName() {
-        return name;
-    }
-    public void setName(String n) {
-        name = n;
+    public void setUsername(String n) {
+        username = n;
     }
 
     public String getMessage() {
@@ -69,11 +51,8 @@ public class ChatMessage {
     public void setType(String t) {
         type = t;
     }
-    public int getID() {
-        return(mID);
-    }
 
-    public void setDrawable(ChatLogAdapter.ChatViewHolder holder, GifImageView gif) {
+    public void setDrawable(final ChatLogAdapter.ChatViewHolder holder, final GifImageView gif) {
         byte[] bytes = new byte[TWO_MEGABYTE];
         final String filename = "GIF" + getMessage() + ".txt";
 
@@ -85,7 +64,7 @@ public class ChatMessage {
             buf.close();
 
             GifDrawable gifFromBytes = new GifDrawable(bytes);
-            gif.setBackground(gifFromBytes);
+            gif.setImageDrawable(gifFromBytes);
             Log.e("Success", "DownloadCM");
         } catch (Exception e) {
             FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -103,7 +82,7 @@ public class ChatMessage {
 
                         Log.e("Success", "convert " + filename);
                         gifFromBytes = new GifDrawable(bytes);
-                        gif.setBackground(gifFromBytes);
+                        gif.setImageDrawable(gifFromBytes);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

@@ -10,6 +10,7 @@
         android:id="@+id/sticker_icon"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:background="@drawable/loading" />
+        android:src="@drawable/loading"
+        android:scaleType="fitCenter"/>
 
 </RelativeLayout>
