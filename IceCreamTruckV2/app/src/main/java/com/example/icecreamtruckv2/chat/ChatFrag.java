@@ -140,6 +140,7 @@ public class ChatFrag extends Fragment {
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 RemoveAllNotification();
                 ChatMessage data = dataSnapshot.getValue(ChatMessage.class);
+                data.setContext(getContext());
                 chatList.add(data);
                 chatRV.scrollToPosition(chatAdapter.getItemCount() - 1);
                 //chatRV.smoothScrollToPosition(chatAdapter.getItemCount() - 1);
@@ -149,6 +150,7 @@ public class ChatFrag extends Fragment {
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 ChatMessage data = dataSnapshot.getValue(ChatMessage.class);
+                data.setContext(getContext());
                 chatList.removeIf(c -> (data.getTimestamp().equals(c.getTimestamp())));
                 chatList.add(data);
                 chatRV.scrollToPosition(chatAdapter.getItemCount() - 1);
@@ -159,6 +161,7 @@ public class ChatFrag extends Fragment {
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
                 ChatMessage data = dataSnapshot.getValue(ChatMessage.class);
+                data.setContext(getContext());
                 chatList.removeIf(c -> (data.getTimestamp().equals(c.getTimestamp())));
                 chatAdapter.notifyDataSetChanged();
             }
@@ -206,6 +209,7 @@ public class ChatFrag extends Fragment {
         };
         stickerClick = item -> {
             ChatMessage data = new ChatMessage();
+            data.setContext(getContext());
             data.setMessage(item.getName());
             data.setType("GIF");
             data.setTimestamp(new SimpleDateFormat("hh:mm a, dd MMM yyyy", Locale.US).format(new Date().getTime()));
@@ -217,6 +221,7 @@ public class ChatFrag extends Fragment {
         sendClick = send -> {
             if (!chatInput.getText().toString().trim().equals("")) {
                 ChatMessage data = new ChatMessage();
+                data.setContext(getContext());
                 data.setMessage(chatInput.getText().toString().trim());
                 data.setType("MSG");
                 data.setTimestamp(new SimpleDateFormat("hh:mm a, dd MMM yyyy", Locale.US).format(new Date().getTime()));

@@ -1,6 +1,9 @@
 package com.example.icecreamtruckv2.chat;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -47,6 +50,7 @@ public class ChatSticker {
     public void setDrawable(final GifImageView gif) {
         final String filename = "GIF" + name + ".txt";
         try {
+            GifDrawable gifFromBytes;
             FileInputStream file = context.openFileInput(filename);
 
             BufferedInputStream buf = new BufferedInputStream(file);
@@ -54,35 +58,42 @@ public class ChatSticker {
             buf.read(bytes, 0, bytes.length);
             buf.close();
 
-            GifDrawable gifFromBytes = new GifDrawable( bytes );
-            gif.setImageDrawable(gifFromBytes);
+            try {
+                gifFromBytes = new GifDrawable(bytes);
+                gifFromBytes.setLoopCount(0);
+                gif.setImageDrawable(gifFromBytes);
+            } catch (Exception eer) {
+                Drawable image = new BitmapDrawable(context.getResources(), BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+                gif.setImageDrawable(image);
+            }
             Log.e("Success", "DownloadCS");
         } catch (Exception e) {
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference stickerSR = storage.getReference(Constants.STICKERS_DB).child(name);
-            stickerSR.getBytes(IMAGE_GIF).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                @Override
-                public void onSuccess(byte[] bytes) {
-                    GifDrawable gifFromBytes = null;
+            stickerSR.getBytes(IMAGE_GIF).addOnSuccessListener(bytes -> {
+                GifDrawable gifFromBytes;
+                try {
+                    FileOutputStream outputStream;
+
+                    outputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
+                    outputStream.write(bytes);
+                    outputStream.close();
+
+                    Log.e("Success", "convert2 " + filename);
                     try {
-                        FileOutputStream outputStream;
-
-                        outputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
-                        outputStream.write(bytes);
-                        outputStream.close();
-
-                        Log.e("Success", "convert2 " + filename);
                         gifFromBytes = new GifDrawable( bytes );
+                        gifFromBytes.setLoopCount(0);
                         gif.setImageDrawable(gifFromBytes);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                    } catch (Exception eer) {
+                        Drawable image = new BitmapDrawable(context.getResources(), BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+                        gif.setImageDrawable(image);
                     }
+
+                } catch (Exception e1) {
+                    e1.printStackTrace();
                 }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle any errors
-                }
+            }).addOnFailureListener(exception -> {
+                // Handle any errors
             });
         }
     }
