@@ -19,7 +19,7 @@ import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
 
 public class ChatSticker {
-    private int TWO_MEGABYTE = 1024 * 1024  * 2;
+    private int IMAGE_GIF = 1024 * 1024 * 12;
     private Context context;
     private String name, timestamp;
 
@@ -50,7 +50,7 @@ public class ChatSticker {
             FileInputStream file = context.openFileInput(filename);
 
             BufferedInputStream buf = new BufferedInputStream(file);
-            byte[] bytes = new byte[TWO_MEGABYTE];
+            byte[] bytes = new byte[IMAGE_GIF];
             buf.read(bytes, 0, bytes.length);
             buf.close();
 
@@ -60,7 +60,7 @@ public class ChatSticker {
         } catch (Exception e) {
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference stickerSR = storage.getReference(Constants.STICKERS_DB).child(name);
-            stickerSR.getBytes(TWO_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            stickerSR.getBytes(IMAGE_GIF).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                 @Override
                 public void onSuccess(byte[] bytes) {
                     GifDrawable gifFromBytes = null;

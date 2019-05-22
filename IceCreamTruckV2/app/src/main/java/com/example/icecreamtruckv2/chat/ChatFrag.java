@@ -1,9 +1,11 @@
 package com.example.icecreamtruckv2.chat;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -92,28 +94,35 @@ public class ChatFrag extends Fragment {
         fid = FirebaseInstanceId.getInstance();
         storage = FirebaseStorage.getInstance();
 
-        return inflater.inflate(R.layout.chat_frag, parent, false);
-    }
-
-
-    // This event is triggered soon after onCreateView().
-    // Any view setup should occur here.  E.g., view lookups and attaching view listeners.
-    @Override
-    public void onViewCreated(final View view, Bundle savedInstanceState) {
         try {
             FirebaseInstanceId.getInstance().deleteInstanceId();
         } catch (IOException e) {
             e.printStackTrace();
         }
         FirebaseMessaging.getInstance().subscribeToTopic(userRole.equals("ahgirl") ? "pushGirlNotifications" : "pushBoyNotifications");
+
+        return inflater.inflate(R.layout.chat_frag, parent, false);
+    }
+
+    // This event is triggered soon after onCreateView().
+    // Any view setup should occur here.  E.g., view lookups and attaching view listeners.
+    @Override
+    public void onViewCreated(final View view, Bundle savedInstanceState) {
         initListeners(view);
         initRV(view);
         loadItems(view);
     }
 
+    public void RemoveAllNotification() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("msg", "");
+        editor.apply();
+        NotificationManager mNotificationManager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.cancelAll();
+    }
+
     @Override
-    public void onDestroyView()
-    {
+    public void onDestroyView() {
         super.onDestroyView();
         chatListRoot.removeEventListener(chatListener);
         stickerListRoot.removeEventListener(stickerListener);
@@ -123,13 +132,13 @@ public class ChatFrag extends Fragment {
         stickerAdapter.clearData();
     }
 
-
     private void initListeners(View view) {
         chatInput = view.findViewById(R.id.input);
 
         chatListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                RemoveAllNotification();
                 ChatMessage data = dataSnapshot.getValue(ChatMessage.class);
                 chatList.add(data);
                 chatRV.scrollToPosition(chatAdapter.getItemCount() - 1);
@@ -201,7 +210,7 @@ public class ChatFrag extends Fragment {
             data.setType("GIF");
             data.setTimestamp(new SimpleDateFormat("hh:mm a, dd MMM yyyy", Locale.US).format(new Date().getTime()));
             data.setUsername(userRole);
-            notifRoot = db.getReference(Constants.CHAT_DB + (userRole.equals("ahgirl") ? "boy" : "girl"));
+            notifRoot = db.getReference(userRole.equals("ahgirl") ? Constants.CHAT_BOY : Constants.CHAT_GIRL);
             chatListRoot.child(String.valueOf(new Date().getTime())).setValue(data);
             notifRoot.child(String.valueOf(new Date().getTime())).setValue(data);
         };
@@ -212,7 +221,7 @@ public class ChatFrag extends Fragment {
                 data.setType("MSG");
                 data.setTimestamp(new SimpleDateFormat("hh:mm a, dd MMM yyyy", Locale.US).format(new Date().getTime()));
                 data.setUsername(userRole);
-                notifRoot = db.getReference(Constants.CHAT_DB + (userRole.equals("ahgirl") ? "boy" : "girl"));
+                notifRoot = db.getReference(userRole.equals("ahgirl") ? Constants.CHAT_BOY : Constants.CHAT_GIRL);
                 chatListRoot.child(String.valueOf(new Date().getTime())).setValue(data);
                 notifRoot.child(String.valueOf(new Date().getTime())).setValue(data);
                 chatInput.setText("");
@@ -321,6 +330,4 @@ public class ChatFrag extends Fragment {
                     stickerRV.smoothScrollToPosition(stickerAdapter.getItemCount() - 1);
                 });
     }
-
-
 }

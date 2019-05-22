@@ -2,6 +2,9 @@ package com.example.icecreamtruckv2.utils;
 
 public interface Constants {
 
+    String CHAT_GIRL = "chatgirl";
+    String CHAT_BOY = "chatboy";
+
     String CHAT_DB = "chat";
     String CHAT_LOG_TAG = "FirebaseChat";
 

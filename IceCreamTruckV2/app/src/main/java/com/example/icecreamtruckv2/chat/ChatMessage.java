@@ -20,7 +20,7 @@ import pl.droidsonroids.gif.GifImageView;
 
 public class ChatMessage {
     private String username, message, type, timestamp;
-    private int TWO_MEGABYTE = 1024 * 1024  * 2;
+    private int IMAGE_GIF = 1024 * 1024 * 12;
 
     public ChatMessage() {}
 
@@ -53,7 +53,7 @@ public class ChatMessage {
     }
 
     public void setDrawable(final ChatLogAdapter.ChatViewHolder holder, final GifImageView gif) {
-        byte[] bytes = new byte[TWO_MEGABYTE];
+        byte[] bytes = new byte[IMAGE_GIF];
         final String filename = "GIF" + getMessage() + ".txt";
 
         try {
@@ -69,7 +69,7 @@ public class ChatMessage {
         } catch (Exception e) {
             FirebaseStorage storage = FirebaseStorage.getInstance();
             StorageReference stickerSR = storage.getReference(Constants.STICKERS_DB).child(getMessage());
-            stickerSR.getBytes(TWO_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            stickerSR.getBytes(IMAGE_GIF).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                 @Override
                 public void onSuccess(byte[] bytes) {
                     GifDrawable gifFromBytes = null;
