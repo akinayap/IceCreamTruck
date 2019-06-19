@@ -1,10 +1,12 @@
 package com.example.icecreamtruckv2.chat;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,15 +23,18 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import com.example.icecreamtruckv2.R;
 import com.example.icecreamtruckv2.utils.Constants;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -43,64 +48,50 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import pl.droidsonroids.gif.GifDrawable;
 
 public class ChatFrag extends Fragment {
-    private SharedPreferences sharedPreferences;
-    public static String userRole;
+    public static int IMAGE_GIF = 1024 * 1024;
 
-    private FirebaseAuth auth;
-    private FirebaseDatabase db;
-    private FirebaseInstanceId fid;
-    private FirebaseStorage storage;
+    public static String userRole, userid;
 
-    /** Database instance **/
-    private DatabaseReference chatListRoot, stickerListRoot, notifRoot;
-    private StorageReference stickerObjectsRoot;
+    public static FirebaseAuth auth = FirebaseAuth.getInstance();
+    public static FirebaseDatabase database = FirebaseDatabase.getInstance();
+    public static FirebaseStorage storage = FirebaseStorage.getInstance();
 
-    /** UI Components **/
-    private RecyclerView chatRV, stickerRV;
-    private EditText chatInput;
-    private ChatLogAdapter chatAdapter;
-    private ChatStickersAdapter stickerAdapter;
+    private DatabaseReference stickerRoot, chatRoot, notifRoot;
+    private StorageReference stickerStorage;
 
-    /** Array Lists **/
-    private List<ChatSticker> stickerList = new ArrayList<>();
     private List<ChatMessage> chatList = new ArrayList<>();
 
-    /** Listeners**/
-    private ChildEventListener chatListener, stickerListener;
-    private ChatStickersAdapter.OnItemClickListener stickerClick;
-    private View.OnClickListener sendClick, uploadClick, sKeyboardClick;
+    private SharedPreferences sharedPreferences;
+    private ChildEventListener stickerListener, chatListener;
 
-    private boolean justUploaded = false;
-
+    private EditText chatInput;
+    private RecyclerView chatRV;
+    private ChatLogAdapter chatAdapter;
+    public static TabLayout tabLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         // Defines the xml file for the fragment
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         userRole = sharedPreferences.getString("userRole", "null");
+        userid = sharedPreferences.getString("userid", "null");
+
         Log.e("WHOAMI", userRole);
-        auth = FirebaseAuth.getInstance();
-        db = FirebaseDatabase.getInstance();
-        fid = FirebaseInstanceId.getInstance();
-        storage = FirebaseStorage.getInstance();
 
-        try {
-            FirebaseInstanceId.getInstance().deleteInstanceId();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         FirebaseMessaging.getInstance().subscribeToTopic(userRole.equals("ahgirl") ? "pushGirlNotifications" : "pushBoyNotifications");
-
         return inflater.inflate(R.layout.chat_frag, parent, false);
     }
 
@@ -108,10 +99,16 @@ public class ChatFrag extends Fragment {
     // Any view setup should occur here.  E.g., view lookups and attaching view listeners.
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
-        initListeners(view);
-        initRV(view);
-        loadItems(view);
+
+        initListeners();
+        loadStickers();
+        loadChat(view);
+        initTabs(view);
+        loadUI(view);
     }
+
+
+
 
     public void RemoveAllNotification() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -121,49 +118,65 @@ public class ChatFrag extends Fragment {
         mNotificationManager.cancelAll();
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        chatListRoot.removeEventListener(chatListener);
-        stickerListRoot.removeEventListener(stickerListener);
-        chatList.clear();
-        stickerList.clear();
-        chatAdapter.clearData();
-        stickerAdapter.clearData();
-    }
+    private void initListeners(){
+        stickerListener = new ChildEventListener(){
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                downloadSticker(dataSnapshot.getKey());
+            }
 
-    private void initListeners(View view) {
-        chatInput = view.findViewById(R.id.input);
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
         chatListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 RemoveAllNotification();
                 ChatMessage data = dataSnapshot.getValue(ChatMessage.class);
-                data.setContext(getContext());
+                assert data != null;
                 chatList.add(data);
-                chatRV.scrollToPosition(chatAdapter.getItemCount() - 1);
-                //chatRV.smoothScrollToPosition(chatAdapter.getItemCount() - 1);
-                chatAdapter.notifyDataSetChanged();
+                chatAdapter.notifyItemInserted(chatList.size()-1);
+                chatRV.smoothScrollToPosition(chatAdapter.getItemCount() - 1);
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                ChatMessage data = dataSnapshot.getValue(ChatMessage.class);
-                data.setContext(getContext());
-                chatList.removeIf(c -> (data.getTimestamp().equals(c.getTimestamp())));
+/*                ChatMessage data = dataSnapshot.getValue(ChatMessage.class);
+                chatList.removeIf(c -> {
+                    assert data != null;
+                    return (data.getTimestamp().equals(c.getTimestamp()));
+                });
                 chatList.add(data);
                 chatRV.scrollToPosition(chatAdapter.getItemCount() - 1);
                 //chatRV.smoothScrollToPosition(chatAdapter.getItemCount() - 1);
-                chatAdapter.notifyDataSetChanged();
+                chatAdapter.notifyItemChanged();*/
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                ChatMessage data = dataSnapshot.getValue(ChatMessage.class);
-                data.setContext(getContext());
-                chatList.removeIf(c -> (data.getTimestamp().equals(c.getTimestamp())));
-                chatAdapter.notifyDataSetChanged();
+/*                ChatMessage data = dataSnapshot.getValue(ChatMessage.class);
+                chatList.removeIf(c -> {
+                    assert data != null;
+                    return (data.getTimestamp().equals(c.getTimestamp()));
+                });
+                chatAdapter.notifyDataSetChanged();*/
             }
 
             @Override
@@ -174,51 +187,60 @@ public class ChatFrag extends Fragment {
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         };
-        stickerListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                ChatSticker data = dataSnapshot.getValue(ChatSticker.class);
-                data.setContext(getContext());
-                stickerList.add(data);
-                if(justUploaded)
-                {
-                    stickerRV.smoothScrollToPosition(stickerAdapter.getItemCount() - 1);
-                    justUploaded = false;
+    }
+    private void downloadSticker(String filename) {
+        try {
+            FileInputStream file = getContext().openFileInput(filename);
+        } catch (Exception e) {
+            stickerStorage = storage.getReference(Constants.STICKERS_DB).child(filename);
+            stickerStorage.getBytes(IMAGE_GIF).addOnSuccessListener(bytes -> {
+                try {
+                    FileOutputStream outputStream = getContext().openFileOutput(filename, Context.MODE_PRIVATE);
+                    outputStream.write(bytes);
+                    outputStream.close();
+                    Log.e("Downloaded", filename);
+                } catch (Exception e1) {
+                    e1.printStackTrace();
                 }
-                stickerAdapter.notifyDataSetChanged();
-            }
+            }).addOnFailureListener(exception -> {
+                // Handle any errors
+            });
+        }
+    }
+    private void loadStickers() {
+        stickerRoot = database.getReference(Constants.STICKERS_DB);
+        stickerRoot.addChildEventListener(stickerListener);
+    }
+    private void loadChat(View view) {
+        LinearLayoutManager llm = new LinearLayoutManager(getContext());
+        chatRV = view.findViewById(R.id.list_of_messages);
+        chatAdapter = new ChatLogAdapter(chatList);
+        chatRV.setAdapter(chatAdapter);
+        chatRV.setLayoutManager(llm);
 
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-            }
+        try {
+            chatRoot = database.getReference(Constants.CHAT_DB);
+            chatRoot.limitToLast(20).addChildEventListener(chatListener);
+        } catch (Exception e) {
+            Log.e("Error", "Failed to load chat");
+        }
 
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                ChatSticker data = dataSnapshot.getValue(ChatSticker.class);
-                stickerList.removeIf(s -> (data.getTimestamp().equals(s.getTimestamp())));
-                stickerAdapter.notifyDataSetChanged();
-            }
+    }
+    private void initTabs(View view) {
+        // Get the ViewPager and set it's PagerAdapter so that it can display items
+        ViewPager viewPager = view.findViewById(R.id.viewpager);
+        ChatViewPagerAdapter pagerAdapter = new ChatViewPagerAdapter(getActivity().getSupportFragmentManager(), getContext());
+        viewPager.setAdapter(pagerAdapter);
 
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-            }
+        // Give the TabLayout the ViewPager
+        tabLayout = view.findViewById(R.id.tab_layout);
+        tabLayout.setupWithViewPager(viewPager);
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        };
-        stickerClick = item -> {
-            ChatMessage data = new ChatMessage();
-            data.setContext(getContext());
-            data.setMessage(item.getName());
-            data.setType("GIF");
-            data.setTimestamp(new SimpleDateFormat("hh:mm a, dd MMM yyyy", Locale.US).format(new Date().getTime()));
-            data.setUsername(userRole);
-            notifRoot = db.getReference(userRole.equals("ahgirl") ? Constants.CHAT_BOY : Constants.CHAT_GIRL);
-            chatListRoot.child(String.valueOf(new Date().getTime())).setValue(data);
-            notifRoot.child(String.valueOf(new Date().getTime())).setValue(data);
-        };
-        sendClick = send -> {
+    }
+    private void loadUI(View view) {
+        chatInput = view.findViewById(R.id.input);
+        FloatingActionButton fab = view.findViewById(R.id.fab);
+        fab.setOnClickListener( send -> {
             if (!chatInput.getText().toString().trim().equals("")) {
                 ChatMessage data = new ChatMessage();
                 data.setContext(getContext());
@@ -226,76 +248,45 @@ public class ChatFrag extends Fragment {
                 data.setType("MSG");
                 data.setTimestamp(new SimpleDateFormat("hh:mm a, dd MMM yyyy", Locale.US).format(new Date().getTime()));
                 data.setUsername(userRole);
-                notifRoot = db.getReference(userRole.equals("ahgirl") ? Constants.CHAT_BOY : Constants.CHAT_GIRL);
-                chatListRoot.child(String.valueOf(new Date().getTime())).setValue(data);
+                notifRoot = database.getReference(userRole.equals("ahgirl") ? Constants.CHAT_BOY : Constants.CHAT_GIRL);
+                chatRoot.child(String.valueOf(new Date().getTime())).setValue(data);
                 notifRoot.child(String.valueOf(new Date().getTime())).setValue(data);
                 chatInput.setText("");
             }
-        };
-        uploadClick = send -> {
+        });
+        FloatingActionButton imgUpload = view.findViewById(R.id.img);
+        imgUpload.setOnClickListener(send -> {
             Intent photoPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
             photoPickerIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
             photoPickerIntent.setType("image/*");
             startActivityForResult(photoPickerIntent, 1);
-        };
-        sKeyboardClick = send -> {
-            View kb = view.findViewById(R.id.sticker_keyboard);
-            if(kb.getVisibility() == View.VISIBLE)
-                kb.setVisibility(View.GONE);
-            else
-                kb.setVisibility(View.VISIBLE);
-
-            if(chatAdapter.getItemCount() > 0) {
-                chatRV.scrollToPosition(chatAdapter.getItemCount() - 1);
-                chatAdapter.notifyDataSetChanged();
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm.isAcceptingText()) {
-                    imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
-                }
-            }
-        };
-        TextInputLayout tv = view.findViewById(R.id.textInputLayout);
-        tv.setOnClickListener(v -> {
-            View kb = view.findViewById(R.id.sticker_keyboard);
-            kb.setVisibility(View.GONE);});
-        chatInput.setOnClickListener(v -> {
-            View kb = view.findViewById(R.id.sticker_keyboard);
-            kb.setVisibility(View.GONE);
         });
-    }
-    private void initRV(View view) {
-        LinearLayoutManager llm = new LinearLayoutManager(getContext());
-        chatRV =  view.findViewById(R.id.list_of_messages);
-        chatAdapter = new ChatLogAdapter(chatList);
-        chatRV.setAdapter(chatAdapter);
-        chatRV.setLayoutManager(llm);
+        FloatingActionButton openKeyboard = view.findViewById(R.id.gif_btn);
+        openKeyboard.setOnClickListener( send -> {
+            View kb = view.findViewById(R.id.sticker_keyboard);
+            if (kb.getVisibility() == View.VISIBLE)
+                kb.setVisibility(View.GONE);
+            else {
+                kb.setVisibility(View.VISIBLE);
+            }
 
-        GridLayoutManager glm = new GridLayoutManager(getContext(), 2, RecyclerView.HORIZONTAL, false);
-        stickerRV =  view.findViewById(R.id.rv_stickers);
-        stickerAdapter = new ChatStickersAdapter(stickerList, stickerClick);
-        stickerRV.setAdapter(stickerAdapter);
-        stickerRV.setLayoutManager(glm);
-    }
-    private void loadItems(View view) {
-        // Load chat messages
-        try {
-            chatListRoot = db.getReference(Constants.CHAT_DB);
-            chatListRoot.limitToLast(100).addChildEventListener(chatListener);
-        } catch (Exception e) {}
-
-        // Load stickers
-        try {
-            stickerListRoot = db.getReference(Constants.STICKERS_DB);
-            stickerListRoot.addChildEventListener(stickerListener);
-        } catch (Exception e) {}
-
-        // Load buttons with listeners
-        FloatingActionButton fab =  view.findViewById(R.id.fab);
-        fab.setOnClickListener(sendClick);
-        FloatingActionButton imgUpload =  view.findViewById(R.id.img);
-        imgUpload.setOnClickListener(uploadClick);
-        FloatingActionButton openKeyboard =  view.findViewById(R.id.gif_btn);
-        openKeyboard.setOnClickListener(sKeyboardClick);
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm.isAcceptingText()) {
+                imm.hideSoftInputFromWindow(Objects.requireNonNull(getActivity().getCurrentFocus()).getWindowToken(), 0);
+            }
+            if (chatAdapter.getItemCount() > 0) {
+                chatRV.scrollToPosition(chatAdapter.getItemCount() - 1);
+                //chatAdapter.notifyDataSetChanged();
+            }
+        });
+        FloatingActionButton folderFrag = view.findViewById(R.id.add_folder);
+        folderFrag.setOnClickListener(open->{
+            Fragment frag = new FolderFragment();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.replace(R.id.frag, frag ); // give your fragment container id in first parameter
+            transaction.addToBackStack(null);  // if written, this transaction will be added to backstack
+            transaction.commit();
+        });
     }
 
     @Override
@@ -306,33 +297,63 @@ public class ChatFrag extends Fragment {
 
                 if (data.getClipData() != null) {
                     int count = data.getClipData().getItemCount();
-                    for(int i = 0; i < count; ++i) {
+                    for (int i = 0; i < count; ++i) {
                         Uri file = data.getClipData().getItemAt(i).getUri();
                         uploadSticker(file);
                     }
-                }
-                else if(data.getData() != null) {
+                } else if (data.getData() != null) {
                     Uri file = data.getData();
                     uploadSticker(file);
                 }
             }
     }
     private void uploadSticker(Uri file) {
-        stickerObjectsRoot = storage.getReference(Constants.STICKERS_DB);
-        final ChatSticker imgName = new ChatSticker();
-        imgName.setName(String.valueOf(new Date().getTime()));
-        imgName.setTimestamp(String.valueOf(new Date().getTime()));
+        long fileSize = 0;
+        try {
+            AssetFileDescriptor afd = getActivity().getContentResolver().openAssetFileDescriptor(file, "r");
+            assert afd != null;
+            fileSize = afd.getLength();
+            afd.close();
+        } catch (Exception e) {
+            Log.e("Invalid", "File not valid");
+        }
 
-        StorageReference storageRef = stickerObjectsRoot.child(imgName.getName());
-        UploadTask ut = storageRef.putFile(file);
+        if (fileSize > IMAGE_GIF || fileSize <= 0) {
 
-        ut.addOnFailureListener(exception -> Toast.makeText(getContext(), "Image not uploaded. :(", Toast.LENGTH_SHORT))
-                .addOnSuccessListener(taskSnapshot -> {
-                    Toast.makeText(getContext(), "GIF added!", Toast.LENGTH_SHORT);
-                    stickerListRoot = db.getReference(Constants.STICKERS_DB);
-                    stickerListRoot.child(imgName.getName()).setValue(imgName);
-                    justUploaded = true;
-                    stickerRV.smoothScrollToPosition(stickerAdapter.getItemCount() - 1);
-                });
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("File too large");
+            builder.setMessage("Image size must be less than 1MB");
+
+            // Set up the buttons
+            builder.setPositiveButton("Optimize Image", (dialog, which) -> {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://ezgif.com")));
+                dialog.dismiss();
+            });
+            builder.setNegativeButton("OK", (dialog, which) -> dialog.cancel());
+
+            builder.show();
+        } else {
+
+            stickerStorage = storage.getReference(Constants.STICKERS_DB);
+            final ChatSticker imgName = new ChatSticker();
+            imgName.setName(String.valueOf(new Date().getTime()));
+            imgName.setTimestamp(String.valueOf(new Date().getTime()));
+
+            StorageReference storageRef = stickerStorage.child(imgName.getName());
+            UploadTask ut = storageRef.putFile(file);
+            ut.addOnFailureListener(exception -> Toast.makeText(getContext(), "Image not uploaded. :(", Toast.LENGTH_SHORT).show())
+                    .addOnSuccessListener(taskSnapshot -> {
+                        Toast.makeText(getContext(), "GIF added!", Toast.LENGTH_SHORT).show();
+                        stickerRoot = database.getReference(Constants.STICKERS_DB);
+                        stickerRoot.child(imgName.getName()).setValue(imgName);
+                    });
+        }
+    }
+
+    @Override
+    public void onDestroyView(){
+        super.onDestroyView();
+        chatRoot.removeEventListener(chatListener);
+        stickerRoot.removeEventListener(stickerListener);
     }
 }

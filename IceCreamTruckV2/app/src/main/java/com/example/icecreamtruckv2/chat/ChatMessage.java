@@ -21,48 +21,49 @@ import java.io.FileOutputStream;
 import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
 
-public class ChatMessage {
-    private String username, message, type, timestamp;
+import static com.example.icecreamtruckv2.chat.ChatFrag.IMAGE_GIF;
+
+class ChatMessage {
+    public String username, message, type, timestamp;
     private Context context;
-    private int IMAGE_GIF = 1024 * 1024 * 12;
 
-    public ChatMessage() {}
+    ChatMessage() {}
 
-    public void setContext(Context c) {
+    void setContext(Context c) {
         context = c;
     }
 
-    public String getTimestamp() {
+    String getTimestamp() {
         return timestamp;
     }
-    public void setTimestamp(String t) {
+    void setTimestamp(String t) {
         timestamp = t;
     }
 
-    public String getUsername() {
+    String getUsername() {
         return username;
     }
-    public void setUsername(String n) {
+    void setUsername(String n) {
         username = n;
     }
 
-    public String getMessage() {
+    String getMessage() {
         return message;
     }
-    public void setMessage(String m) {
+    void setMessage(String m) {
         message = m;
     }
 
-    public String getType() {
+    String getType() {
         return type;
     }
-    public void setType(String t) {
+    void setType(String t) {
         type = t;
     }
 
-    public void setDrawable(final ChatLogAdapter.ChatViewHolder holder, final GifImageView gif) {
+    void setDrawable(final ChatLogAdapter.ChatViewHolder holder, final GifImageView gif) {
         byte[] bytes = new byte[IMAGE_GIF];
-        final String filename = "GIF" + getMessage() + ".txt";
+        final String filename = getMessage();
 
         try {
             GifDrawable gifFromBytes;
@@ -80,34 +81,8 @@ public class ChatMessage {
                 Drawable image = new BitmapDrawable(context.getResources(), BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
                 gif.setImageDrawable(image);
             }
-            Log.e("Success", "DownloadCM");
         } catch (Exception e) {
-            FirebaseStorage storage = FirebaseStorage.getInstance();
-            StorageReference stickerSR = storage.getReference(Constants.STICKERS_DB).child(getMessage());
-            stickerSR.getBytes(IMAGE_GIF).addOnSuccessListener(bytes1 -> {
-                GifDrawable gifFromBytes;
-                try {
-                    FileOutputStream outputStream;
-
-                    outputStream = holder.itemView.getContext().openFileOutput(filename, Context.MODE_PRIVATE);
-                    outputStream.write(bytes1);
-                    outputStream.close();
-
-                    Log.e("Success", "convert " + filename);
-                    try {
-                        gifFromBytes = new GifDrawable(bytes);
-                        gifFromBytes.setLoopCount(0);
-                        gif.setImageDrawable(gifFromBytes);
-                    } catch (Exception eer) {
-                        Drawable image = new BitmapDrawable(context.getResources(), BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-                        gif.setImageDrawable(image);
-                    }
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                }
-            }).addOnFailureListener(exception -> {
-                // Handle any errors
-            });
+            Log.e("Error", "Failed to set drawable");
         }
     }
 }

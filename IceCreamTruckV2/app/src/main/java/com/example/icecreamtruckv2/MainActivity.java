@@ -78,6 +78,9 @@ public class MainActivity extends AppCompatActivity {
         fid = FirebaseInstanceId.getInstance();
         userUID = auth.getCurrentUser().getUid();
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("userid", userUID);
+        editor.apply();
         setContentView(R.layout.activity_main);
 
         setMyInfo();

@@ -7,18 +7,19 @@ import android.view.ViewGroup;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.icecreamtruckv2.R;
+
+import java.util.Collections;
 import java.util.List;
 
 import pl.droidsonroids.gif.GifImageView;
 
-public class ChatStickersAdapter extends RecyclerView.Adapter<ChatStickersAdapter.ChatStickersViewHolder> {
+public class ChatStickersAdapter extends RecyclerView.Adapter<ChatStickersAdapter.ChatStickersViewHolder> implements ItemMoveCallback.ItemTouchHelperContract {
+    private OnItemClickListener clicklistener;
+    private List<ChatSticker> mData;
 
-    private OnItemClickListener listener;
-    public List<ChatSticker> mData;
-
-    public ChatStickersAdapter(List<ChatSticker> msg, OnItemClickListener listener) {
-        mData = msg;
-        this.listener = listener;
+    ChatStickersAdapter(List<ChatSticker> stickerList, OnItemClickListener listener) {
+        mData = stickerList;
+        clicklistener = listener;
     }
 
     public void clearData() {
@@ -43,14 +44,14 @@ public class ChatStickersAdapter extends RecyclerView.Adapter<ChatStickersAdapte
         data.setContext(holder.itemView.getContext());
         holder.icon.setImageResource(R.drawable.loading);
         data.setDrawable(holder.icon);
-        holder.bind(data, listener);
+        holder.bind(data, clicklistener);
     }
 
     public interface OnItemClickListener {
         void onItemClick(ChatSticker item);
     }
 
-    static final class ChatStickersViewHolder extends RecyclerView.ViewHolder {
+    final class ChatStickersViewHolder extends RecyclerView.ViewHolder {
         GifImageView icon;
 
         ChatStickersViewHolder(View view) {
@@ -58,8 +59,33 @@ public class ChatStickersAdapter extends RecyclerView.Adapter<ChatStickersAdapte
             icon = view.findViewById(R.id.sticker_icon);
         }
 
-        public void bind(final ChatSticker item, final OnItemClickListener listener) {
+        void bind(final ChatSticker item, final OnItemClickListener listener) {
             itemView.setOnClickListener(v -> listener.onItemClick(item));
         }
     }
+
+    @Override
+    public void onRowMoved(RecyclerView rv, int fromPosition, int toPosition) {
+
+
+        if (fromPosition < toPosition) {
+            for (int i = fromPosition; i < toPosition; i++) {
+                Collections.swap(mData, i, i + 1);
+            }
+        } else {
+            for (int i = fromPosition; i > toPosition; i--) {
+                Collections.swap(mData, i, i - 1);
+            }
+        }
+        notifyItemMoved(fromPosition, toPosition);
+    }
+
+    @Override
+    public void onRowSelected(ChatStickersViewHolder myViewHolder) {
+    }
+
+    @Override
+    public void onRowClear(ChatStickersViewHolder myViewHolder, RecyclerView rv) {
+    }
+
 }

@@ -21,40 +21,29 @@ import java.io.FileOutputStream;
 import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
 
-public class ChatSticker {
-    private int IMAGE_GIF = 1024 * 1024 * 12;
+import static com.example.icecreamtruckv2.chat.ChatFrag.IMAGE_GIF;
+
+public class ChatSticker{
     private Context context;
-    private String name, timestamp;
+    private String name, timestamp, folder;
+    private boolean folderActivity = false;
 
-    public ChatSticker() {}
-
-    public void setContext(Context c)
-    {
+    ChatSticker() {}
+    ChatSticker(String f, Context c, String filename) {
+        folder = f;
         context = c;
-    }
-
-    public String getTimestamp() {
-        return timestamp;
-    }
-    public void setTimestamp(String t) {
-        timestamp = t;
-    }
-
-    public String getName() {
-        return name;
-    }
-    public void setName(String n) {
-        name = n;
+        name = filename;
     }
 
     public void setDrawable(final GifImageView gif) {
-        final String filename = "GIF" + name + ".txt";
+        byte[] bytes = new byte[IMAGE_GIF];
+        final String filename = name;
+
         try {
             GifDrawable gifFromBytes;
             FileInputStream file = context.openFileInput(filename);
 
             BufferedInputStream buf = new BufferedInputStream(file);
-            byte[] bytes = new byte[IMAGE_GIF];
             buf.read(bytes, 0, bytes.length);
             buf.close();
 
@@ -66,35 +55,39 @@ public class ChatSticker {
                 Drawable image = new BitmapDrawable(context.getResources(), BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
                 gif.setImageDrawable(image);
             }
-            Log.e("Success", "DownloadCS");
         } catch (Exception e) {
-            FirebaseStorage storage = FirebaseStorage.getInstance();
-            StorageReference stickerSR = storage.getReference(Constants.STICKERS_DB).child(name);
-            stickerSR.getBytes(IMAGE_GIF).addOnSuccessListener(bytes -> {
-                GifDrawable gifFromBytes;
-                try {
-                    FileOutputStream outputStream;
-
-                    outputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
-                    outputStream.write(bytes);
-                    outputStream.close();
-
-                    Log.e("Success", "convert2 " + filename);
-                    try {
-                        gifFromBytes = new GifDrawable( bytes );
-                        gifFromBytes.setLoopCount(0);
-                        gif.setImageDrawable(gifFromBytes);
-                    } catch (Exception eer) {
-                        Drawable image = new BitmapDrawable(context.getResources(), BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-                        gif.setImageDrawable(image);
-                    }
-
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                }
-            }).addOnFailureListener(exception -> {
-                // Handle any errors
-            });
         }
+    }
+    void setContext(Context c)
+    {
+        context = c;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+    void setTimestamp(String t) {
+        timestamp = t;
+    }
+
+    String getName() {
+        return name;
+    }
+    void setName(String n) {
+        name = n;
+    }
+
+    public String getFolder() {
+        return folder;
+    }
+    void setFolder(String name) {
+        folder = name;
+    }
+
+    void isInFolder(){
+        folderActivity = true;
+    }
+    boolean inFolder(){
+        return folderActivity;
     }
 }
