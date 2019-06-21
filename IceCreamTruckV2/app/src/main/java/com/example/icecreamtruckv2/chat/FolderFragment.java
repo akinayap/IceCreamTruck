@@ -30,6 +30,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import static androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE;
 import static com.example.icecreamtruckv2.chat.ChatFrag.database;
 
 public class FolderFragment extends Fragment {
@@ -59,7 +60,6 @@ public class FolderFragment extends Fragment {
 
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
-
         stickerList = new ArrayList<>();
         folderList = new ArrayList<>();
         folderNamesList = new ArrayList<>();
@@ -75,6 +75,7 @@ public class FolderFragment extends Fragment {
                 }
                 database.getReference("users/" + userid + "/" + Constants.STICKERS_FOLDER_DB + "/" + folderNamesList.get(i)).setPriority(i);
             }
+
             Fragment frag = new ChatFrag();
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.frag, frag ); // give your fragment container id in first parameter

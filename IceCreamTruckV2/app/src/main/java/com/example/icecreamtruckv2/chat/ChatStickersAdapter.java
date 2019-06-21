@@ -66,8 +66,6 @@ public class ChatStickersAdapter extends RecyclerView.Adapter<ChatStickersAdapte
 
     @Override
     public void onRowMoved(RecyclerView rv, int fromPosition, int toPosition) {
-
-
         if (fromPosition < toPosition) {
             for (int i = fromPosition; i < toPosition; i++) {
                 Collections.swap(mData, i, i + 1);

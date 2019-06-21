@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -17,32 +16,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.icecreamtruckv2.R;
 import com.example.icecreamtruckv2.utils.Constants;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -50,7 +42,6 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -58,17 +49,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import pl.droidsonroids.gif.GifDrawable;
-
 public class ChatFrag extends Fragment {
-    public static int IMAGE_GIF = 1024 * 1024;
+    static int IMAGE_GIF = 1024 * 1024;
 
-    public static String userRole, userid;
+    static TabLayout tabLayout;
+    static String userRole, userid;
+    static FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-    public static FirebaseAuth auth = FirebaseAuth.getInstance();
-    public static FirebaseDatabase database = FirebaseDatabase.getInstance();
-    public static FirebaseStorage storage = FirebaseStorage.getInstance();
-
+    private FirebaseStorage storage = FirebaseStorage.getInstance();
     private DatabaseReference stickerRoot, chatRoot, notifRoot;
     private StorageReference stickerStorage;
 
@@ -80,37 +68,18 @@ public class ChatFrag extends Fragment {
     private EditText chatInput;
     private RecyclerView chatRV;
     private ChatLogAdapter chatAdapter;
-    public static TabLayout tabLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
-        // Defines the xml file for the fragment
+        Log.e("Function", "ChatFrag.onCreateView");
+        RemoveAllNotification();
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         userRole = sharedPreferences.getString("userRole", "null");
         userid = sharedPreferences.getString("userid", "null");
-
-        Log.e("WHOAMI", userRole);
-
         FirebaseMessaging.getInstance().subscribeToTopic(userRole.equals("ahgirl") ? "pushGirlNotifications" : "pushBoyNotifications");
         return inflater.inflate(R.layout.chat_frag, parent, false);
     }
-
-    // This event is triggered soon after onCreateView().
-    // Any view setup should occur here.  E.g., view lookups and attaching view listeners.
-    @Override
-    public void onViewCreated(final View view, Bundle savedInstanceState) {
-
-        initListeners();
-        loadStickers();
-        loadChat(view);
-        initTabs(view);
-        loadUI(view);
-    }
-
-
-
-
-    public void RemoveAllNotification() {
+    private void RemoveAllNotification() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("msg", "");
         editor.apply();
@@ -118,39 +87,39 @@ public class ChatFrag extends Fragment {
         mNotificationManager.cancelAll();
     }
 
+    @Override
+    public void onViewCreated(final View view, Bundle savedInstanceState) {
+        Log.e("Function", "ChatFrag.onViewCreated");
+        initListeners();
+        loadStickers();
+        loadChat(view);
+        initTabs(view);
+        loadUI(view);
+    }
+
     private void initListeners(){
+        Log.e("Function", "ChatFrag.initListeners");
+        // Download sticker everytime there is a new one.
         stickerListener = new ChildEventListener(){
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 downloadSticker(dataSnapshot.getKey());
             }
-
             @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
             @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {}
             @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
         };
+
+        // Get chat log details.
         chatListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                RemoveAllNotification();
                 ChatMessage data = dataSnapshot.getValue(ChatMessage.class);
-                assert data != null;
                 chatList.add(data);
                 chatAdapter.notifyItemInserted(chatList.size()-1);
                 chatRV.smoothScrollToPosition(chatAdapter.getItemCount() - 1);
@@ -158,34 +127,18 @@ public class ChatFrag extends Fragment {
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-/*                ChatMessage data = dataSnapshot.getValue(ChatMessage.class);
-                chatList.removeIf(c -> {
-                    assert data != null;
-                    return (data.getTimestamp().equals(c.getTimestamp()));
-                });
-                chatList.add(data);
-                chatRV.scrollToPosition(chatAdapter.getItemCount() - 1);
-                //chatRV.smoothScrollToPosition(chatAdapter.getItemCount() - 1);
-                chatAdapter.notifyItemChanged();*/
+                Log.e("Message", "Edited");
+                ChatMessage data = dataSnapshot.getValue(ChatMessage.class);
             }
-
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-/*                ChatMessage data = dataSnapshot.getValue(ChatMessage.class);
-                chatList.removeIf(c -> {
-                    assert data != null;
-                    return (data.getTimestamp().equals(c.getTimestamp()));
-                });
-                chatAdapter.notifyDataSetChanged();*/
+                Log.e("Message", "Deleted");
+                ChatMessage data = dataSnapshot.getValue(ChatMessage.class);
             }
-
             @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-            }
-
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
         };
     }
     private void downloadSticker(String filename) {
@@ -203,15 +156,18 @@ public class ChatFrag extends Fragment {
                     e1.printStackTrace();
                 }
             }).addOnFailureListener(exception -> {
-                // Handle any errors
+                Log.e("Error", "Failed to get sticker");
             });
         }
     }
     private void loadStickers() {
+        Log.e("Function", "ChatFrag.loadStickers");
         stickerRoot = database.getReference(Constants.STICKERS_DB);
         stickerRoot.addChildEventListener(stickerListener);
     }
+
     private void loadChat(View view) {
+        Log.e("Function", "ChatFrag.loadChat");
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         chatRV = view.findViewById(R.id.list_of_messages);
         chatAdapter = new ChatLogAdapter(chatList);
@@ -227,6 +183,7 @@ public class ChatFrag extends Fragment {
 
     }
     private void initTabs(View view) {
+        Log.e("Function", "ChatFrag.initTabs");
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         ViewPager viewPager = view.findViewById(R.id.viewpager);
         ChatViewPagerAdapter pagerAdapter = new ChatViewPagerAdapter(getActivity().getSupportFragmentManager(), getContext());
@@ -238,6 +195,7 @@ public class ChatFrag extends Fragment {
 
     }
     private void loadUI(View view) {
+        Log.e("Function", "ChatFrag.loadUI");
         chatInput = view.findViewById(R.id.input);
         FloatingActionButton fab = view.findViewById(R.id.fab);
         fab.setOnClickListener( send -> {
@@ -291,6 +249,7 @@ public class ChatFrag extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.e("Function", "ChatFrag.onActivityResult");
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1)
             if (resultCode == Activity.RESULT_OK) {
@@ -308,6 +267,7 @@ public class ChatFrag extends Fragment {
             }
     }
     private void uploadSticker(Uri file) {
+        Log.e("Function", "ChatFrag.uploadSticker");
         long fileSize = 0;
         try {
             AssetFileDescriptor afd = getActivity().getContentResolver().openAssetFileDescriptor(file, "r");
@@ -352,6 +312,7 @@ public class ChatFrag extends Fragment {
 
     @Override
     public void onDestroyView(){
+        Log.e("Function", "ChatFrag.onDestroyView");
         super.onDestroyView();
         chatRoot.removeEventListener(chatListener);
         stickerRoot.removeEventListener(stickerListener);

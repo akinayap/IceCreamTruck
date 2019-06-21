@@ -30,7 +30,7 @@ import static com.example.icecreamtruckv2.chat.ChatFrag.database;
 import static com.example.icecreamtruckv2.chat.ChatFrag.userRole;
 
 public class StickerFragment extends Fragment {
-    private List<ChatSticker> stickerList = new ArrayList<>();
+    private List<ChatSticker> stickerList;
     private String folderName;
 
     /** Database instance **/
@@ -53,18 +53,12 @@ public class StickerFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         initListener();
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String userid = sharedPreferences.getString("userid", "");
-        stickerRoot = database.getReference("users/" + userid + "/" + Constants.STICKERS_FOLDER_DB + "/" + folderName);
-        stickerRoot.addChildEventListener(stickerListener);
     }
 
     @Override
     public void onDestroy(){
         super.onDestroy();
-        stickerRoot.removeEventListener(stickerListener);
     }
 
     private void initListener() {
@@ -102,11 +96,18 @@ public class StickerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        String userid = sharedPreferences.getString("userid", "");
+        if(stickerList == null)
+            stickerList = new ArrayList<>();
+        else
+            stickerList.clear();
+
+        stickerRoot = database.getReference("users/" + userid + "/" + Constants.STICKERS_FOLDER_DB + "/" + folderName);
+        stickerRoot.addChildEventListener(stickerListener);
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.frag_sticker, container, false);
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        String username = sharedPreferences.getString("username", "");
         /** Listeners**/
         ChatStickersAdapter.OnItemClickListener stickerClick = item -> {
 
@@ -130,5 +131,11 @@ public class StickerFragment extends Fragment {
         stickerRV.setLayoutManager(glm);
 
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        stickerRoot.removeEventListener(stickerListener);
     }
 }

@@ -1,0 +1,8 @@
+<resources>
+    <dimen name="border">16dp</dimen>
+    <dimen name="smaller_border">16dp</dimen>
+    <dimen name="btn_tap_size">35dp</dimen>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+</resources>

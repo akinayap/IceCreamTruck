@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Ice Cream Truck</string>
+
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login_now">Login Now</string>
+
+    <string name="title_home">Home</string>
+    <string name="title_chat">Chat</string>
+
+    <string name="chat_input">Enter message here!</string>
+</resources>
