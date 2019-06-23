@@ -11,46 +11,58 @@ import java.io.FileInputStream;
 
 import anw.icecreamtruck.R;
 import pl.droidsonroids.gif.GifDrawable;
+import pl.droidsonroids.gif.GifImageView;
 
 import static anw.icecreamtruck.utils.Constants.IMAGE_GIF;
 
-public class ChatMessage {
-    public String username, message, type, timestamp;
+public class ChatSticker {
     private Context context;
+    private String name, timestamp, folder;
+    private boolean folderActivity = false;
 
-    public ChatMessage(){
-
-    }
-
-    public ChatMessage(Context c, String msg, String t, String time, String userRole){
+    ChatSticker() {}
+    public ChatSticker(String f, Context c, String filename) {
+        folder = f;
         context = c;
-        message = msg;
-        type = t;
-        timestamp = time;
-        username = userRole;
+        name = filename;
     }
 
-    public void setContext(Context c) {
+    void setContext(Context c)
+    {
         context = c;
     }
-
 
     public String getTimestamp() {
         return timestamp;
     }
-    public String getUsername() {
-        return username;
+    void setTimestamp(String t) {
+        timestamp = t;
     }
-    public String getMessage() {
-        return message;
+
+    String getName() {
+        return name;
     }
-    public String getType() {
-        return type;
+    void setName(String n) {
+        name = n;
+    }
+
+    public String getFolder() {
+        return folder;
+    }
+    void setFolder(String name) {
+        folder = name;
+    }
+
+    void isInFolder(){
+        folderActivity = true;
+    }
+    boolean inFolder(){
+        return folderActivity;
     }
 
     public Drawable drawable(){
         byte[] bytes = new byte[IMAGE_GIF];
-        final String filename = getMessage();
+        final String filename = name;
 
         try {
             GifDrawable gifFromBytes;
