@@ -1,16 +1,18 @@
-package anw.icecreamtruck.chat.adapter;
+package anw.ict.chat.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.DataSnapshot;
@@ -20,19 +22,21 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-import anw.icecreamtruck.R;
-import anw.icecreamtruck.chat.fragments.StickerFrag;
-import anw.icecreamtruck.chat.objects.ChatSticker;
+import anw.ict.R;
+import anw.ict.chat.fragments.StickerFrag;
+import anw.ict.chat.objects.ChatSticker;
 import pl.droidsonroids.gif.GifImageView;
 
-import static anw.icecreamtruck.chat.fragments.ChatFrag.tabLayout;
-import static anw.icecreamtruck.utils.Constants.STICKERS_FOLDER;
+import static anw.ict.chat.fragments.ChatFrag.tabLayout;
+import static anw.ict.utils.Constants.STICKERS_FOLDER;
 
-public class ChatViewPagerAdapter extends FragmentStatePagerAdapter {
+public class ChatViewPagerAdapter extends FragmentPagerAdapter {
     private Context context;
     private List<String> folderNames = new ArrayList<>();
     private List<ChatSticker> folderIcons = new ArrayList<>();
+    private String userId;
 
     private ValueEventListener folderListener;
 
@@ -41,14 +45,11 @@ public class ChatViewPagerAdapter extends FragmentStatePagerAdapter {
         Log.e("ChatViewPagerAdapter", "Initialized");
         context = c;
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String userId = sharedPreferences.getString("userId", "");
+        userId = sharedPreferences.getString("userId", "");
 
         folderListener = new ValueEventListener(){
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-/*                String filename = dataSnapshot.getChildren().iterator().next().getChildren().iterator().next().getKey();
-                ChatSticker cs = new ChatSticker(dataSnapshot.getKey(), context, filename);
-                folderIcons.add(cs);*/
                 for(DataSnapshot child : dataSnapshot.getChildren()){
                     folderNames.add(child.getKey());
 
@@ -79,10 +80,12 @@ public class ChatViewPagerAdapter extends FragmentStatePagerAdapter {
         return folderNames.size();
     }
     private View getTabView(int position) {
-        View tabs = LayoutInflater.from(context).inflate(R.layout.tab, null);
+        @SuppressLint("InflateParams") View tabs = LayoutInflater.from(context).inflate(R.layout.tab, null);
         GifImageView giv = tabs.findViewById(R.id.gif_title);
-        giv.setImageResource(R.drawable.ic_loading);
+        TextView tv = tabs.findViewById(R.id.folder_title);
+        giv.setImageResource(R.drawable.ic_login_load);
         giv.setImageDrawable(folderIcons.get(position).drawable());
+        tv.setText(folderNames.get(position));
         return tabs;
     }
 
@@ -91,8 +94,11 @@ public class ChatViewPagerAdapter extends FragmentStatePagerAdapter {
         super.notifyDataSetChanged();
         for (int i = 0; i < tabLayout.getTabCount(); i++) {
             TabLayout.Tab tab = tabLayout.getTabAt(i);
-            tab.setCustomView(getTabView(i));
+            Objects.requireNonNull(tab).setCustomView(getTabView(i));
         }
     }
 
+    public void removeListener() {
+        FirebaseDatabase.getInstance().getReference("users/" + userId + "/" + STICKERS_FOLDER).removeEventListener(folderListener);
+    }
 }

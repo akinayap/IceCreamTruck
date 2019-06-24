@@ -1,4 +1,4 @@
-package anw.icecreamtruck.utils;
+package anw.ict.utils;
 
 public interface Constants {
     int IMAGE_GIF = 1024 * 1024;

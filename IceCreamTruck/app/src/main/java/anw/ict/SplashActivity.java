@@ -1,4 +1,4 @@
-package anw.icecreamtruck;
+package anw.ict;
 
 import android.content.Context;
 import android.content.Intent;
@@ -25,11 +25,11 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.Objects;
 
-import static anw.icecreamtruck.utils.Constants.STICKERS;
-import static anw.icecreamtruck.utils.Constants.IMAGE_GIF;
+import static anw.ict.utils.Constants.STICKERS;
+import static anw.ict.utils.Constants.IMAGE_GIF;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -116,7 +116,7 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.child("role").getValue() != null) {
-                    String userRole = dataSnapshot.child("role").getValue().toString();
+                    String userRole = Objects.requireNonNull(dataSnapshot.child("role").getValue()).toString();
 
                     SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -145,7 +145,7 @@ public class SplashActivity extends AppCompatActivity {
     }
     private void downloadSticker(String filename) {
         try {
-            FileInputStream file = getApplicationContext().openFileInput(filename);
+            getApplicationContext().openFileInput(filename);
         } catch (Exception e) {
             stickerStorage = st.getReference(STICKERS).child(filename);
             stickerStorage.getBytes(IMAGE_GIF).addOnSuccessListener(bytes -> {
@@ -157,9 +157,7 @@ public class SplashActivity extends AppCompatActivity {
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }
-            }).addOnFailureListener(exception -> {
-                Log.e("Error", "Failed to get sticker");
-            });
+            }).addOnFailureListener(exception -> Log.e("Error", "Failed to get sticker"));
         }
     }
 

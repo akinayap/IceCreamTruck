@@ -1,5 +1,6 @@
-package anw.icecreamtruck.chat.fragments;
+package anw.ict.chat.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -25,14 +27,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
-import com.google.android.gms.auth.api.signin.internal.Storage;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.text.SimpleDateFormat;
@@ -42,18 +42,17 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import anw.icecreamtruck.R;
-import anw.icecreamtruck.chat.adapter.ChatLogAdapter;
-import anw.icecreamtruck.chat.adapter.ChatViewPagerAdapter;
-import anw.icecreamtruck.chat.objects.ChatMessage;
-import anw.icecreamtruck.utils.FragmentLifecycle;
+import anw.ict.R;
+import anw.ict.chat.adapter.ChatLogAdapter;
+import anw.ict.chat.adapter.ChatViewPagerAdapter;
+import anw.ict.chat.objects.ChatMessage;
 
-import static anw.icecreamtruck.utils.Constants.CHAT_LOG;
-import static anw.icecreamtruck.utils.Constants.IMAGE_GIF;
-import static anw.icecreamtruck.utils.Constants.STICKERS;
+import static anw.ict.utils.Constants.CHAT_LOG;
+import static anw.ict.utils.Constants.IMAGE_GIF;
+import static anw.ict.utils.Constants.STICKERS;
 
 public class ChatFrag extends Fragment{
-    private String userRole, userId;
+    private String userRole;
 
     private List<ChatMessage> chatList = new ArrayList<>();
     private ChildEventListener chatListener;
@@ -62,19 +61,18 @@ public class ChatFrag extends Fragment{
     private RecyclerView chatRV;
     private ChatLogAdapter chatAdapter;
     private ChatViewPagerAdapter pagerAdapter;
-    FirebaseDatabase db;
-    FirebaseStorage st;
+    private FirebaseDatabase db;
+    private FirebaseStorage st;
+
     public static TabLayout tabLayout;
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState){
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState){
         // Init user details
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         userRole = sharedPreferences.getString("userRole", "null");
-        userId = sharedPreferences.getString("userId", "null");
-        Log.e(userId, userRole);
-
 
         db = FirebaseDatabase.getInstance();
+        st = FirebaseStorage.getInstance();
 
         // Init chat
         chatListener = new ChildEventListener() {
@@ -105,7 +103,7 @@ public class ChatFrag extends Fragment{
             public void onCancelled(@NonNull DatabaseError databaseError) {}
         };
         try {
-            db.getReference(CHAT_LOG).addChildEventListener(chatListener);
+            db.getReference(CHAT_LOG).limitToLast(50).addChildEventListener(chatListener);
         } catch (Exception e) {
             Log.e("Error", "Failed to load chat");
         }
@@ -113,9 +111,11 @@ public class ChatFrag extends Fragment{
         return inflater.inflate(R.layout.frag_chat, parent, false);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Log.e("ChatFrag", "onViewCreated");
 
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         chatRV = view.findViewById(R.id.list_of_messages);
@@ -126,8 +126,16 @@ public class ChatFrag extends Fragment{
         ImageButton stickerKeyboardBtn = view.findViewById(R.id.sticker_btn);
         ImageButton addStickerBtn = view.findViewById(R.id.add_sticker_btn);
         ImageButton sendBtn = view.findViewById(R.id.send_btn);
+        ImageButton folderBtn = view.findViewById(R.id.folder_btn);
 
         chatInput = view.findViewById(R.id.input);
+
+        chatInput.setOnTouchListener((v, event) -> {
+            View keyboard = view.findViewById(R.id.sticker_keyboard);
+            if(keyboard.getVisibility() == View.VISIBLE)
+                keyboard.setVisibility(View.GONE);
+            return false;
+        });
 
         stickerKeyboardBtn.setOnClickListener(v -> {
             View keyboard = view.findViewById(R.id.sticker_keyboard);
@@ -135,7 +143,7 @@ public class ChatFrag extends Fragment{
                 keyboard.setVisibility(View.GONE);
             else
                 keyboard.setVisibility(View.VISIBLE);
-            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) Objects.requireNonNull(getActivity()).getSystemService(Context.INPUT_METHOD_SERVICE);
             if(imm.isAcceptingText())
                 imm.hideSoftInputFromWindow(Objects.requireNonNull(getActivity().getCurrentFocus()).getWindowToken(), 0);
 
@@ -158,6 +166,7 @@ public class ChatFrag extends Fragment{
                 chatInput.setText("");
             }
         });
+        folderBtn.setOnClickListener(v-> Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction().replace(R.id.frag, new FolderFrag()).addToBackStack(null).commit());
 
         initTabs(view);
     }
@@ -165,43 +174,23 @@ public class ChatFrag extends Fragment{
     @Override
     public void onDestroyView(){
         super.onDestroyView();
+        Log.e("ChatFrag", "Destroy View");
         db.getReference(CHAT_LOG).removeEventListener(chatListener);
-
+        pagerAdapter.removeListener();
     }
 
     private void initTabs(View view) {
         Log.e("Function", "ChatFrag.initTabs");
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         ViewPager viewPager = view.findViewById(R.id.viewpager);
-        pagerAdapter = new ChatViewPagerAdapter(getActivity().getSupportFragmentManager(), getContext());
+        pagerAdapter = new ChatViewPagerAdapter(getChildFragmentManager(), getContext());
         viewPager.setAdapter(pagerAdapter);
-        viewPager.addOnPageChangeListener(pageChangeListener);
+
         // Give the TabLayout the ViewPager
         tabLayout = view.findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager);
 
     }
-    private ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener() {
-
-        int currentPosition = 0;
-
-        @Override
-        public void onPageSelected(int newPosition) {
-
-            FragmentLifecycle fragmentToShow = (FragmentLifecycle)pagerAdapter.getItem(newPosition);
-            fragmentToShow.onResumeFragment();
-
-            FragmentLifecycle fragmentToHide = (FragmentLifecycle)pagerAdapter.getItem(currentPosition);
-            fragmentToHide.onPauseFragment();
-
-            currentPosition = newPosition;
-        }
-
-        @Override
-        public void onPageScrolled(int arg0, float arg1, int arg2) { }
-
-        public void onPageScrollStateChanged(int arg0) { }
-    };
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -226,7 +215,7 @@ public class ChatFrag extends Fragment{
         Log.e("Function", "ChatFrag.uploadSticker");
         long fileSize = 0;
         try {
-            AssetFileDescriptor afd = getActivity().getContentResolver().openAssetFileDescriptor(file, "r");
+            AssetFileDescriptor afd = Objects.requireNonNull(getActivity()).getContentResolver().openAssetFileDescriptor(file, "r");
             assert afd != null;
             fileSize = afd.getLength();
             afd.close();
@@ -246,7 +235,7 @@ public class ChatFrag extends Fragment{
                 dialog.dismiss();
             });
             builder.setNegativeButton("OK", (dialog, which) -> dialog.cancel());
-;
+
             builder.show();
         } else {
             String name = String.valueOf(new Date().getTime());
@@ -259,5 +248,4 @@ public class ChatFrag extends Fragment{
                     });
         }
     }
-
 }

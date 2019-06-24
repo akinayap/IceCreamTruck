@@ -1,26 +1,23 @@
-package anw.icecreamtruck.chat.objects;
+package anw.ict.chat.objects;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 
-import anw.icecreamtruck.R;
+import anw.ict.R;
 import pl.droidsonroids.gif.GifDrawable;
 
-import static anw.icecreamtruck.utils.Constants.IMAGE_GIF;
+import static anw.ict.utils.Constants.IMAGE_GIF;
 
 public class ChatMessage {
     public String username, message, type, timestamp;
     private Context context;
 
-    public ChatMessage(){
-
-    }
+    public ChatMessage(){}
 
     public ChatMessage(Context c, String msg, String t, String time, String userRole){
         context = c;
@@ -65,14 +62,10 @@ public class ChatMessage {
                 gifFromBytes.setLoopCount(0);
                 return gifFromBytes;
             } catch (Exception eer) {
-                Log.e("Error", "Image is not GIF" + eer.getMessage());
-                Drawable image = new BitmapDrawable(context.getResources(), BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-                return image;
+                return new BitmapDrawable(context.getResources(), BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
             }
         } catch (Exception e) {
-            Log.e("Error", "Failed to set drawable" + e.getMessage());
-            Drawable image = context.getDrawable(R.drawable.ic_loading);
-            return image;
+            return context.getDrawable(R.drawable.ic_load);
         }
     }
 }

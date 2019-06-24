@@ -1,4 +1,4 @@
-package anw.icecreamtruck;
+package anw.ict;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -8,7 +8,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import anw.icecreamtruck.chat.fragments.ChatFrag;
+import anw.ict.chat.fragments.ChatFrag;
 
 public class MainActivity extends AppCompatActivity {
 

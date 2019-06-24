@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/border"
         android:scaleType="fitCenter"
-        android:src="@drawable/ic_loading"
+        android:src="@drawable/ic_login_load"
         android:tint="@color/colorPrimary"
         app:layout_constraintTop_toTopOf="parent" />
 

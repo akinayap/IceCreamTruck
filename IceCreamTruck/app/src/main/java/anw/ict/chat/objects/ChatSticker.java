@@ -1,24 +1,21 @@
-package anw.icecreamtruck.chat.objects;
+package anw.ict.chat.objects;
 
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 
-import anw.icecreamtruck.R;
+import anw.ict.R;
 import pl.droidsonroids.gif.GifDrawable;
-import pl.droidsonroids.gif.GifImageView;
 
-import static anw.icecreamtruck.utils.Constants.IMAGE_GIF;
+import static anw.ict.utils.Constants.IMAGE_GIF;
 
 public class ChatSticker {
     private Context context;
     private String name, timestamp, folder;
-    private boolean folderActivity = false;
 
     ChatSticker() {}
     public ChatSticker(String f, Context c, String filename) {
@@ -27,7 +24,7 @@ public class ChatSticker {
         name = filename;
     }
 
-    void setContext(Context c)
+    public void setContext(Context c)
     {
         context = c;
     }
@@ -39,7 +36,7 @@ public class ChatSticker {
         timestamp = t;
     }
 
-    String getName() {
+    public String getName() {
         return name;
     }
     void setName(String n) {
@@ -49,15 +46,8 @@ public class ChatSticker {
     public String getFolder() {
         return folder;
     }
-    void setFolder(String name) {
+    public void setFolder(String name) {
         folder = name;
-    }
-
-    void isInFolder(){
-        folderActivity = true;
-    }
-    boolean inFolder(){
-        return folderActivity;
     }
 
     public Drawable drawable(){
@@ -77,14 +67,10 @@ public class ChatSticker {
                 gifFromBytes.setLoopCount(0);
                 return gifFromBytes;
             } catch (Exception eer) {
-                Log.e("Error", "Image is not GIF" + eer.getMessage());
-                Drawable image = new BitmapDrawable(context.getResources(), BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-                return image;
+                return new BitmapDrawable(context.getResources(), BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
             }
         } catch (Exception e) {
-            Log.e("Error", "Failed to set drawable" + e.getMessage());
-            Drawable image = context.getDrawable(R.drawable.ic_loading);
-            return image;
+            return context.getDrawable(R.drawable.ic_login_load);
         }
     }
 }

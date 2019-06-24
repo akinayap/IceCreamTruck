@@ -9,4 +9,12 @@
     <string name="title_chat">Chat</string>
 
     <string name="chat_input">Enter message here!</string>
+    <string name="boy_txt">Hello to my ah girl</string>
+    <string name="girl_txt">Hello to my ah boy</string>
+    <string name="time_txt">Time</string>
+    <string name="folder_txt">folders</string>
+    <string name="ok">OK</string>
+    <string name="add_folder">Add Folder</string>
+    <string name="cancel">Cancel</string>
+    <string name="folder_name">Folder Name</string>
 </resources>
