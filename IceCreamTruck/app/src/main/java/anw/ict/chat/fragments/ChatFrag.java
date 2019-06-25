@@ -3,6 +3,7 @@ package anw.ict.chat.fragments;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -91,6 +92,7 @@ public class ChatFrag extends Fragment{
                         chatRV.smoothScrollToPosition(chatAdapter.getItemCount() - 1);
                     }
                 }
+                clearNotifications();
             }
 
             @Override
@@ -113,6 +115,16 @@ public class ChatFrag extends Fragment{
         }
 
         return inflater.inflate(R.layout.frag_chat, parent, false);
+    }
+
+    private void clearNotifications() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("msg", "");
+        editor.apply();
+
+        NotificationManager mNotificationManager = (NotificationManager) Objects.requireNonNull(getContext()).getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.cancelAll();
     }
 
     @SuppressLint("ClickableViewAccessibility")

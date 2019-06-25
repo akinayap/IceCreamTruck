@@ -91,10 +91,7 @@
             android:id="@+id/folder_btn"
             android:layout_width="@dimen/btn_tap_size"
             android:layout_height="@dimen/btn_tap_size"
-            android:src="@drawable/ic_folder"
-            android:scaleType="fitCenter"
-            android:tint="@color/colorPrimary"
-            android:backgroundTint="@color/transparent"
+            android:background="@drawable/ic_folder"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
