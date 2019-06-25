@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -28,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -43,16 +43,19 @@ import java.util.Locale;
 import java.util.Objects;
 
 import anw.ict.R;
+import anw.ict.SplashActivity;
 import anw.ict.chat.adapter.ChatLogAdapter;
 import anw.ict.chat.adapter.ChatViewPagerAdapter;
 import anw.ict.chat.objects.ChatMessage;
+import anw.ict.chat.objects.ChatNotification;
 
 import static anw.ict.utils.Constants.CHAT_LOG;
 import static anw.ict.utils.Constants.IMAGE_GIF;
+import static anw.ict.utils.Constants.NOTIFICATIONS;
 import static anw.ict.utils.Constants.STICKERS;
 
 public class ChatFrag extends Fragment{
-    private String userRole;
+    private String userRole, userId;
 
     private List<ChatMessage> chatList = new ArrayList<>();
     private ChildEventListener chatListener;
@@ -70,6 +73,7 @@ public class ChatFrag extends Fragment{
         // Init user details
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         userRole = sharedPreferences.getString("userRole", "null");
+        userId = sharedPreferences.getString("userId", "null");
 
         db = FirebaseDatabase.getInstance();
         st = FirebaseStorage.getInstance();
@@ -127,6 +131,7 @@ public class ChatFrag extends Fragment{
         ImageButton addStickerBtn = view.findViewById(R.id.add_sticker_btn);
         ImageButton sendBtn = view.findViewById(R.id.send_btn);
         ImageButton folderBtn = view.findViewById(R.id.folder_btn);
+        ImageButton cameraBtn = view.findViewById(R.id.camera_btn);
 
         chatInput = view.findViewById(R.id.input);
 
@@ -164,11 +169,25 @@ public class ChatFrag extends Fragment{
                 ChatMessage data = new ChatMessage(getContext(), msg,"MSG", timestamp, userRole);
                 db.getReference(CHAT_LOG).child(String.valueOf(time)).setValue(data);
                 chatInput.setText("");
+                sendNotification(String.valueOf(time), data);
             }
         });
         folderBtn.setOnClickListener(v-> Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction().replace(R.id.frag, new FolderFrag()).addToBackStack(null).commit());
+        cameraBtn.setOnClickListener(v->{
+            /*Show Camera REMOVE THE LOGOUT*/
+            FirebaseAuth.getInstance().signOut();
 
+            Intent i = new Intent(getContext(), SplashActivity.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(i);
+        });
         initTabs(view);
+    }
+
+    private void sendNotification(String time, ChatMessage data) {
+        ChatNotification notif = new ChatNotification(data);
+        db.getReference(NOTIFICATIONS + "/" + userId + "/" + time).setValue(notif);
     }
 
     @Override
@@ -189,7 +208,6 @@ public class ChatFrag extends Fragment{
         // Give the TabLayout the ViewPager
         tabLayout = view.findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager);
-
     }
 
     @Override

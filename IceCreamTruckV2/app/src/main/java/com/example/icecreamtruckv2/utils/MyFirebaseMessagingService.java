@@ -63,8 +63,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         //newNotification(cn);
     }
 
-    private void inboxStyle(ChatNotif cn)
-    {
+    private void inboxStyle(ChatNotif cn) {
         cn.message = cn.type.equals("GIF") ? "sent a GIF" : cn.message;
         cn.sender = cn.sender.equals("ahgirl") ? "Ah Girl" : "Ah Boy";
 

@@ -27,9 +27,11 @@ import java.util.Locale;
 import anw.ict.R;
 import anw.ict.chat.adapter.ChatStickersAdapter;
 import anw.ict.chat.objects.ChatMessage;
+import anw.ict.chat.objects.ChatNotification;
 import anw.ict.chat.objects.ChatSticker;
 
 import static anw.ict.utils.Constants.CHAT_LOG;
+import static anw.ict.utils.Constants.NOTIFICATIONS;
 import static anw.ict.utils.Constants.STICKERS_FOLDER;
 
 public class StickerFrag extends Fragment {
@@ -81,7 +83,8 @@ public class StickerFrag extends Fragment {
             Long time = new Date().getTime();
             String timestamp = new SimpleDateFormat("hh:mm a, dd MMM yyyy", Locale.US).format(time);
             ChatMessage data = new ChatMessage(getContext(), item.getName(), "GIF", timestamp, userRole);
-            db.getReference(CHAT_LOG).child(String.valueOf(new Date().getTime())).setValue(data);
+            db.getReference(CHAT_LOG).child(String.valueOf(time)).setValue(data);
+            sendNotification(String.valueOf(time), data);
         };
 
         GridLayoutManager glm = new GridLayoutManager(getContext(), 2, RecyclerView.HORIZONTAL, false);
@@ -92,6 +95,11 @@ public class StickerFrag extends Fragment {
         stickerRV.setLayoutManager(glm);
 
         return rootView;
+    }
+
+    private void sendNotification(String time, ChatMessage data) {
+        ChatNotification notif = new ChatNotification(data);
+        db.getReference(NOTIFICATIONS + "/" + userId + "/" + time).setValue(notif);
     }
 
     @Override

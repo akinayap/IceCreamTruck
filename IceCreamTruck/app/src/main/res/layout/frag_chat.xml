@@ -10,71 +10,60 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@id/textInputLayout"
+        app:layout_constraintBottom_toTopOf="@id/input"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/sticker_btn"
         android:layout_width="@dimen/btn_tap_size"
         android:layout_height="@dimen/btn_tap_size"
-        android:layout_marginStart="8dp"
-        android:background="@drawable/ic_paw"
-        app:layout_constraintBottom_toBottomOf="@id/textInputLayout"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/textInputLayout" />
+        android:background="@drawable/ic_gif"
+        app:layout_constraintTop_toTopOf="@id/input"
+        app:layout_constraintBottom_toBottomOf="@id/input"
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/add_sticker_btn"
         android:layout_width="@dimen/btn_tap_size"
         android:layout_height="@dimen/btn_tap_size"
-        android:layout_marginStart="8dp"
         android:background="@drawable/ic_add"
-        android:backgroundTint="@color/colorPrimary"
-        app:layout_constraintBottom_toBottomOf="@id/textInputLayout"
-        app:layout_constraintStart_toEndOf="@id/sticker_btn"
-        app:layout_constraintTop_toTopOf="@id/textInputLayout" />
+        app:layout_constraintTop_toTopOf="@id/input"
+        app:layout_constraintBottom_toBottomOf="@id/input"
+        app:layout_constraintStart_toEndOf="@id/sticker_btn" />
 
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout"
-        android:padding="0dp"
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/input"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:layout_toStartOf="@id/send_btn"
+        android:padding="@dimen/smaller_border"
+        android:layout_marginBottom="@dimen/smaller_border"
+        android:hint="@string/chat_input"
+        android:background="@drawable/bg_input"
+        android:textColorHint="@color/colorPrimary"
+        android:textColor="@color/colorPrimary"
         app:layout_constraintBottom_toTopOf="@id/sticker_keyboard"
         app:layout_constraintEnd_toStartOf="@id/send_btn"
-        app:layout_constraintStart_toEndOf="@id/add_sticker_btn"
-        android:textColorHint="@color/colorPrimary"
-        android:textColor="@color/colorPrimary" >
+        app:layout_constraintStart_toEndOf="@id/add_sticker_btn"/>
 
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/camera_btn"
+        android:layout_width="@dimen/camera_tap_size"
+        android:layout_height="@dimen/camera_tap_size"
+        android:background="@drawable/ic_camera"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@id/input"
+        app:layout_constraintEnd_toEndOf="@id/input"
+        app:layout_constraintTop_toTopOf="@id/input" />
 
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/chat_input"
-            android:paddingStart="15dp"
-            android:paddingEnd="15dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:background="@drawable/bg_input"
-            android:textColorHint="@color/colorPrimary"
-            android:textColor="@color/colorPrimary" />
-    </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/send_btn"
         android:layout_width="@dimen/btn_tap_size"
         android:layout_height="@dimen/btn_tap_size"
-        android:layout_marginEnd="8dp"
         android:background="@drawable/ic_send"
-        android:backgroundTint="@color/colorPrimary"
-        app:layout_constraintBottom_toBottomOf="@id/textInputLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/textInputLayout" />
+        app:layout_constraintTop_toTopOf="@id/input"
+        app:layout_constraintBottom_toBottomOf="@id/input"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/sticker_keyboard"
@@ -102,9 +91,10 @@
             android:id="@+id/folder_btn"
             android:layout_width="@dimen/btn_tap_size"
             android:layout_height="@dimen/btn_tap_size"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/ic_folder"
-            android:backgroundTint="@color/colorPrimary"
+            android:src="@drawable/ic_folder"
+            android:scaleType="fitCenter"
+            android:tint="@color/colorPrimary"
+            android:backgroundTint="@color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
