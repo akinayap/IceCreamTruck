@@ -30,6 +30,9 @@ import anw.ict.chat.objects.ChatMessage;
 import anw.ict.chat.objects.ChatNotification;
 import anw.ict.chat.objects.ChatSticker;
 
+import static anw.ict.chat.fragments.ChatFrag.chatList;
+import static anw.ict.chat.fragments.ChatFrag.reply;
+import static anw.ict.chat.fragments.ChatFrag.showReply;
 import static anw.ict.utils.Constants.CHAT_LOG;
 import static anw.ict.utils.Constants.NOTIFICATIONS;
 import static anw.ict.utils.Constants.STICKERS_FOLDER;
@@ -81,8 +84,14 @@ public class StickerFrag extends Fragment {
 
         ChatStickersAdapter.OnItemClickListener stickerClick = item -> {
             Long time = new Date().getTime();
-            String timestamp = new SimpleDateFormat("hh:mm a, dd MMM yyyy", Locale.US).format(time);
-            ChatMessage data = new ChatMessage(getContext(), item.getName(), "GIF", timestamp, userRole);
+            //String timestamp = new SimpleDateFormat("hh:mm a, dd MMM yyyy", Locale.US).format(time);
+            ChatMessage data = new ChatMessage(getContext(), item.getName(), "GIF", String.valueOf(time), userRole);
+
+            if(reply > -1){
+                data.reply = chatList.get(reply);
+                reply = -1;
+                showReply();
+            }
             db.getReference(CHAT_LOG).child(String.valueOf(time)).setValue(data);
             sendNotification(String.valueOf(time), data);
         };

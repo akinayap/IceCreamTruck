@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,8 +10,8 @@
         android:id="@+id/list_of_messages"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@id/input"
+        android:layout_marginBottom="@dimen/smaller_border"
+        app:layout_constraintBottom_toTopOf="@id/reply_view"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatImageButton
@@ -31,6 +32,70 @@
         app:layout_constraintBottom_toBottomOf="@id/input"
         app:layout_constraintStart_toEndOf="@id/sticker_btn" />
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/reply_view"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_input"
+        android:padding="@dimen/smaller_border"
+        app:layout_constraintBottom_toTopOf="@id/input"
+        app:layout_constraintEnd_toEndOf="@id/input"
+        app:layout_constraintStart_toStartOf="@id/input">
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/reply_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_reply"
+            android:tint="@color/colorPrimary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+        <TextView
+            android:id="@+id/reply_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/reply"
+            android:textColor="@color/colorPrimary"
+            app:layout_constraintStart_toEndOf="@id/reply_img"
+            app:layout_constraintTop_toTopOf="@id/reply_img"
+            app:layout_constraintBottom_toBottomOf="@id/reply_img"/>
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/sender_img"
+            android:layout_marginTop="@dimen/smaller_border"
+            android:layout_width="@dimen/sender_img_size"
+            android:layout_height="@dimen/sender_img_size"
+            android:src="@drawable/ic_girl"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/reply_img"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+        <TextView
+            android:id="@+id/msg_to_reply"
+            android:layout_marginTop="@dimen/smaller_border"
+            android:layout_marginStart="@dimen/smaller_border"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/sender_img"
+            app:layout_constraintTop_toBottomOf="@id/reply_img"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:text="@string/message_i_will_reply_to"/>
+        <pl.droidsonroids.gif.GifImageView
+            android:id="@+id/gif_to_reply"
+            android:layout_marginTop="@dimen/smaller_border"
+            android:layout_marginStart="@dimen/smaller_border"
+            android:layout_width="@dimen/gif_size"
+            android:layout_height="@dimen/gif_size"
+            android:src="@drawable/ic_load"
+            android:scaleType="fitCenter"
+            app:layout_constraintStart_toEndOf="@id/sender_img"
+            app:layout_constraintTop_toBottomOf="@id/reply_img"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/cancel_reply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_cancel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
     <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/input"
         android:layout_width="0dp"
@@ -50,7 +115,7 @@
         android:layout_width="@dimen/camera_tap_size"
         android:layout_height="@dimen/camera_tap_size"
         android:background="@drawable/ic_camera"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="@dimen/smaller_border"
         app:layout_constraintBottom_toBottomOf="@id/input"
         app:layout_constraintEnd_toEndOf="@id/input"
         app:layout_constraintTop_toTopOf="@id/input" />

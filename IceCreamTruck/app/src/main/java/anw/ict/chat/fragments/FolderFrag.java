@@ -53,7 +53,6 @@ public class FolderFrag extends Fragment {
     private FirebaseDatabase db;
     private String userId;
 
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -177,8 +176,9 @@ public class FolderFrag extends Fragment {
 
             // Set up the buttons
             builder.setPositiveButton("OK", (dialog, which) -> {
-                if(folderList.stream().anyMatch(f -> f.getFolderName().equals(input.getText().toString()))){
+                if(folderList.stream().noneMatch(f -> f.getFolderName().equals(input.getText().toString()))){
                     folderList.add(new ChatFolder(input.getText().toString(), new ArrayList<>()));
+                    folderAdapter.notifyItemInserted(folderList.size() - 1);
                 }
             });
             builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());

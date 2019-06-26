@@ -17,4 +17,6 @@
     <string name="add_folder">Add Folder</string>
     <string name="cancel">Cancel</string>
     <string name="folder_name">Folder Name</string>
+    <string name="reply">Reply</string>
+    <string name="message_i_will_reply_to">Message I will reply to</string>
 </resources>

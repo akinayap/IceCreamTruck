@@ -7,8 +7,8 @@
     <pl.droidsonroids.gif.GifImageView
         android:id="@+id/gif_title"
         android:padding="5dp"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="@dimen/gif_size"
+        android:layout_height="@dimen/gif_size"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_load"
         app:layout_constraintTop_toTopOf="parent"
@@ -18,8 +18,8 @@
     <TextView
         android:id="@+id/folder_title"
         android:padding="5dp"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
+        android:layout_width="@dimen/gif_size"
+        android:layout_height="@dimen/gif_size"
         android:gravity="center"
         android:textSize="12sp"
         android:text="@string/folder_txt"

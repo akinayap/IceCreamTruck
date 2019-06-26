@@ -15,6 +15,7 @@ import static anw.ict.utils.Constants.IMAGE_GIF;
 
 public class ChatMessage {
     public String username, message, type, timestamp;
+    public ChatMessage reply = null;
     private Context context;
 
     public ChatMessage(){}

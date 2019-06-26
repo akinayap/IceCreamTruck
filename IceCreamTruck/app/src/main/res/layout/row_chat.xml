@@ -12,23 +12,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_margin="8dp"
+        android:layout_margin="@dimen/smaller_border"
         card_view:cardBackgroundColor="@color/transparent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/other_cl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp">
+            android:paddingStart="@dimen/smaller_border"
+            android:paddingEnd="@dimen/smaller_border">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/other_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginStart="@dimen/smaller_border"
+                android:layout_marginTop="@dimen/smaller_border"
+                android:layout_marginBottom="@dimen/smaller_border"
                 android:autoLink="web"
                 android:text="@string/boy_txt"
                 android:textColor="@color/colorPrimary"
@@ -40,40 +41,86 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/other_icon"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_margin="8dp"
+                android:layout_width="@dimen/sender_img_size"
+                android:layout_height="@dimen/sender_img_size"
+                android:layout_margin="@dimen/smaller_border"
+                android:tint="@color/colorPrimary"
                 card_view:layout_constraintBottom_toBottomOf="parent"
                 card_view:layout_constraintStart_toStartOf="parent"
                 card_view:layout_constraintTop_toBottomOf="@+id/other_time"
-                card_view:srcCompat="@drawable/ic_boy"
-                android:tint="@color/colorPrimary"/>
+                card_view:srcCompat="@drawable/ic_boy" />
 
             <pl.droidsonroids.gif.GifImageView
                 android:id="@+id/other_gif"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginStart="@dimen/smaller_border"
+                android:layout_marginTop="@dimen/smaller_border"
+                android:layout_marginBottom="@dimen/smaller_border"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_load"
                 android:visibility="gone"
                 card_view:layout_constraintBottom_toBottomOf="parent"
                 card_view:layout_constraintStart_toEndOf="@+id/other_icon"
-                card_view:layout_constraintTop_toBottomOf="@+id/other_time"  />
+                card_view:layout_constraintTop_toBottomOf="@+id/other_time" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/other_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginStart="@dimen/smaller_border"
+                android:layout_marginTop="@dimen/smaller_border"
                 android:text="@string/time_txt"
                 android:textColor="@color/colorPrimary"
                 android:textSize="12sp"
                 card_view:layout_constraintStart_toStartOf="parent"
-                card_view:layout_constraintTop_toTopOf="parent" />
+                card_view:layout_constraintTop_toBottomOf="@id/other_reply" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/other_reply"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/smaller_border"
+                card_view:layout_constraintTop_toTopOf="parent"
+                card_view:layout_constraintStart_toStartOf="parent"
+                card_view:layout_constraintEnd_toEndOf="parent">
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/other_reply_img"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_reply"
+                    card_view:layout_constraintStart_toStartOf="parent"
+                    card_view:layout_constraintTop_toTopOf="parent"
+                    card_view:layout_constraintBottom_toBottomOf="parent"/>
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/other_sender_img"
+                    android:layout_width="@dimen/sender_img_size"
+                    android:layout_height="@dimen/sender_img_size"
+                    android:src="@drawable/ic_girl"
+                    card_view:layout_constraintTop_toTopOf="parent"
+                    card_view:layout_constraintStart_toEndOf="@id/other_reply_img"
+                    card_view:layout_constraintBottom_toBottomOf="parent"/>
+                <TextView
+                    android:id="@+id/other_msg_to_reply"
+                    android:layout_marginStart="@dimen/smaller_border"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    card_view:layout_constraintStart_toEndOf="@id/other_sender_img"
+                    card_view:layout_constraintEnd_toEndOf="parent"
+                    card_view:layout_constraintTop_toTopOf="parent"
+                    card_view:layout_constraintBottom_toBottomOf="parent"
+                    android:text="@string/message_i_will_reply_to"/>
+                <pl.droidsonroids.gif.GifImageView
+                    android:id="@+id/other_gif_to_reply"
+                    android:layout_marginStart="@dimen/smaller_border"
+                    android:layout_width="@dimen/gif_size"
+                    android:layout_height="@dimen/gif_size"
+                    android:src="@drawable/ic_load"
+                    android:scaleType="fitCenter"
+                    card_view:layout_constraintStart_toEndOf="@id/other_sender_img"
+                    card_view:layout_constraintTop_toTopOf="parent"
+                    card_view:layout_constraintBottom_toBottomOf="parent"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
@@ -83,26 +130,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_margin="8dp"
+        android:layout_margin="@dimen/smaller_border"
         android:layout_alignParentEnd="true"
         card_view:cardBackgroundColor="@color/transparent"
         tools:ignore="RelativeOverlap">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/my_cl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp">
+            android:paddingStart="@dimen/smaller_border"
+            android:paddingEnd="@dimen/smaller_border">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/my_message"
-                android:autoLink="web"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginTop="@dimen/smaller_border"
+                android:layout_marginEnd="@dimen/smaller_border"
+                android:layout_marginBottom="@dimen/smaller_border"
+                android:autoLink="web"
                 android:text="@string/girl_txt"
                 android:textColor="@color/colorPrimary"
                 android:textSize="14sp"
@@ -113,39 +161,85 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/my_icon"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_margin="8dp"
+                android:layout_width="@dimen/sender_img_size"
+                android:layout_height="@dimen/sender_img_size"
+                android:layout_margin="@dimen/smaller_border"
+                android:tint="@color/colorPrimary"
                 card_view:layout_constraintBottom_toBottomOf="parent"
                 card_view:layout_constraintEnd_toEndOf="parent"
                 card_view:layout_constraintTop_toBottomOf="@+id/my_time"
-                card_view:srcCompat="@drawable/ic_girl"
-                android:tint="@color/colorPrimary"/>
+                card_view:srcCompat="@drawable/ic_girl" />
 
             <pl.droidsonroids.gif.GifImageView
                 android:id="@+id/my_gif"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
+                android:layout_marginTop="@dimen/smaller_border"
+                android:layout_marginEnd="@dimen/smaller_border"
+                android:layout_marginBottom="@dimen/smaller_border"
                 android:src="@drawable/ic_load"
                 android:visibility="gone"
                 card_view:layout_constraintBottom_toBottomOf="parent"
                 card_view:layout_constraintEnd_toStartOf="@+id/my_icon"
-                card_view:layout_constraintTop_toBottomOf="@+id/my_time"  />
+                card_view:layout_constraintTop_toBottomOf="@+id/my_time" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/my_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginTop="@dimen/smaller_border"
+                android:layout_marginEnd="@dimen/smaller_border"
                 android:text="@string/time_txt"
                 android:textColor="@color/colorPrimary"
                 android:textSize="12sp"
                 card_view:layout_constraintEnd_toEndOf="parent"
-                card_view:layout_constraintTop_toTopOf="parent"  />
+                card_view:layout_constraintTop_toBottomOf="@id/my_reply" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/my_reply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/smaller_border"
+            card_view:layout_constraintTop_toTopOf="parent"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintEnd_toEndOf="parent">
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/my_reply_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_reply"
+                card_view:layout_constraintStart_toStartOf="parent"
+                card_view:layout_constraintTop_toTopOf="parent"
+                card_view:layout_constraintBottom_toBottomOf="parent"/>
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/my_sender_img"
+                android:layout_width="@dimen/sender_img_size"
+                android:layout_height="@dimen/sender_img_size"
+                android:src="@drawable/ic_girl"
+                card_view:layout_constraintTop_toTopOf="parent"
+                card_view:layout_constraintStart_toEndOf="@id/my_reply_img"
+                card_view:layout_constraintBottom_toBottomOf="parent"/>
+            <TextView
+                android:id="@+id/my_msg_to_reply"
+                android:layout_marginStart="@dimen/smaller_border"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                card_view:layout_constraintStart_toEndOf="@id/my_sender_img"
+                card_view:layout_constraintEnd_toEndOf="parent"
+                card_view:layout_constraintTop_toTopOf="parent"
+                card_view:layout_constraintBottom_toBottomOf="parent"
+                android:text="@string/message_i_will_reply_to"/>
+            <pl.droidsonroids.gif.GifImageView
+                android:id="@+id/my_gif_to_reply"
+                android:layout_marginStart="@dimen/smaller_border"
+                android:layout_width="@dimen/gif_size"
+                android:layout_height="@dimen/gif_size"
+                android:src="@drawable/ic_load"
+                android:scaleType="fitCenter"
+                card_view:layout_constraintStart_toEndOf="@id/my_sender_img"
+                card_view:layout_constraintTop_toTopOf="parent"
+                card_view:layout_constraintBottom_toBottomOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
