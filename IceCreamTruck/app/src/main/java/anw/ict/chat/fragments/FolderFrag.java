@@ -109,7 +109,6 @@ public class FolderFrag extends Fragment {
         RecyclerView stickerRV = view.findViewById(R.id.rv_remaining_stickers);
         stickerAdapter = new ChatStickersAdapter(stickerList,v->{
             // Click on Sticker to add to folder
-            Log.e("sel", selectedFolder);
             if(!selectedFolder.equals("")) {
                 v.setFolder(selectedFolder);
                 stickerAdapter.notifyItemRemoved(stickerList.indexOf(v));
@@ -194,7 +193,6 @@ public class FolderFrag extends Fragment {
     @Override
     public void onDestroyView(){
         super.onDestroyView();
-        Log.e("ChatFrag", "Destroy View");
         db.getReference(STICKERS).removeEventListener(stickerListener);
         db.getReference("users/" + userId + "/" + STICKERS_FOLDER).removeEventListener(folderListener);
     }

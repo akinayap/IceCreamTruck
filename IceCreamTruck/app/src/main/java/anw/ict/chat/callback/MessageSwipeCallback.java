@@ -93,7 +93,6 @@ public class MessageSwipeCallback extends ItemTouchHelper.Callback {
                                   final float dX, final float dY,
                                   final int actionState, final boolean isCurrentlyActive) {
         recyclerView.setOnTouchListener((v, event) -> {
-            Log.e("MessageSwipeCallback", "setTouchListener");
             swipeBack = event.getAction() == MotionEvent.ACTION_CANCEL || event.getAction() == MotionEvent.ACTION_UP;
             if (swipeBack) {
                 if (dX < -buttonWidth) buttonShowedState = ButtonsState.RIGHT_VISIBLE;
@@ -115,9 +114,7 @@ public class MessageSwipeCallback extends ItemTouchHelper.Callback {
                                       final float dY,
                                       final int actionState, final boolean isCurrentlyActive) {
         recyclerView.setOnTouchListener((v, event) -> {
-            Log.e("MessageSwipeCallback", "setTouchDownListener");
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                Log.e("MessageSwipeCallback", "ACTION_DOWN");
                 setTouchUpListener(c, recyclerView, viewHolder, dY, actionState, isCurrentlyActive);
             }
             return false;
@@ -131,22 +128,17 @@ public class MessageSwipeCallback extends ItemTouchHelper.Callback {
                                     final float dY,
                                     final int actionState, final boolean isCurrentlyActive) {
         recyclerView.setOnTouchListener((v, event) -> {
-            Log.e("MessageSwipeCallback", "setTouchUpListener");
             if (event.getAction() == MotionEvent.ACTION_UP) {
-                Log.e("MessageSwipeCallback", "ACTION_UP");
                 MessageSwipeCallback.super.onChildDraw(c, recyclerView, viewHolder, 0F, dY, actionState, isCurrentlyActive);
                 recyclerView.setOnTouchListener((v1, event1) -> false);
                 setItemsClickable(recyclerView, true);
                 swipeBack = false;
 
                 if (buttonsActions != null && buttonInstance != null && buttonInstance.getBounds().contains((int)event.getX(), (int)event.getY())) {
-                    Log.e("MessageSwipeCallback", "checkevents");
                     if (buttonShowedState == ButtonsState.LEFT_VISIBLE) {
-                        Log.e("MessageSwipeCallback", "leftClick");
                         buttonsActions.onLeftClicked(viewHolder.getAdapterPosition());
                     }
                     else if (buttonShowedState == ButtonsState.RIGHT_VISIBLE) {
-                        Log.e("MessageSwipeCallback", "rightClick");
                         buttonsActions.onRightClicked(viewHolder.getAdapterPosition());
                     }
                 }
@@ -202,12 +194,10 @@ public class MessageSwipeCallback extends ItemTouchHelper.Callback {
 
     private class MessageSwipeActions {
         void onLeftClicked(int position) {
-            Log.e("Left Tapped", String.valueOf(position));
             ChatFrag.reply = position;
             ChatFrag.showReply();
         }
         void onRightClicked(int position) {
-            Log.e("Right Tapped", String.valueOf(position));
             FirebaseDatabase.getInstance().getReference(CHAT_LOG + "/" + mAdapter.getItem(position).getTimestamp()).removeValue();
         }
 

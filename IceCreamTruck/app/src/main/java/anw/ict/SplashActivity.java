@@ -28,6 +28,7 @@ import com.google.firebase.storage.StorageReference;
 import java.io.FileOutputStream;
 import java.util.Objects;
 
+import static anw.ict.chat.fragments.ChatFrag.chatList;
 import static anw.ict.utils.Constants.STICKERS;
 import static anw.ict.utils.Constants.IMAGE_GIF;
 
@@ -49,10 +50,14 @@ public class SplashActivity extends AppCompatActivity {
         db = FirebaseDatabase.getInstance();
         st = FirebaseStorage.getInstance();
 
-        if(auth.getCurrentUser() == null)
+        if(auth.getCurrentUser() == null){
+            chatList.clear();
             login();
-        else
+        }
+        else{
+            chatList.clear();
             load();
+        }
     }
 
     private void login(){

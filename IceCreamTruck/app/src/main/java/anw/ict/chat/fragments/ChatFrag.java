@@ -96,10 +96,9 @@ public class ChatFrag extends Fragment{
                     if(dataSnapshot.child("reply").getValue() != null)
                     {
                         ChatMessage reply = dataSnapshot.child("reply").getValue(ChatMessage.class);
-                        reply.setContext(getContext());
                         if(reply != null){
+                            reply.setContext(getContext());
                             data.reply = reply;
-                            Log.e("HAS", "REPLY");
                         }
                     }
                     data.setContext(getContext());
@@ -114,13 +113,11 @@ public class ChatFrag extends Fragment{
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.e("Message", "Edited");
                 ChatMessage cm = chatList.stream().filter(m->m.getTimestamp().equals(dataSnapshot.getKey())).findAny().orElse(null);
                 chatAdapter.notifyItemChanged(chatList.indexOf(cm));
             }
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                Log.e("Message", dataSnapshot.getKey());
                 ChatMessage cm = chatList.stream().filter(m->m.getTimestamp().equals(dataSnapshot.getKey())).findAny().orElse(null);
                 chatAdapter.notifyItemRemoved(chatList.indexOf(cm));
                 chatList.remove(cm);
@@ -153,7 +150,6 @@ public class ChatFrag extends Fragment{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.e("ChatFrag", "onViewCreated");
 
         replyBox = view.findViewById(R.id.reply_view);
         if(reply < 0) {
@@ -280,12 +276,10 @@ public class ChatFrag extends Fragment{
     @Override
     public void onDestroyView(){
         super.onDestroyView();
-        Log.e("ChatFrag", "Destroy View");
         db.getReference(CHAT_LOG).removeEventListener(chatListener);
         pagerAdapter.removeListener();
     }
     private void initTabs(View view) {
-        Log.e("Function", "ChatFrag.initTabs");
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         ViewPager viewPager = view.findViewById(R.id.viewpager);
         pagerAdapter = new ChatViewPagerAdapter(getChildFragmentManager(), getContext());
@@ -298,7 +292,6 @@ public class ChatFrag extends Fragment{
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.e("Function", "ChatFrag.onActivityResult");
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1)
             if (resultCode == Activity.RESULT_OK) {
@@ -316,7 +309,6 @@ public class ChatFrag extends Fragment{
             }
     }
     private void uploadSticker(Uri file) {
-        Log.e("Function", "ChatFrag.uploadSticker");
         long fileSize = 0;
         try {
             AssetFileDescriptor afd = Objects.requireNonNull(getActivity()).getContentResolver().openAssetFileDescriptor(file, "r");

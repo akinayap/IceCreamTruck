@@ -40,11 +40,6 @@ public class NotificationService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         if (remoteMessage.getData().size() > 0) {
-            Log.e(TAG, "Sender: " + remoteMessage.getData().get("sender"));
-            Log.e(TAG, "Type: " + remoteMessage.getData().get("type"));
-            Log.e(TAG, "Message: " + remoteMessage.getData().get("msg"));
-            Log.e(TAG, "Timestamp: " + remoteMessage.getData().get("time"));
-
             ChatNotification cn = new ChatNotification(remoteMessage.getData().get("sender"), remoteMessage.getData().get("type"), remoteMessage.getData().get("msg"), remoteMessage.getData().get("time"));
             inboxStyle(cn);
         }

@@ -42,7 +42,6 @@ public class ChatViewPagerAdapter extends FragmentPagerAdapter {
 
     public ChatViewPagerAdapter(FragmentManager fm, Context c) {
         super(fm);
-        Log.e("ChatViewPagerAdapter", "Initialized");
         context = c;
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         userId = sharedPreferences.getString("userId", "");

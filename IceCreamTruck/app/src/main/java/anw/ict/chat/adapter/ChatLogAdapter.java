@@ -1,5 +1,6 @@
 package anw.ict.chat.adapter;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -22,7 +23,6 @@ import anw.ict.R;
 import anw.ict.chat.objects.ChatMessage;
 import pl.droidsonroids.gif.GifImageView;
 
-import static anw.ict.chat.fragments.ChatFrag.chatList;
 import static anw.ict.chat.fragments.ChatFrag.chatRV;
 
 public class ChatLogAdapter extends RecyclerView.Adapter<ChatLogAdapter.ChatViewHolder> {
@@ -84,7 +84,10 @@ public class ChatLogAdapter extends RecyclerView.Adapter<ChatLogAdapter.ChatView
                     message.setVisibility(View.VISIBLE);
                     message.setText(data.reply.getMessage());
                 }
-                holder.mReply.setOnClickListener(v -> chatList.stream().filter(m -> m.getTimestamp().equals(data.reply.getTimestamp())).findAny().ifPresent(cm -> chatRV.smoothScrollToPosition(chatList.indexOf(cm))));
+                holder.mReply.setOnClickListener(v -> {
+                    ChatMessage cm = mData.stream().filter(m -> m.getTimestamp().equals(data.reply.getTimestamp())).findAny().orElse(null);
+                    chatRV.smoothScrollToPosition(mData.indexOf(cm));
+                });
             } else {
                 holder.mReply.setVisibility(View.GONE);
                 holder.oReply.setVisibility(View.GONE);
@@ -121,11 +124,22 @@ public class ChatLogAdapter extends RecyclerView.Adapter<ChatLogAdapter.ChatView
                     message.setVisibility(View.VISIBLE);
                     message.setText(data.reply.getMessage());
                 }
+                holder.oReply.setOnClickListener(v -> {
+                    ChatMessage cm = mData.stream().filter(m -> m.getTimestamp().equals(data.reply.getTimestamp())).findAny().orElse(null);
+                    chatRV.smoothScrollToPosition(mData.indexOf(cm));
+
+                });
             } else {
                 holder.mReply.setVisibility(View.GONE);
                 holder.oReply.setVisibility(View.GONE);
             }
         }
+    }
+
+    private void blink(View view) {
+        ObjectAnimator anim = ObjectAnimator.ofFloat(view, "alpha", 0.0f, 0.5f, 0.5f, 0.5f, 0.0f);
+        anim.setDuration(1000);
+        anim.start();
     }
 
     public Context getContext() {

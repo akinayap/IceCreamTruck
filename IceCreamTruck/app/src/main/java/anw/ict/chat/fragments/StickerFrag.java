@@ -54,7 +54,6 @@ public class StickerFrag extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.e("StickerFrag", "Created " + folderName);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         userId = sharedPreferences.getString("userId", "");
         userRole = sharedPreferences.getString("userRole", "");
@@ -114,7 +113,6 @@ public class StickerFrag extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        Log.e("StickerFrag", "Destroyed " + folderName);
         stickerAdapter.notifyItemRangeRemoved(0, stickerList.size());
         stickerList.clear();
         db.getReference("users/" + userId + "/" + STICKERS_FOLDER + "/" + folderName).removeEventListener(stickerListener);
