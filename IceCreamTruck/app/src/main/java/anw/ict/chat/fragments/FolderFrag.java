@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -112,6 +111,8 @@ public class FolderFrag extends Fragment {
             if(!selectedFolder.equals("")) {
                 v.setFolder(selectedFolder);
                 stickerAdapter.notifyItemRemoved(stickerList.indexOf(v));
+                stickerAdapter.notifyItemRangeChanged(stickerList.indexOf(v), stickerAdapter.getItemCount());
+
                 stickerList.remove(v);
 
                 ChatFolder folder = folderList.stream().filter(f -> f.getFolderName().equals(v.getFolder())).findAny().orElse(null);
@@ -146,6 +147,7 @@ public class FolderFrag extends Fragment {
         Button cancelBtn = view.findViewById(R.id.cancelBTN);
 
         okBtn.setOnClickListener(v->{
+            selectedFolder = "";
             db.getReference("users/" + userId + "/" + STICKERS_FOLDER).removeValue();
             for(int i = 0; i < folderList.size(); ++i)
             {
@@ -159,7 +161,6 @@ public class FolderFrag extends Fragment {
                 db.getReference("users/" + userId + "/" + STICKERS_FOLDER + "/" + folderName).setPriority(i);
             }
 
-            selectedFolder = null;
             Fragment frag = new ChatFrag();
             FragmentTransaction transaction = Objects.requireNonNull(getFragmentManager()).beginTransaction();
             transaction.replace(R.id.frag, frag); // give your fragment container id in first parameter
@@ -186,7 +187,7 @@ public class FolderFrag extends Fragment {
 
         });
         cancelBtn.setOnClickListener(v -> {
-            selectedFolder = null;
+            selectedFolder = "";
             Objects.requireNonNull(getFragmentManager()).popBackStack();
         });
     }

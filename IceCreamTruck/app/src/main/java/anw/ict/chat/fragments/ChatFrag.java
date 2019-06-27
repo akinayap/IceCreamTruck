@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
-import android.graphics.Canvas;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -64,7 +63,7 @@ import static anw.ict.utils.Constants.STICKERS;
 public class ChatFrag extends Fragment{
     private String userRole, userId;
 
-    public static List<ChatMessage> chatList = new ArrayList<>();
+    private static List<ChatMessage> chatList = new ArrayList<>();
     private ChildEventListener chatListener;
 
     private EditText chatInput;
@@ -112,26 +111,14 @@ public class ChatFrag extends Fragment{
             }
 
             @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                ChatMessage cm = chatList.stream().filter(m->m.getTimestamp().equals(dataSnapshot.getKey())).findAny().orElse(null);
-                chatAdapter.notifyItemChanged(chatList.indexOf(cm));
-            }
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
             @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                ChatMessage cm = chatList.stream().filter(m->m.getTimestamp().equals(dataSnapshot.getKey())).findAny().orElse(null);
-                chatAdapter.notifyItemRemoved(chatList.indexOf(cm));
-                chatList.remove(cm);
-            }
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {}
             @Override
             public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {}
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {}
         };
-        try {
-            db.getReference(CHAT_LOG).limitToLast(50).addChildEventListener(chatListener);
-        } catch (Exception e) {
-            Log.e("Error", "Failed to load chat");
-        }
 
         return inflater.inflate(R.layout.frag_chat, parent, false);
     }
@@ -156,7 +143,7 @@ public class ChatFrag extends Fragment{
             replyBox.setVisibility(GONE);
         }
         else{
-            showReply();
+            showReply(null);
         }
 
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
@@ -168,12 +155,15 @@ public class ChatFrag extends Fragment{
 
         ItemTouchHelper itemTouchhelper = new ItemTouchHelper(swipeCallback);
         itemTouchhelper.attachToRecyclerView(chatRV);
-        chatRV.addItemDecoration(new RecyclerView.ItemDecoration() {
-            @Override
-            public void onDraw(@NonNull Canvas c, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-                swipeCallback.onDraw(c);
-            }
-        });
+
+        try {
+            chatList.clear();
+            chatAdapter.notifyDataSetChanged();
+            db.getReference(CHAT_LOG).removeEventListener(chatListener);
+            db.getReference(CHAT_LOG).limitToLast(50).addChildEventListener(chatListener);
+        } catch (Exception e) {
+            Log.e("Error", "Failed to load chat");
+        }
 
         ImageButton stickerKeyboardBtn = view.findViewById(R.id.sticker_btn);
         ImageButton addStickerBtn = view.findViewById(R.id.add_sticker_btn);
@@ -215,11 +205,9 @@ public class ChatFrag extends Fragment{
             //String timestamp = new SimpleDateFormat("hh:mm a, dd MMM yyyy", Locale.US).format(time);
             if (!msg.equals("")) {
                 ChatMessage data = new ChatMessage(getContext(), msg,"MSG", String.valueOf(time), userRole);
-                if(reply > -1){
-                    data.reply = chatList.get(reply);
-                    reply = -1;
-                    showReply();
-                }
+                showReply(data);
+                reply = -1;
+                showReply(null);
                 db.getReference(CHAT_LOG).child(String.valueOf(time)).setValue(data);
                 chatInput.setText("");
                 sendNotification(String.valueOf(time), data);
@@ -238,13 +226,16 @@ public class ChatFrag extends Fragment{
         initTabs(view);
     }
 
-    public static void showReply() {
+    public static void showReply(ChatMessage data) {
         if(reply < 0) {
             replyBox.setVisibility(GONE);
             return;
         }
         replyBox.setVisibility(View.VISIBLE);
         ChatMessage msg = chatList.get(reply);
+        if(data != null)
+            data.reply = msg;
+
         ((ImageView)replyBox.findViewById(R.id.sender_img)).setImageResource(msg.username.equals("ahgirl") ? R.drawable.ic_girl : R.drawable.ic_boy);
         if(msg.getType().equals("MSG")){
             replyBox.findViewById(R.id.gif_to_reply).setVisibility(View.GONE);
@@ -261,11 +252,7 @@ public class ChatFrag extends Fragment{
             gif.setImageDrawable(msg.drawable());
         }
 
-        replyBox.findViewById(R.id.cancel_reply).setOnClickListener(v -> {
-            reply = -1;
-            showReply();
-        });
-
+        replyBox.findViewById(R.id.cancel_reply).setOnClickListener(v -> replyBox.setVisibility(GONE));
     }
 
     private void sendNotification(String time, ChatMessage data) {

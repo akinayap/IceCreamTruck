@@ -1,14 +1,17 @@
 package anw.ict.chat.adapter;
 
+import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -58,6 +61,11 @@ public class ChatLogAdapter extends RecyclerView.Adapter<ChatLogAdapter.ChatView
             holder.mCard.setVisibility(View.VISIBLE);
             holder.mTime.setText(date);
 
+            if(data.startBlink){
+                blink(holder.mCard);
+                data.startBlink = false;
+            }
+
             if (data.getType().equals("GIF")) {
                 holder.mGif.setVisibility(View.VISIBLE);
                 holder.mMessage.setVisibility(View.GONE);
@@ -86,7 +94,16 @@ public class ChatLogAdapter extends RecyclerView.Adapter<ChatLogAdapter.ChatView
                 }
                 holder.mReply.setOnClickListener(v -> {
                     ChatMessage cm = mData.stream().filter(m -> m.getTimestamp().equals(data.reply.getTimestamp())).findAny().orElse(null);
-                    chatRV.smoothScrollToPosition(mData.indexOf(cm));
+                    if(mData.indexOf(cm) < 0) {
+                        Toast.makeText(getContext(), "Message was deleted.", Toast.LENGTH_LONG).show();
+                    }
+                    else {
+                        chatRV.smoothScrollToPosition(mData.indexOf(cm));
+                        if(cm != null){
+                            cm.startBlink = true;
+                            notifyItemChanged(mData.indexOf(cm));
+                        }
+                    }
                 });
             } else {
                 holder.mReply.setVisibility(View.GONE);
@@ -96,6 +113,11 @@ public class ChatLogAdapter extends RecyclerView.Adapter<ChatLogAdapter.ChatView
             holder.mCard.setVisibility(View.GONE);
             holder.oCard.setVisibility(View.VISIBLE);
             holder.oTime.setText(date);
+
+            if(data.startBlink){
+                blink(holder.oCard);
+                data.startBlink = false;
+            }
 
             if (data.getType().equals("GIF")) {
                 holder.oGif.setVisibility(View.VISIBLE);
@@ -126,28 +148,56 @@ public class ChatLogAdapter extends RecyclerView.Adapter<ChatLogAdapter.ChatView
                 }
                 holder.oReply.setOnClickListener(v -> {
                     ChatMessage cm = mData.stream().filter(m -> m.getTimestamp().equals(data.reply.getTimestamp())).findAny().orElse(null);
-                    chatRV.smoothScrollToPosition(mData.indexOf(cm));
-
+                    if(mData.indexOf(cm) < 0) {
+                        Toast.makeText(getContext(), "Message was deleted.", Toast.LENGTH_LONG).show();
+                    }
+                    else {
+                        chatRV.smoothScrollToPosition(mData.indexOf(cm));
+                        if(cm != null){
+                            cm.startBlink = true;
+                            notifyItemChanged(mData.indexOf(cm));
+                        }
+                    }
                 });
             } else {
                 holder.mReply.setVisibility(View.GONE);
                 holder.oReply.setVisibility(View.GONE);
             }
+
         }
     }
 
     private void blink(View view) {
-        ObjectAnimator anim = ObjectAnimator.ofFloat(view, "alpha", 0.0f, 0.5f, 0.5f, 0.5f, 0.0f);
+        Drawable buttonDrawable = view.getBackground();
+        ObjectAnimator anim = ObjectAnimator.ofArgb(view, "backgroundColor", 0, R.color.colorPrimaryDark, R.color.colorPrimaryDark, R.color.colorPrimaryDark, 0);
+        //ObjectAnimator anim = ObjectAnimator.ofFloat(view, "alpha", 1.0f, 0.5f, 0.5f, 0.5f, 0.5f, 1.0f);
         anim.setDuration(1000);
         anim.start();
+        anim.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                view.setBackground(buttonDrawable);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                view.setBackground(buttonDrawable);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
+            }
+        });
     }
 
     public Context getContext() {
         return c;
-    }
-
-    public ChatMessage getItem(int position) {
-        return mData.get(position);
     }
 
     public class ChatViewHolder extends RecyclerView.ViewHolder {

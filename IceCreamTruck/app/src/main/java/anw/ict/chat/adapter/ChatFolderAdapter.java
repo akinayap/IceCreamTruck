@@ -50,14 +50,15 @@ public class ChatFolderAdapter extends RecyclerView.Adapter<ChatFolderAdapter.Ch
 
     @Override
     public void onBindViewHolder(@NonNull ChatFolderViewHolder holder, int position) {
-
-        holder.tv.setText(mData.get(position).getFolderName());
+        String currentSelected = mData.get(position).getFolderName();
+        holder.tv.setText(currentSelected);
 
         holder.adapter = new ChatStickersAdapter(mData.get(position).getStickers(), v->{
             // Remove Sticker Here
             List<ChatSticker> stickers = mData.get(position).getStickers();
             ChatSticker toRemove = stickers.stream().filter(s -> s.getName().equals(v.getName())).findAny().orElse(null);
             holder.adapter.notifyItemRemoved(stickers.indexOf(toRemove));
+            holder.adapter.notifyItemRangeChanged(stickers.indexOf(toRemove), holder.adapter.getItemCount());
             mData.get(position).getStickers().remove(toRemove);
 
             stickerList.add(v);
@@ -86,7 +87,7 @@ public class ChatFolderAdapter extends RecyclerView.Adapter<ChatFolderAdapter.Ch
             notifyItemChanged(mData.indexOf(prevFolder));
         });
 
-        if(selectedFolder.equals(mData.get(position).getFolderName())) {
+        if(selectedFolder.equals(currentSelected)) {
             Drawable buttonDrawable = holder.cl.getBackground();
             buttonDrawable = DrawableCompat.wrap(buttonDrawable);
             //the color is a direct color int and not a color resource

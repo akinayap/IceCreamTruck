@@ -16,6 +16,7 @@ import static anw.ict.utils.Constants.IMAGE_GIF;
 public class ChatMessage {
     public String username, message, type, timestamp;
     public ChatMessage reply = null;
+    public boolean startBlink = false;
     private Context context;
 
     public ChatMessage(){}
