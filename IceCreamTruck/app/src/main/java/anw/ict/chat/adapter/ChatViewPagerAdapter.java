@@ -82,7 +82,7 @@ public class ChatViewPagerAdapter extends FragmentPagerAdapter {
         GifImageView giv = tabs.findViewById(R.id.gif_title);
         TextView tv = tabs.findViewById(R.id.folder_title);
         giv.setImageResource(R.drawable.ic_login_load);
-        giv.setImageDrawable(folderIcons.get(position).drawable());
+        folderIcons.get(position).drawable(giv);
         tv.setText(folderNames.get(position));
         return tabs;
     }

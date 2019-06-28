@@ -27,6 +27,8 @@ import anw.ict.chat.objects.ChatMessage;
 import pl.droidsonroids.gif.GifImageView;
 
 import static anw.ict.chat.fragments.ChatFrag.chatRV;
+import static anw.ict.utils.Constants.GIF;
+import static anw.ict.utils.Constants.PIC;
 
 public class ChatLogAdapter extends RecyclerView.Adapter<ChatLogAdapter.ChatViewHolder> {
     private String userRole;
@@ -66,10 +68,13 @@ public class ChatLogAdapter extends RecyclerView.Adapter<ChatLogAdapter.ChatView
                 data.startBlink = false;
             }
 
-            if (data.getType().equals("GIF")) {
+            if (data.getType().equals(GIF) || data.getType().equals(PIC)) {
                 holder.mGif.setVisibility(View.VISIBLE);
                 holder.mMessage.setVisibility(View.GONE);
-                holder.mGif.setImageDrawable(data.drawable());
+                if(data.getType().equals(PIC))
+                    data.photo(holder.mGif);
+                else
+                    data.drawable(holder.mGif);
             } else if (!data.getMessage().equals("")) {
                 holder.mMessage.setVisibility(View.VISIBLE);
                 holder.mGif.setVisibility(View.GONE);
@@ -83,10 +88,13 @@ public class ChatLogAdapter extends RecyclerView.Adapter<ChatLogAdapter.ChatView
                 GifImageView gifMessage = (GifImageView) holder.mReply.getViewById(R.id.my_gif_to_reply);
 
                 userIcon.setImageResource(data.reply.username.equals("ahgirl") ? R.drawable.ic_girl : R.drawable.ic_boy);
-                if(data.reply.getType().equals("GIF")){
+                if(data.reply.getType().equals(GIF) || data.reply.getType().equals(PIC)){
                     message.setVisibility(View.GONE);
                     gifMessage.setVisibility(View.VISIBLE);
-                    gifMessage.setImageDrawable(data.reply.drawable());
+                    if(data.reply.getType().equals(PIC))
+                        data.reply.photo(gifMessage);
+                    else
+                        data.reply.drawable(gifMessage);
                 } else if (!data.reply.getMessage().equals("")){
                     gifMessage.setVisibility(View.GONE);
                     message.setVisibility(View.VISIBLE);
@@ -119,10 +127,13 @@ public class ChatLogAdapter extends RecyclerView.Adapter<ChatLogAdapter.ChatView
                 data.startBlink = false;
             }
 
-            if (data.getType().equals("GIF")) {
+            if (data.getType().equals(GIF) || data.getType().equals(PIC)) {
                 holder.oGif.setVisibility(View.VISIBLE);
                 holder.oMessage.setVisibility(View.GONE);
-                holder.oGif.setImageDrawable(data.drawable());
+                if(data.getType().equals(PIC))
+                    data.photo(holder.oGif);
+                else
+                    data.drawable(holder.oGif);
             } else if (!data.getMessage().equals("")) {
                 holder.oMessage.setVisibility(View.VISIBLE);
                 holder.oGif.setVisibility(View.GONE);
@@ -137,10 +148,13 @@ public class ChatLogAdapter extends RecyclerView.Adapter<ChatLogAdapter.ChatView
                 GifImageView gifMessage = (GifImageView) holder.oReply.getViewById(R.id.other_gif_to_reply);
 
                 userIcon.setImageResource(data.reply.username.equals("ahgirl") ? R.drawable.ic_girl : R.drawable.ic_boy);
-                if(data.reply.getType().equals("GIF")){
+                if(data.reply.getType().equals(GIF) || data.reply.getType().equals(PIC)){
                     message.setVisibility(View.GONE);
                     gifMessage.setVisibility(View.VISIBLE);
-                    gifMessage.setImageDrawable(data.reply.drawable());
+                    if(data.reply.getType().equals(PIC))
+                        data.reply.photo(gifMessage);
+                    else
+                       data.reply.drawable(gifMessage);
                 } else if (!data.reply.getMessage().equals("")){
                     gifMessage.setVisibility(View.GONE);
                     message.setVisibility(View.VISIBLE);

@@ -23,6 +23,9 @@ import anw.ict.R;
 import anw.ict.chat.objects.ChatNotification;
 
 import static android.content.ContentValues.TAG;
+import static anw.ict.utils.Constants.GIF;
+import static anw.ict.utils.Constants.MSG;
+import static anw.ict.utils.Constants.PIC;
 import static anw.ict.utils.Constants.TOKENS;
 
 public class NotificationService extends FirebaseMessagingService {
@@ -51,7 +54,17 @@ public class NotificationService extends FirebaseMessagingService {
     }
 
     private void inboxStyle(ChatNotification cn) {
-        cn.msg = cn.type.equals("GIF") ? "sent a GIF" : cn.msg;
+        switch (cn.getType()){
+            case GIF:
+                cn.msg = "sent a GIF";
+                break;
+            case PIC:
+                cn.msg = "sent a photo";
+                break;
+            case MSG:
+                break;
+        }
+
         cn.sender = cn.sender.equals("ahgirl") ? "Ah Girl" : "Ah Boy";
 
         Intent chatIntent  = new Intent(this, MainActivity.class);
@@ -87,15 +100,15 @@ public class NotificationService extends FirebaseMessagingService {
                 .setContentIntent(PendingIntent.getActivity(this, 0, chatIntent, PendingIntent.FLAG_UPDATE_CURRENT))
                 .setAutoCancel(true)
                 .setVibrate(new long[]{100, 200, 300, 400, 500})
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setChannelId(CHANNEL_ID)
                 .setStyle(inboxStyle);
-
 
         NotificationChannel mChannel = notificationManager.getNotificationChannel(CHANNEL_ID);
         if (mChannel == null) {
             mChannel = new NotificationChannel(CHANNEL_ID,
                     "Channel human readable title",
-                    NotificationManager.IMPORTANCE_DEFAULT);
+                    NotificationManager.IMPORTANCE_HIGH);
             mChannel.enableVibration(false);
             mChannel.setVibrationPattern(new long[]{1000, 200, 300, 400, 500});
             notificationManager.createNotificationChannel(mChannel);

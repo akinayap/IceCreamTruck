@@ -41,6 +41,8 @@ public class SplashActivity extends AppCompatActivity {
     FirebaseStorage st;
     String userId;
 
+    long totalStickers = 0, loadedStickers = 0;
+
     ValueEventListener stickerListener, userListener;
 
     @Override
@@ -104,11 +106,10 @@ public class SplashActivity extends AppCompatActivity {
         stickerListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                totalStickers = dataSnapshot.getChildrenCount();
                 for(DataSnapshot child : dataSnapshot.getChildren())
                     downloadSticker(child.getKey());
 
-                // Init userrole
-                db.getReference("users/" + userId).addValueEventListener(userListener);
             }
 
             @Override
@@ -150,6 +151,12 @@ public class SplashActivity extends AppCompatActivity {
     private void downloadSticker(String filename) {
         try {
             getApplicationContext().openFileInput(filename);
+            ++loadedStickers;
+            if(loadedStickers == totalStickers){
+                // Init userrole
+                db.getReference("users/" + userId).addValueEventListener(userListener);
+            }
+
         } catch (Exception e) {
             stickerStorage = st.getReference(STICKERS).child(filename);
             stickerStorage.getBytes(IMAGE_GIF).addOnSuccessListener(bytes -> {
@@ -158,6 +165,11 @@ public class SplashActivity extends AppCompatActivity {
                     outputStream.write(bytes);
                     outputStream.close();
                     Log.e("Downloaded", filename);
+                    ++loadedStickers;
+                    if(loadedStickers == totalStickers){
+                        // Init userrole
+                        db.getReference("users/" + userId).addValueEventListener(userListener);
+                    }
                 } catch (Exception e1) {
                     e1.printStackTrace();
                 }

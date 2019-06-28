@@ -1,13 +1,17 @@
 package anw.ict.chat.fragments;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -40,6 +44,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -55,10 +60,18 @@ import anw.ict.chat.objects.ChatNotification;
 import pl.droidsonroids.gif.GifImageView;
 
 import static android.view.View.GONE;
+import static anw.ict.utils.Constants.CAM_PERMISSION;
 import static anw.ict.utils.Constants.CHAT_LOG;
 import static anw.ict.utils.Constants.IMAGE_GIF;
+import static anw.ict.utils.Constants.IMAGE_PHOTO;
+import static anw.ict.utils.Constants.MSG;
 import static anw.ict.utils.Constants.NOTIFICATIONS;
+import static anw.ict.utils.Constants.PHOTOS;
+import static anw.ict.utils.Constants.PIC;
 import static anw.ict.utils.Constants.STICKERS;
+import static anw.ict.utils.Constants.TAKE_PIC_AND_SEND;
+import static anw.ict.utils.Constants.UPLOAD_IMAGE_AND_SEND;
+import static anw.ict.utils.Constants.UPLOAD_STICKERS;
 
 public class ChatFrag extends Fragment{
     private String userRole, userId;
@@ -107,7 +120,6 @@ public class ChatFrag extends Fragment{
                         chatRV.smoothScrollToPosition(chatAdapter.getItemCount() - 1);
                     }
                 }
-                clearNotifications();
             }
 
             @Override
@@ -137,7 +149,7 @@ public class ChatFrag extends Fragment{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        clearNotifications();
         replyBox = view.findViewById(R.id.reply_view);
         if(reply < 0) {
             replyBox.setVisibility(GONE);
@@ -197,14 +209,14 @@ public class ChatFrag extends Fragment{
             Intent photoPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
             photoPickerIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
             photoPickerIntent.setType("image/*");
-            startActivityForResult(photoPickerIntent, 1);
+            startActivityForResult(photoPickerIntent, UPLOAD_STICKERS);
         });
         sendBtn.setOnClickListener(v->{
             String msg = chatInput.getText().toString().trim();
             Long time = new Date().getTime();
             //String timestamp = new SimpleDateFormat("hh:mm a, dd MMM yyyy", Locale.US).format(time);
             if (!msg.equals("")) {
-                ChatMessage data = new ChatMessage(getContext(), msg,"MSG", String.valueOf(time), userRole);
+                ChatMessage data = new ChatMessage(getContext(), msg,MSG, String.valueOf(time), userRole);
                 showReply(data);
                 reply = -1;
                 showReply(null);
@@ -215,15 +227,54 @@ public class ChatFrag extends Fragment{
         });
         folderBtn.setOnClickListener(v-> Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction().replace(R.id.frag, new FolderFrag()).addToBackStack(null).commit());
         cameraBtn.setOnClickListener(v->{
-            /*Show Camera REMOVE THE LOGOUT*/
-            FirebaseAuth.getInstance().signOut();
+            String[] choices = {"Take a photo", "Open Gallery"};
 
-            Intent i = new Intent(getContext(), SplashActivity.class);
-            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(i);
+                    AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
+                    mBuilder.setTitle("Choose an item");
+                    mBuilder.setSingleChoiceItems(choices, -1, (dialogInterface, i) -> {
+                        if(i == 0){
+                            // Take Photo
+                            if (Objects.requireNonNull(getContext()).checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                                requestPermissions(new String[]{Manifest.permission.CAMERA}, CAM_PERMISSION);
+                            }
+                            else {
+                                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                                startActivityForResult(cameraIntent, TAKE_PIC_AND_SEND);
+                            }
+                        }
+                        else{
+                            // Upload Image
+                            Intent photoPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                            photoPickerIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                            photoPickerIntent.setType("image/*");
+                            startActivityForResult(photoPickerIntent, UPLOAD_IMAGE_AND_SEND);
+                        }
+                        dialogInterface.dismiss();
+                    }).setIcon(null);
+
+                    AlertDialog mDialog = mBuilder.create();
+                    mDialog.show();
         });
         initTabs(view);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
+    {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == CAM_PERMISSION)
+        {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            {
+                Toast.makeText(getContext(), "Camera permission granted", Toast.LENGTH_LONG).show();
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, TAKE_PIC_AND_SEND);
+            }
+            else
+            {
+                Toast.makeText(getContext(), "Camera permission denied", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     public static void showReply(ChatMessage data) {
@@ -237,7 +288,7 @@ public class ChatFrag extends Fragment{
             data.reply = msg;
 
         ((ImageView)replyBox.findViewById(R.id.sender_img)).setImageResource(msg.username.equals("ahgirl") ? R.drawable.ic_girl : R.drawable.ic_boy);
-        if(msg.getType().equals("MSG")){
+        if(msg.getType().equals(MSG)){
             replyBox.findViewById(R.id.gif_to_reply).setVisibility(View.GONE);
             TextView tv = replyBox.findViewById(R.id.msg_to_reply);
             tv.setVisibility(View.VISIBLE);
@@ -249,10 +300,10 @@ public class ChatFrag extends Fragment{
             GifImageView gif = replyBox.findViewById(R.id.gif_to_reply);
             gif.setVisibility(View.VISIBLE);
 
-            gif.setImageDrawable(msg.drawable());
+            msg.drawable(gif);
         }
 
-        replyBox.findViewById(R.id.cancel_reply).setOnClickListener(v -> replyBox.setVisibility(GONE));
+        replyBox.findViewById(R.id.cancel_reply).setOnClickListener(v -> {reply = -1; replyBox.setVisibility(GONE);});
     }
 
     private void sendNotification(String time, ChatMessage data) {
@@ -280,9 +331,8 @@ public class ChatFrag extends Fragment{
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1)
-            if (resultCode == Activity.RESULT_OK) {
-
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == UPLOAD_STICKERS){
                 if (data.getClipData() != null) {
                     int count = data.getClipData().getItemCount();
                     for (int i = 0; i < count; ++i) {
@@ -294,7 +344,33 @@ public class ChatFrag extends Fragment{
                     uploadSticker(file);
                 }
             }
+            else if (requestCode == UPLOAD_IMAGE_AND_SEND){
+                Log.e("Activity intent", "UPLOAD");
+                if (data.getClipData() != null) {
+                    Log.e("dataclip", "UPLOAD");
+                    int count = data.getClipData().getItemCount();
+                    for (int i = 0; i < count; ++i) {
+                        Uri file = data.getClipData().getItemAt(i).getUri();
+                        uploadImage(file);
+                    }
+                } else if (data.getData() != null) {
+                    Log.e("data", "UPLOAD");
+                    Uri file = data.getData();
+                    uploadImage(file);
+                }
+                data.getExtras().get("data");
+            }
+            else if (requestCode == TAKE_PIC_AND_SEND){
+                Log.e("Activity intent", "UPLOAD");
+                if (data.getExtras().get("data") != null) {
+                    Log.e("data", "UPLOAD");
+                    uploadPhoto((Bitmap)data.getExtras().get("data"));
+                    //uploadImage(file);
+                }
+            }
+        }
     }
+
     private void uploadSticker(Uri file) {
         long fileSize = 0;
         try {
@@ -310,7 +386,7 @@ public class ChatFrag extends Fragment{
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle("File too large");
-            builder.setMessage("Image size must be less than 1MB");
+            builder.setMessage("GIF size must be less than 1MB");
 
             // Set up the buttons
             builder.setPositiveButton("Optimize Image", (dialog, which) -> {
@@ -331,6 +407,69 @@ public class ChatFrag extends Fragment{
                     });
         }
     }
+    private void uploadImage(Uri file) {
+        long fileSize = 0;
+        try {
+            AssetFileDescriptor afd = Objects.requireNonNull(getActivity()).getContentResolver().openAssetFileDescriptor(file, "r");
+            assert afd != null;
+            fileSize = afd.getLength();
+            afd.close();
+        } catch (Exception e) {
+            Log.e("Invalid", "File not valid");
+        }
 
+        if (fileSize > IMAGE_PHOTO || fileSize <= 0) {
 
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle("File too large");
+            builder.setMessage("Image size must be less than 10MB");
+
+            // Set up the buttons
+            builder.setPositiveButton("Optimize Image", (dialog, which) -> {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://ezgif.com")));
+                dialog.dismiss();
+            });
+            builder.setNegativeButton("OK", (dialog, which) -> dialog.cancel());
+
+            builder.show();
+        } else {
+            String name = String.valueOf(new Date().getTime());
+
+            UploadTask ut = st.getReference(PHOTOS).child(name).putFile(file);
+            ut.addOnFailureListener(exception -> Toast.makeText(getContext(), "Photo not uploaded. :(", Toast.LENGTH_SHORT).show())
+                    .addOnSuccessListener(taskSnapshot -> {
+                        Toast.makeText(getContext(), "Photo sent!", Toast.LENGTH_SHORT).show();
+
+                        ChatMessage data = new ChatMessage(getContext(), name, PIC, name, userRole);
+                        showReply(data);
+                        reply = -1;
+                        showReply(null);
+                        db.getReference(CHAT_LOG).child(name).setValue(data);
+                        chatInput.setText("");
+                        sendNotification(name, data);
+                    });
+        }
+    }
+
+    private void uploadPhoto(Bitmap bitmap) {
+        String name = String.valueOf(new Date().getTime());
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] bytes = baos.toByteArray();
+
+        UploadTask ut = st.getReference(PHOTOS).child(name).putBytes(bytes);
+        ut.addOnFailureListener(exception -> Toast.makeText(getContext(), "Photo not uploaded. :(", Toast.LENGTH_SHORT).show())
+                .addOnSuccessListener(taskSnapshot -> {
+                    Toast.makeText(getContext(), "Photo sent!", Toast.LENGTH_SHORT).show();
+
+                    ChatMessage data = new ChatMessage(getContext(), name, PIC, name, userRole);
+                    showReply(data);
+                    reply = -1;
+                    showReply(null);
+                    db.getReference(CHAT_LOG).child(name).setValue(data);
+                    chatInput.setText("");
+                    sendNotification(name, data);
+                });
+    }
 }
