@@ -1,5 +1,6 @@
 package anw.ict.utils;
 
+import android.app.ActivityManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -16,6 +17,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.List;
 import java.util.Objects;
 
 import anw.ict.MainActivity;
@@ -40,16 +42,36 @@ public class NotificationService extends FirebaseMessagingService {
         FirebaseDatabase.getInstance().getReference(TOKENS + "/" + FirebaseAuth.getInstance().getUid()).setValue(token);
     }
 
+    private static boolean isForeground(Context context) {
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> tasks = am.getRunningAppProcesses();
+        final String packageName = context.getPackageName();
+        for (ActivityManager.RunningAppProcessInfo appProcess : tasks) {
+            if (ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND == appProcess.importance && packageName.equals(appProcess.processName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        if (remoteMessage.getData().size() > 0) {
-            ChatNotification cn = new ChatNotification(remoteMessage.getData().get("sender"), remoteMessage.getData().get("type"), remoteMessage.getData().get("msg"), remoteMessage.getData().get("time"));
-            inboxStyle(cn);
-        }
 
-        // Check if msg contains a notification payload.
-        if (remoteMessage.getNotification() != null) {
-            Log.e(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
+        if (isForeground(getApplicationContext())) {
+            //if in forground then your operation
+            // if app is running them
+        } else {
+            //if in background then perform notification operation
+
+            if (remoteMessage.getData().size() > 0) {
+                ChatNotification cn = new ChatNotification(remoteMessage.getData().get("sender"), remoteMessage.getData().get("type"), remoteMessage.getData().get("msg"), remoteMessage.getData().get("time"));
+                inboxStyle(cn);
+            }
+
+            // Check if msg contains a notification payload.
+            if (remoteMessage.getNotification() != null) {
+                Log.e(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
+            }
         }
     }
 

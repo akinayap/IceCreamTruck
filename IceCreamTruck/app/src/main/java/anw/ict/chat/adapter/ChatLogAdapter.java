@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,14 +20,17 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
 import anw.ict.R;
 import anw.ict.chat.objects.ChatMessage;
+import anw.ict.utils.Emoji;
 import pl.droidsonroids.gif.GifImageView;
 
 import static anw.ict.chat.fragments.ChatFrag.chatRV;
+import static anw.ict.chat.fragments.ChatFrag.showImage;
 import static anw.ict.utils.Constants.GIF;
 import static anw.ict.utils.Constants.PIC;
 
@@ -75,10 +79,18 @@ public class ChatLogAdapter extends RecyclerView.Adapter<ChatLogAdapter.ChatView
                     data.photo(holder.mGif);
                 else
                     data.drawable(holder.mGif);
+                holder.mGif.setOnClickListener(v -> showImage(holder.mGif.getDrawable()));
             } else if (!data.getMessage().equals("")) {
-                holder.mMessage.setVisibility(View.VISIBLE);
-                holder.mGif.setVisibility(View.GONE);
-                holder.mMessage.setText(data.getMessage());
+                if(Arrays.equals(data.getMessage().getBytes(), Emoji.HEART)){
+                    holder.mGif.setVisibility(View.VISIBLE);
+                    holder.mMessage.setVisibility(View.GONE);
+                    holder.mGif.setImageResource(R.drawable.ic_beating_heart);
+                }
+                else {
+                    holder.mMessage.setVisibility(View.VISIBLE);
+                    holder.mGif.setVisibility(View.GONE);
+                    holder.mMessage.setText(data.getMessage());
+                }
             }
             if(data.reply != null){
                 holder.oReply.setVisibility(View.GONE);
@@ -134,10 +146,18 @@ public class ChatLogAdapter extends RecyclerView.Adapter<ChatLogAdapter.ChatView
                     data.photo(holder.oGif);
                 else
                     data.drawable(holder.oGif);
+                holder.oGif.setOnClickListener(v -> showImage(holder.oGif.getDrawable()));
             } else if (!data.getMessage().equals("")) {
-                holder.oMessage.setVisibility(View.VISIBLE);
-                holder.oGif.setVisibility(View.GONE);
-                holder.oMessage.setText(data.getMessage());
+                if(Arrays.equals(data.getMessage().getBytes(), Emoji.HEART)){
+                    holder.oGif.setVisibility(View.VISIBLE);
+                    holder.oMessage.setVisibility(View.GONE);
+                    holder.oGif.setImageResource(R.drawable.ic_beating_heart);
+                }
+                else {
+                    holder.oMessage.setVisibility(View.VISIBLE);
+                    holder.oGif.setVisibility(View.GONE);
+                    holder.oMessage.setText(data.getMessage());
+                }
             }
 
             if(data.reply != null){

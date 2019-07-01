@@ -6,12 +6,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -36,7 +36,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -51,7 +50,6 @@ import java.util.List;
 import java.util.Objects;
 
 import anw.ict.R;
-import anw.ict.SplashActivity;
 import anw.ict.chat.adapter.ChatLogAdapter;
 import anw.ict.chat.adapter.ChatViewPagerAdapter;
 import anw.ict.chat.callback.MessageSwipeCallback;
@@ -82,6 +80,7 @@ public class ChatFrag extends Fragment{
     private EditText chatInput;
     private ChatLogAdapter chatAdapter;
     private static ConstraintLayout replyBox;
+    private static ConstraintLayout imagePreview;
     private ChatViewPagerAdapter pagerAdapter;
     private FirebaseDatabase db;
     private FirebaseStorage st;
@@ -151,6 +150,10 @@ public class ChatFrag extends Fragment{
         super.onViewCreated(view, savedInstanceState);
         clearNotifications();
         replyBox = view.findViewById(R.id.reply_view);
+        imagePreview = view.findViewById(R.id.img_preview_layout);
+        if(imagePreview.getVisibility() == View.VISIBLE)
+            imagePreview.setVisibility(GONE);
+
         if(reply < 0) {
             replyBox.setVisibility(GONE);
         }
@@ -259,8 +262,7 @@ public class ChatFrag extends Fragment{
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
-    {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == CAM_PERMISSION)
         {
@@ -304,6 +306,14 @@ public class ChatFrag extends Fragment{
         }
 
         replyBox.findViewById(R.id.cancel_reply).setOnClickListener(v -> {reply = -1; replyBox.setVisibility(GONE);});
+    }
+
+    public static void showImage(Drawable img){
+        imagePreview.setVisibility(View.VISIBLE);
+        GifImageView giv = imagePreview.findViewById(R.id.img_preview);
+        giv.setImageDrawable(img);
+
+        imagePreview.findViewById(R.id.end_img_preview).setOnClickListener(v -> imagePreview.setVisibility(GONE));
     }
 
     private void sendNotification(String time, ChatMessage data) {
@@ -358,7 +368,6 @@ public class ChatFrag extends Fragment{
                     Uri file = data.getData();
                     uploadImage(file);
                 }
-                data.getExtras().get("data");
             }
             else if (requestCode == TAKE_PIC_AND_SEND){
                 Log.e("Activity intent", "UPLOAD");
