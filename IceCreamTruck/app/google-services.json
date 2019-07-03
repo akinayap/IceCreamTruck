@@ -79,43 +79,6 @@
           ]
         }
       }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:315351737614:android:86ed5934f8796a8f",
-        "android_client_info": {
-          "package_name": "com.example.icecreamtruckv2"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "315351737614-tpbv19tl5qntrnhpcbv4tumvf2auo447.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.icecreamtruckv2",
-            "certificate_hash": "e17231c6874c5b56c4fd9b38bfaf449d25e42809"
-          }
-        },
-        {
-          "client_id": "315351737614-n5m2p06vdevqbs9njgbp4cle2aaqccg7.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDUehtHZ2GKbUq1wQ6T8hXSy7twILhv-y0"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "315351737614-n5m2p06vdevqbs9njgbp4cle2aaqccg7.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
     }
   ],
   "configuration_version": "1"

@@ -4,6 +4,7 @@ public interface Constants {
     int UPLOAD_STICKERS = 1;
     int UPLOAD_IMAGE_AND_SEND = 2;
     int TAKE_PIC_AND_SEND = 3;
+    int UPLOAD_MEMORIES = 4;
 
     int CAM_PERMISSION = 999;
 

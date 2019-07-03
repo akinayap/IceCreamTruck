@@ -1,0 +1,282 @@
+<html>
+<head>
+  <meta charset=utf-8 />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email/Password Authentication Example</title>
+
+	<!-- Import and configure the Firebase SDK -->
+  <!-- If you do not serve/host your project using Firebase Hosting see https://firebase.google.com/docs/web/setup -->
+  <script src="/__/firebase/6.2.4/firebase-app.js"></script>
+  <script src="/__/firebase/6.2.4/firebase-auth.js"></script>
+	<script src="/__/firebase/6.2.4/firebase-database.js"></script>
+	<script src="/__/firebase/6.2.4/firebase-storage.js"></script>
+	<script src="/__/firebase/6.2.4/firebase-messaging.js"></script>
+	<script src="/__/firebase/6.2.4/firebase-functions.js"></script>
+  <script src="/__/firebase/init.js"></script>
+
+	<style>
+		body {
+			width: 99%;
+			height: 97%;
+		}
+	
+		h3 {
+			background-color:DodgerBlue;
+			color: white;
+			margin: auto;
+			padding: 10px;
+			font-family: "Trebuchet MS", Helvetica, sans-serif;
+		}
+		
+		div.outer{
+			border: 2px solid black;
+			margin: auto;
+			height: 85%;
+		}
+		
+		div.login{
+			border: 2px solid black;
+			margin: auto;
+		}
+		
+		div.inner{
+			margin: auto;
+			padding: 10px;
+		}
+		
+		div.chatui{
+			margin: auto;
+			padding: 10px;
+			text-align: center;
+		}
+		
+		div.columnleft {
+			float: left;
+			padding: 5px;
+		}
+
+		div.columnright {
+			float: right;
+			padding: 5px;
+		}
+
+		div.row::after {
+			margin: auto;
+			content: "";
+			clear: both;
+			display: table;
+		}
+		
+		div.border{
+			border:1px solid black;
+		}
+		
+		div.chatholder{
+			margin: auto;
+			height: 80%;
+			overflow-x: hidden;
+			overflow-y: auto;
+		}
+		
+		p {
+			word-wrap: normal;
+		}
+		
+		img{
+			height: 50px;
+			width: auto;
+			padding: 5px;
+			float: left;
+		}
+		
+		button{
+			padding: 10px;
+		}
+		
+		input.message{
+			width: 90%;
+		}
+		
+		
+	</style>
+
+  <script type="text/javascript">
+	
+		var userrole;
+		function toggleSendMsg() {
+			var date = new Date();
+			var timestamp = date.getTime();
+			var message = document.getElementById('msg').value;
+			
+			document.getElementById('msg').value = '';
+			firebase.database().ref('chat/ice_cream_truck_chat/' + timestamp).set({
+				message: message,
+				timestamp: timestamp.toString(),
+				type: 'MSG',
+				username: userrole
+			});
+		}
+    function toggleSignIn() {
+      if (firebase.auth().currentUser) {
+        firebase.auth().signOut();
+      } else {
+        var email = document.getElementById('email').value;
+        var password = document.getElementById('password').value;
+        if (email.length < 4) {
+          alert('Please enter an email address.');
+          return;
+        }
+        if (password.length < 4) {
+          alert('Please enter a password.');
+          return;
+        }
+				
+        firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+          var errorCode = error.code;
+          var errorMessage = error.message;
+					
+          if (errorCode === 'auth/wrong-password') {
+            alert('Wrong password.');
+          } else {
+            alert(errorMessage);
+          }
+          console.log(error);
+          document.getElementById('quickstart-sign-in').disabled = false;
+        });
+      }
+      document.getElementById('quickstart-sign-in').disabled = true;
+    }
+		
+		function updateList(userrole, data) {
+			var msg_holder = document.getElementById('list_of_messages');
+			var div_row = document.createElement("DIV");
+			div_row.classList.add('row');
+			div_row.classList.add('border');
+			
+			var div_icon = document.createElement("DIV");
+			var img_icon = document.createElement("IMG");
+			
+			var div_msg = document.createElement("DIV");
+			
+			var img_msg = document.createElement("IMG");
+					img_msg.src = 'ic_load.gif';
+			var p_msg = document.createElement("P");
+			
+			img_icon.src = 'ic_boy.png';
+			if(data.val().username.toString().localeCompare('ahgirl') == 0){
+				img_icon.src = 'ic_girl.png';
+			}
+			div_icon.appendChild(img_icon);
+			
+			if(userrole.localeCompare(data.val().username.toString()) == 0){
+				div_icon.classList.add('columnright');
+				div_msg.classList.add('columnright');
+			} else {
+				div_icon.classList.add('columnleft');
+				div_msg.classList.add('columnleft');
+			}
+		
+			var storage  = firebase.storage();
+			
+			// Check message types
+			if(data.val().type.toString().localeCompare('MSG') == 0) {
+				p_msg.textContent = data.val().message;
+				div_msg.appendChild(p_msg);
+			} else if(data.val().type.toString().localeCompare('GIF') == 0) {
+				var gif = storage.ref('stickers/' + data.val().message);
+				gif.getDownloadURL().then(function(url) {
+					img_msg.src = url;
+					div_msg.appendChild(img_msg);
+				}).catch(function(error) {
+					console.error(error);
+				});
+			} else {
+				var pic = storage.ref('photos/' + data.val().message);
+				pic.getDownloadURL().then(function(url) {
+					img_msg.src = url;
+					div_msg.appendChild(img_msg);
+				}).catch(function(error) {
+					console.error(error);
+				});
+			}
+		
+			div_row.appendChild(div_icon);
+			div_row.appendChild(div_msg);
+		
+			msg_holder.appendChild(div_row);
+		}
+		
+    function initApp() {
+      firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+          // User is signed in.
+          var displayName = user.displayName;
+          var email = user.email;
+          var emailVerified = user.emailVerified;
+          var photoURL = user.photoURL;
+          var isAnonymous = user.isAnonymous;
+          var uid = user.uid;
+          var providerData = user.providerData;
+					
+          document.getElementById('quickstart-sign-in-status').textContent = 'Signed in';
+          document.getElementById('quickstart-sign-in').textContent = 'Sign out';
+          document.getElementById('current-user').textContent = email;
+					
+					var database = firebase.database();
+					var user = database.ref('users/'+uid+'/role');
+					user.once('value', function(data){
+						userrole = data.val();
+					});
+					
+					var messages = database.ref('chat/ice_cream_truck_chat');
+					messages.on('child_added', function(data) {
+						updateList(userrole.toString(), data);
+					});
+					
+          document.getElementById('send-message').disabled = false;
+        } else {
+          // User is signed out.
+          document.getElementById('quickstart-sign-in-status').textContent = 'Signed out';
+          document.getElementById('quickstart-sign-in').textContent = 'Sign in';
+          document.getElementById('current-user').textContent = 'None';
+					var msg_holder = document.getElementById('list_of_messages');
+					while (msg_holder.firstChild) {
+							msg_holder.removeChild(msg_holder.firstChild);
+					}
+          document.getElementById('send-message').disabled = true;
+        }
+        document.getElementById('quickstart-sign-in').disabled = false;
+      });
+      document.getElementById('quickstart-sign-in').addEventListener('click', toggleSignIn, false);
+      document.getElementById('send-message').addEventListener('click', toggleSendMsg, false);
+		}
+    window.onload = function() {
+      initApp();
+    };
+  </script>
+</head>
+<body>
+	<!-- Container for signin -->
+	<div class="login">
+		<h3>Firebase log in status: <span id="quickstart-sign-in-status">Unknown</span></h3>
+			<div class="inner">
+				<input type="text" id="email" name="email" placeholder="Email"/>
+				&nbsp;&nbsp;&nbsp;
+				<input type="password" id="password" name="password" placeholder="Password"/>
+				&nbsp;&nbsp;&nbsp;
+				<button disabled id="quickstart-sign-in" name="signin">Sign In</button>
+			</div>
+	</div>
+	<!-- Container for chat -->
+	<div class="outer">
+		<h3>Current User: <span id="current-user">None</span></h3>
+		<div class="chatholder" id="list_of_messages">
+		</div>
+		<div class="chatui">
+			<input class="message" type="text" id="msg" name="msg" placeholder="Write message here"/>
+				&nbsp;&nbsp;&nbsp;
+			<button id="send-message" name="sendmsg">Send</button>
+		</div>
+	</div>
+</body>
+</html>
