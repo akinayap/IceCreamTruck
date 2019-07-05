@@ -59,7 +59,7 @@ public class NotificationService extends FirebaseMessagingService {
 
         if (isForeground(getApplicationContext())) {
             //if in forground then your operation
-            // if app is running them
+            // if app is running
         } else {
             //if in background then perform notification operation
 

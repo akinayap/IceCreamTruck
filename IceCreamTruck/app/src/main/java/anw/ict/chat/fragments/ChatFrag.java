@@ -187,7 +187,6 @@ public class ChatFrag extends Fragment{
         ImageButton cameraBtn = view.findViewById(R.id.camera_btn);
 
         chatInput = view.findViewById(R.id.input);
-
         chatInput.setOnTouchListener((v, event) -> {
             View keyboard = view.findViewById(R.id.sticker_keyboard);
             if(keyboard.getVisibility() == View.VISIBLE)

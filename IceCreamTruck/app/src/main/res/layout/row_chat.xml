@@ -16,7 +16,6 @@
         card_view:cardBackgroundColor="@color/transparent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/other_cl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -136,7 +135,6 @@
         tools:ignore="RelativeOverlap">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/my_cl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"

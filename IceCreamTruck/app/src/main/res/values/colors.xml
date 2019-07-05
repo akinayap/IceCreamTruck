@@ -4,6 +4,5 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">@android:color/holo_blue_bright</color>
     <color name="transparent">#00000000</color>
-    <color name="minorTransparent">#10000000</color>
     <color name="halfTransparent">#3F000000</color>
 </resources>
