@@ -4,164 +4,271 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
-	tools:context=".MainActivity">
+	tools:context=".MainActivity"
+	android:background="@drawable/ph_bg">
 
-	<androidx.appcompat.widget.AppCompatImageView
+	<androidx.constraintlayout.widget.ConstraintLayout
+		android:id="@+id/ui"
+		android:layout_margin="24dp"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		app:layout_constraintTop_toTopOf="parent"
+		android:background="@drawable/ph_bg_ui"
+		android:padding="8dp"
+		>
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			app:layout_constraintTop_toTopOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			android:text="Score: "
+			android:textColor="@color/ui_text"/>
+
+	</androidx.constraintlayout.widget.ConstraintLayout>
+
+	<androidx.appcompat.widget.AppCompatImageButton
 		android:id="@+id/cone_1"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
+		android:layout_width="@dimen/cone_size"
+		android:layout_height="@dimen/cone_size"
 		android:layout_margin="24dp"
 		android:layout_weight="1"
-		android:src="@drawable/ic_cone"
+		android:src="@drawable/ph_ic_cone"
 		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toEndOf="parent"/>
+		app:layout_constraintStart_toStartOf="parent"
+		android:scaleType="fitCenter"
+		android:background="@color/transparent"/>
+	<androidx.constraintlayout.widget.ConstraintLayout
+		android:id="@+id/ic_1"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginBottom="@dimen/first_cream"
+		app:layout_constraintBottom_toBottomOf="@+id/cone_1"
+		app:layout_constraintEnd_toEndOf="@+id/cone_1"
+		app:layout_constraintStart_toStartOf="@+id/cone_1">
 
-	<androidx.appcompat.widget.AppCompatImageView
+<!--
+		<androidx.appcompat.widget.AppCompatImageView
+			android:id="@+id/dot_cream_1_1"
+			android:layout_width="@dimen/cream_size"
+			android:layout_height="@dimen/cream_size"
+			android:layout_marginBottom="@dimen/cream_dist"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:srcCompat="@drawable/ph_ic_cream_outline" />
+
+		<androidx.appcompat.widget.AppCompatImageView
+			android:id="@+id/dot_cream_1_2"
+			android:layout_width="@dimen/cream_size"
+			android:layout_height="@dimen/cream_size"
+			android:layout_marginBottom="@dimen/cream_dist"
+			app:layout_constraintBottom_toBottomOf="@+id/dot_cream_1_1"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:srcCompat="@drawable/ph_ic_cream_outline" />
+
+		<androidx.appcompat.widget.AppCompatImageView
+			android:id="@+id/dot_cream_1_3"
+			android:layout_width="@dimen/cream_size"
+			android:layout_height="@dimen/cream_size"
+			android:layout_marginBottom="@dimen/cream_dist"
+			app:layout_constraintBottom_toBottomOf="@+id/dot_cream_1_2"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:srcCompat="@drawable/ph_ic_cream_outline" />
+
+		<androidx.appcompat.widget.AppCompatImageView
+			android:id="@+id/cream_1_1"
+			android:layout_width="@dimen/cream_size"
+			android:layout_height="@dimen/cream_size"
+			android:layout_marginBottom="@dimen/cream_dist"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:srcCompat="@drawable/ph_ic_cream3" />
+
+		<androidx.appcompat.widget.AppCompatImageView
+			android:id="@+id/cream_1_2"
+			android:layout_width="@dimen/cream_size"
+			android:layout_height="@dimen/cream_size"
+			android:layout_marginBottom="@dimen/cream_dist"
+			app:layout_constraintBottom_toBottomOf="@+id/cream_1_1"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:srcCompat="@drawable/ph_ic_cream2" />
+
+		<androidx.appcompat.widget.AppCompatImageView
+			android:id="@+id/cream_1_3"
+			android:layout_width="@dimen/cream_size"
+			android:layout_height="@dimen/cream_size"
+			android:layout_marginBottom="@dimen/cream_dist"
+			app:layout_constraintBottom_toBottomOf="@+id/cream_1_2"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:srcCompat="@drawable/ph_ic_cream1" />-->
+	</androidx.constraintlayout.widget.ConstraintLayout>
+
+	<androidx.appcompat.widget.AppCompatImageButton
 		android:id="@+id/cone_2"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
+		android:layout_width="@dimen/cone_size"
+		android:layout_height="@dimen/cone_size"
 		android:layout_margin="24dp"
 		android:layout_weight="1"
-		android:src="@drawable/ic_cone"
-		app:layout_constraintStart_toEndOf="@id/cone_1"
+		android:src="@drawable/ph_ic_cone"
+		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toStartOf="@id/cone_3"
-		app:layout_constraintBottom_toBottomOf="parent"/>
-
-	<androidx.appcompat.widget.AppCompatImageView
-		android:id="@+id/cone_3"
+		app:layout_constraintStart_toEndOf="@id/cone_1"
+		android:scaleType="fitCenter"
+		android:background="@color/transparent"/>
+	<androidx.constraintlayout.widget.ConstraintLayout
+		android:id="@+id/ic_2"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
+		android:layout_marginBottom="@dimen/first_cream"
+		app:layout_constraintBottom_toBottomOf="@+id/cone_2"
+		app:layout_constraintEnd_toEndOf="@+id/cone_2"
+		app:layout_constraintStart_toStartOf="@+id/cone_2">
+
+		<androidx.appcompat.widget.AppCompatImageView
+			android:id="@+id/dot_cream_2_1"
+			android:layout_width="@dimen/cream_size"
+			android:layout_height="@dimen/cream_size"
+			android:layout_marginBottom="@dimen/cream_dist"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:srcCompat="@drawable/ph_ic_cream_outline" />
+
+		<androidx.appcompat.widget.AppCompatImageView
+			android:id="@+id/dot_cream_2_2"
+			android:layout_width="@dimen/cream_size"
+			android:layout_height="@dimen/cream_size"
+			android:layout_marginBottom="@dimen/cream_dist"
+			app:layout_constraintBottom_toBottomOf="@+id/dot_cream_2_1"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:srcCompat="@drawable/ph_ic_cream_outline" />
+
+		<androidx.appcompat.widget.AppCompatImageView
+			android:id="@+id/dot_cream_2_3"
+			android:layout_width="@dimen/cream_size"
+			android:layout_height="@dimen/cream_size"
+			android:layout_marginBottom="@dimen/cream_dist"
+			app:layout_constraintBottom_toBottomOf="@+id/dot_cream_2_2"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:srcCompat="@drawable/ph_ic_cream_outline" />
+
+		<androidx.appcompat.widget.AppCompatImageView
+			android:id="@+id/cream_2_1"
+			android:layout_width="@dimen/cream_size"
+			android:layout_height="@dimen/cream_size"
+			android:layout_marginBottom="@dimen/cream_dist"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:srcCompat="@drawable/ph_ic_cream3" />
+
+		<androidx.appcompat.widget.AppCompatImageView
+			android:id="@+id/cream_2_2"
+			android:layout_width="@dimen/cream_size"
+			android:layout_height="@dimen/cream_size"
+			android:layout_marginBottom="@dimen/cream_dist"
+			app:layout_constraintBottom_toBottomOf="@+id/cream_2_1"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:srcCompat="@drawable/ph_ic_cream2" />
+
+		<androidx.appcompat.widget.AppCompatImageView
+			android:id="@+id/cream_2_3"
+			android:layout_width="@dimen/cream_size"
+			android:layout_height="@dimen/cream_size"
+			android:layout_marginBottom="@dimen/cream_dist"
+			app:layout_constraintBottom_toBottomOf="@+id/cream_2_2"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:srcCompat="@drawable/ph_ic_cream1" />
+	</androidx.constraintlayout.widget.ConstraintLayout>
+
+	<androidx.appcompat.widget.AppCompatImageButton
+		android:id="@+id/cone_3"
+		android:layout_width="@dimen/cone_size"
+		android:layout_height="@dimen/cone_size"
 		android:layout_margin="24dp"
 		android:layout_weight="1"
-		android:src="@drawable/ic_cone"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintStart_toStartOf="parent"/>
-
-	<androidx.appcompat.widget.AppCompatImageView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="8dp"
-		android:layout_marginBottom="125dp"
-		android:src="@drawable/ic_scoop"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintStart_toStartOf="parent" />
-
-	<androidx.appcompat.widget.AppCompatImageView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="144dp"
-		android:layout_marginBottom="125dp"
-		android:src="@drawable/ic_red_scoop"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintStart_toStartOf="parent" />
-
-	<androidx.appcompat.widget.AppCompatImageView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="144dp"
-		android:layout_marginBottom="165dp"
-		android:src="@drawable/ic_green_scoop"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintStart_toStartOf="parent" />
-
-	<androidx.appcompat.widget.AppCompatImageView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="144dp"
-		android:layout_marginBottom="205dp"
-		android:src="@drawable/ic_blue_scoop"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintStart_toStartOf="parent" />
-
-	<androidx.appcompat.widget.AppCompatImageView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="144dp"
-		android:layout_marginBottom="245dp"
-		android:src="@drawable/ic_red_scoop"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintStart_toStartOf="parent" />
-
-	<androidx.appcompat.widget.AppCompatImageView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="144dp"
-		android:layout_marginBottom="285dp"
-		android:src="@drawable/ic_green_scoop"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintStart_toStartOf="parent" />
-
-	<androidx.appcompat.widget.AppCompatImageView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="144dp"
-		android:layout_marginBottom="325dp"
-		android:src="@drawable/ic_blue_scoop"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintStart_toStartOf="parent" />
-
-	<androidx.appcompat.widget.AppCompatImageView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="144dp"
-		android:layout_marginBottom="365dp"
-		android:src="@drawable/ic_red_scoop"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintStart_toStartOf="parent" />
-
-	<androidx.appcompat.widget.AppCompatImageView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="144dp"
-		android:layout_marginBottom="405dp"
-		android:src="@drawable/ic_green_scoop"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintStart_toStartOf="parent" />
-
-	<androidx.appcompat.widget.AppCompatImageView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="144dp"
-		android:layout_marginBottom="445dp"
-		android:src="@drawable/ic_blue_scoop"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintStart_toStartOf="parent" />
-
-	<androidx.appcompat.widget.AppCompatImageView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="144dp"
-		android:layout_marginBottom="485dp"
-		android:src="@drawable/ic_red_scoop"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintStart_toStartOf="parent" />
-
-	<androidx.appcompat.widget.AppCompatImageView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="144dp"
-		android:layout_marginBottom="525dp"
-		android:src="@drawable/ic_green_scoop"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintStart_toStartOf="parent" />
-
-	<androidx.appcompat.widget.AppCompatImageView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="144dp"
-		android:layout_marginBottom="565dp"
-		android:src="@drawable/ic_blue_scoop"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintStart_toStartOf="parent" />
-
-	<androidx.appcompat.widget.AppCompatImageView
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:layout_marginStart="280dp"
-		android:layout_marginBottom="125dp"
-		android:src="@drawable/ic_dotted_scoop"
+		android:src="@drawable/ph_ic_cone"
 		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toStartOf="parent" />
+		android:scaleType="fitCenter"
+		android:background="@color/transparent"/>
+	<androidx.constraintlayout.widget.ConstraintLayout
+		android:id="@+id/ic_3"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginBottom="@dimen/first_cream"
+		app:layout_constraintBottom_toBottomOf="@+id/cone_3"
+		app:layout_constraintEnd_toEndOf="@+id/cone_3"
+		app:layout_constraintStart_toStartOf="@+id/cone_3">
+
+		<androidx.appcompat.widget.AppCompatImageView
+			android:id="@+id/dot_cream_3_1"
+			android:layout_width="@dimen/cream_size"
+			android:layout_height="@dimen/cream_size"
+			android:layout_marginBottom="@dimen/cream_dist"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:srcCompat="@drawable/ph_ic_cream_outline" />
+
+		<androidx.appcompat.widget.AppCompatImageView
+			android:id="@+id/dot_cream_3_2"
+			android:layout_width="@dimen/cream_size"
+			android:layout_height="@dimen/cream_size"
+			android:layout_marginBottom="@dimen/cream_dist"
+			app:layout_constraintBottom_toBottomOf="@+id/dot_cream_3_1"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:srcCompat="@drawable/ph_ic_cream_outline" />
+
+		<androidx.appcompat.widget.AppCompatImageView
+			android:id="@+id/dot_cream_3_3"
+			android:layout_width="@dimen/cream_size"
+			android:layout_height="@dimen/cream_size"
+			android:layout_marginBottom="@dimen/cream_dist"
+			app:layout_constraintBottom_toBottomOf="@+id/dot_cream_3_2"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:srcCompat="@drawable/ph_ic_cream_outline" />
+
+		<androidx.appcompat.widget.AppCompatImageView
+			android:id="@+id/cream_3_1"
+			android:layout_width="@dimen/cream_size"
+			android:layout_height="@dimen/cream_size"
+			android:layout_marginBottom="@dimen/cream_dist"
+			app:layout_constraintBottom_toBottomOf="parent"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:srcCompat="@drawable/ph_ic_cream3" />
+
+		<androidx.appcompat.widget.AppCompatImageView
+			android:id="@+id/cream_3_2"
+			android:layout_width="@dimen/cream_size"
+			android:layout_height="@dimen/cream_size"
+			android:layout_marginBottom="@dimen/cream_dist"
+			app:layout_constraintBottom_toBottomOf="@+id/cream_3_1"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:srcCompat="@drawable/ph_ic_cream2" />
+
+		<androidx.appcompat.widget.AppCompatImageView
+			android:id="@+id/cream_3_3"
+			android:layout_width="@dimen/cream_size"
+			android:layout_height="@dimen/cream_size"
+			android:layout_marginBottom="@dimen/cream_dist"
+			app:layout_constraintBottom_toBottomOf="@+id/cream_3_2"
+			app:layout_constraintEnd_toEndOf="parent"
+			app:layout_constraintStart_toStartOf="parent"
+			app:srcCompat="@drawable/ph_ic_cream1" />
+	</androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

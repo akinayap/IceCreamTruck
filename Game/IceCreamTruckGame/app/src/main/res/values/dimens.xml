@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<dimen name="cone_size">120dp</dimen>
+	<dimen name="cream_size">100dp</dimen>
+	<dimen name="first_cream">32dp</dimen>
+	<dimen name="cream_dist">50dp</dimen>
+</resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:layout_width="match_parent"
+	android:layout_height="match_parent">
+	<androidx.appcompat.widget.AppCompatImageView
+		android:id="@+id/dot_cream_1_1"
+		android:layout_width="@dimen/cream_size"
+		android:layout_height="@dimen/cream_size"
+		android:layout_marginBottom="@dimen/cream_dist"
+		android:src="@drawable/ph_ic_cream3"/>
+</LinearLayout>
