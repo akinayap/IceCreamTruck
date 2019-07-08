@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using IceCreamMakerExtensions;
 using DG.Tweening;
+using TMPro;
 
 public class IceCreamBar : MonoBehaviour
 {
@@ -15,16 +16,18 @@ public class IceCreamBar : MonoBehaviour
     private List<SpriteRenderer> dottedList = new List<SpriteRenderer>();
     private List<SpriteRenderer> creamList = new List<SpriteRenderer>();
 
+    public TextMeshProUGUI IncomeText;
+    private Vector3 IncomeTextStartPos;
+
     private enum State
     {
         WaitingToFinish,
         Match,
         Exiting,
         FinishedExiting,
-        Reseting,
-        ReadyForOrder
+        Reseting
     }
-    private State currentState = State.ReadyForOrder;
+    private State currentState = State.FinishedExiting;
 
     // Start is called before the first frame update
     void Start()
@@ -38,6 +41,9 @@ public class IceCreamBar : MonoBehaviour
         cone.gameObject.SetActive(false);
         cream1.gameObject.SetActive(false);
         cream2.gameObject.SetActive(false);
+
+        IncomeText.text = "";
+        IncomeTextStartPos = IncomeText.transform.position;
 
         IceCreamResources.Load();
     }
@@ -75,7 +81,7 @@ public class IceCreamBar : MonoBehaviour
 
     public void AddScoop()
     {
-        if (dottedList.Count < creamList.Count)
+        if ( (currentState != State.WaitingToFinish && currentState != State.Match) || dottedList.Count < creamList.Count)
         {
             return;
         }
@@ -140,7 +146,7 @@ public class IceCreamBar : MonoBehaviour
             cream.DOFade(0, 1);
         }
         cone.transform.DOJump(cone.transform.position.ChangeY(cone.transform.position.y - 10), 8, 1, 1);
-        cone.transform.DORotate(new Vector3(0, 0, 45), 2).OnComplete(Reset);
+        cone.transform.DORotate(new Vector3(0, 0, 25), 1).OnComplete(Reset);
         cone.DOFade(0, 1);
     }
 
@@ -162,6 +168,20 @@ public class IceCreamBar : MonoBehaviour
         cone.transform.rotation = Quaternion.identity;
 
         currentState = State.FinishedExiting;
+    }
+
+    public void FadeOut()
+    {
+        foreach (var cream in creamList)
+        {
+            cream.DOFade(0, 0.5f);
+        }
+
+        foreach (var dotted in dottedList)
+        {
+            dotted.DOFade(0, 0.5f);
+        }
+        cone.DOFade(0, 0.5f);
     }
 
     // Update is called once per frame
@@ -186,6 +206,9 @@ public class IceCreamBar : MonoBehaviour
 
     public void DoServeAnimation()
     {
+        if (currentState != State.Match)
+            return;
+
         foreach (var dotted in dottedList)
         {
             dotted.gameObject.SetActive(false);
@@ -200,5 +223,21 @@ public class IceCreamBar : MonoBehaviour
         cone.DOFade(0, 1).OnComplete(Reset);
 
         currentState = State.Exiting;
+
+        float cents = creamList.Count * 25;
+        if (cents >= 100)
+        {
+            IncomeText.text = "$" + (cents / 100.0f).ToString("F2");
+        }
+        else
+        {
+            IncomeText.text = ((int)(cents)) + "c";
+        }
+
+        IncomeText.transform.position = IncomeTextStartPos;
+        IncomeText.transform.DOMoveY(20, 1).SetRelative(true).SetEase(Ease.InOutSine);
+        IncomeText.DOFade(1, 0.2f).OnComplete(()=>IncomeText.DOFade(0, 0.8f));
+
+        IceCreamResources.Instance.Manager.UpdateProfit(cents / 100.0f);
     }
 }

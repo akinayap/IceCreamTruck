@@ -11,6 +11,7 @@ public class IceCreamResources : ScriptableObject
     public List<Sprite> IceCreamFlavours;
     public Texture DottedLineIceCream;
 
+    public GameManager Manager;
     public static IceCreamResources Instance
     {
         get
