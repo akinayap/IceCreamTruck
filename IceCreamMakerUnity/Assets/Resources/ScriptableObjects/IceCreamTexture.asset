@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95556fc53f22eea4b944f3965176328d, type: 3}
+  m_Name: IceCreamTexture
+  m_EditorClassIdentifier: 
+  CreamPrefab: {fileID: 7648251047168381156, guid: 392522e4d96a778458caa427b7f9dcf1,
+    type: 2}
+  DottedPrefab: {fileID: 3485689458624351139, guid: cf309759296cbdc47951f915cfc69e43,
+    type: 2}
+  IceCreamFlavours:
+  - {fileID: 21300000, guid: ea625f15c2d76fd4b88a0489ed061f22, type: 3}
+  - {fileID: 21300000, guid: 39eb003918ae9044794520f57288774f, type: 3}
+  - {fileID: 21300000, guid: 492b0a3eda131204f8ec70ad3d29b606, type: 3}
+  - {fileID: 21300000, guid: 096582e15426f3147b167c619bd2f6de, type: 3}
+  - {fileID: 21300000, guid: cda261bed854ce14197c179026168bd8, type: 3}
+  DottedLineIceCream: {fileID: 2800000, guid: 9a08e9e3e16753b4bb8a3dbc9dcd569a, type: 3}
