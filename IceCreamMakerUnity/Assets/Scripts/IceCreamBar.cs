@@ -69,11 +69,11 @@ public class IceCreamBar : MonoBehaviour
 
             var originalScale = dottedCream.transform.localScale;
             dottedCream.transform.localScale = new Vector3(0.001f, 0.001f, 0.001f);
-            dottedCream.transform.DOScale(originalScale, fadeInTimePerCream).SetEase(Ease.InOutBounce).SetDelay(i * delayPerCream);
+            dottedCream.transform.DOScale(originalScale, fadeInTimePerCream).SetEase(Ease.InOutBounce);
 
             var dottedSprite = dottedCream.GetComponent<SpriteRenderer>();
             dottedSprite.color = dottedSprite.color.ChangeA(0);
-            dottedSprite.DOFade(1, fadeInTimePerCream).SetDelay(i* delayPerCream);
+            dottedSprite.DOFade(1, fadeInTimePerCream);
 
             dottedList.Add(dottedSprite);
         }

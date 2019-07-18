@@ -22,3 +22,6 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 096582e15426f3147b167c619bd2f6de, type: 3}
   - {fileID: 21300000, guid: cda261bed854ce14197c179026168bd8, type: 3}
   DottedLineIceCream: {fileID: 2800000, guid: 9a08e9e3e16753b4bb8a3dbc9dcd569a, type: 3}
+  TapSparkPrefab: {fileID: 1405913696822620, guid: 5383501eef6490045a370bf6ac5a7e65,
+    type: 2}
+  Manager: {fileID: 0}
