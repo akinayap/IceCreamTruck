@@ -177,7 +177,7 @@ public class GameManager : MonoBehaviour
 
                     //For every result returned, output the name of the GameObject on the Canvas hit by the Ray
                     bool hasHit = results.Count > 0;
-                    if(!hasHit)
+                    if (!hasHit)
                     {
                         debugText += " pass";
                         touchList.Add(new TouchData(touch.fingerId, touch.position));
@@ -188,7 +188,7 @@ public class GameManager : MonoBehaviour
                     }
                     ScreenLogger.Log(debugText);
                 }
-                else if (touch.phase == TouchPhase.Canceled || touch.phase == TouchPhase.Stationary)
+                else if (touch.phase == TouchPhase.Moved || touch.phase == TouchPhase.Stationary)
                 {
                     foreach (var t in touchList)
                     {
@@ -197,6 +197,15 @@ public class GameManager : MonoBehaviour
                         t.ElaspsedTime += Time.deltaTime;
                         t.CurrPos = touch.position;
                         t.Updated = true;
+                    }
+                }
+                else if (touch.phase == TouchPhase.Canceled || touch.phase == TouchPhase.Ended)
+                {
+                    foreach (var t in touchList)
+                    {
+                        if (t.ID != touch.fingerId)
+                            continue;
+                        t.Ended = true;
                     }
                 }
             }
