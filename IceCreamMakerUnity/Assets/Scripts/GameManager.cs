@@ -15,14 +15,16 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI DaytimeText;
     public TextMeshProUGUI MoneyText;
     public TextMeshProUGUI ExtraTimeText;
+    public Button ServeButton;
+    public List<SpriteRenderer> Flavours;
+    public EndGameResults ResultScreen;
     private bool waitingForOrder = false;
-    private bool ableToFreeze = false;
 
     private Vector3 ExtraTimeStartPos;
 
     private float currHour = 8;
     private float currMin = 0;
-    private float timeSpeed = 20;
+    private float timeSpeed = 30;
 
     private float currentMoney = 0;
 
@@ -33,14 +35,12 @@ public class GameManager : MonoBehaviour
         public Vector3 CurrPos;
         public float ElaspsedTime;
         public bool Ended;
-        public bool Updated;
         public TouchData(int id, Vector3 startPos)
         {
             ID = id;
             CurrPos = StartPos = startPos;
             ElaspsedTime = 0;
             Ended = false;
-            Updated = true;
         }
 
         public bool SwipedUp()
@@ -49,17 +49,18 @@ public class GameManager : MonoBehaviour
             return CurrPos.y - StartPos.y > limit;
         }
     }
-    GraphicRaycaster m_Raycaster;
-    PointerEventData m_PointerEventData;
-    EventSystem m_EventSystem;
+    private GraphicRaycaster m_Raycaster;
+    private PointerEventData m_PointerEventData;
+    private EventSystem m_EventSystem;
 
-    List<TouchData> touchList = new List<TouchData>();
-    bool gameOver = false;
+    private List<TouchData> touchList = new List<TouchData>();
+    private bool gameOver = false;
+    private int creamCounter = 0;
 
     // Start is called before the first frame update
     void Start()
     {
-        DOTween.Sequence().AppendInterval(0.5f).AppendCallback(() =>
+        DOTween.Sequence().AppendInterval(2.5f).AppendCallback(() =>
         {
             this.enabled = true;
         });
@@ -69,6 +70,13 @@ public class GameManager : MonoBehaviour
 
         ExtraTimeStartPos = ExtraTimeText.transform.position;
         ExtraTimeText.color = ExtraTimeText.color.ChangeA(0);
+
+        for(int i=0;i<Flavours.Count;++i)
+        {
+            var s = Flavours[i];
+            s.color = s.color.ChangeA(0);
+            s.DOFade(1, 0.5f).OnComplete(()=>s.DOFade(0, 0.5f).SetDelay(0.2f)).SetDelay(i * 0.8f);
+        }
 
         //Fetch the Raycaster from the GameObject (the Canvas)
         m_Raycaster = GameObject.Find("Canvas").GetComponent<GraphicRaycaster>();
@@ -98,6 +106,15 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        if (BarList.All(bar => bar.CanServe() || bar.CantBeAddedAnymore()))
+        {
+            ServeButton.GetComponent<Image>().color = Color.white;
+        }
+        else
+        {
+            ServeButton.GetComponent<Image>().color = Color.gray;
+        }
+
         UpdateDayTime();
     }
 
@@ -124,7 +141,7 @@ public class GameManager : MonoBehaviour
                     .SetLoops(3);
                 DOTween.Sequence().Append(DaytimeText.DOColor(Color.green, 0.5f))
                     .Append(DaytimeText.DOColor(Color.white, 0.5f))
-                    .SetLoops(3).OnComplete(ResetLevel);
+                    .SetLoops(3).OnComplete(ShowEndScreen);
             }
         }
         var text = "";
@@ -144,6 +161,15 @@ public class GameManager : MonoBehaviour
         DaytimeText.text = text;
     }
 
+    void ShowEndScreen()
+    {
+        DaytimeText.DOFade(0, 0.4f);
+        MoneyText.DOFade(0, 0.4f);
+        ExtraTimeText.DOFade(0, 0.4f);
+        ServeButton.GetComponent<Image>().DOFade(0, 0.4f);
+        ResultScreen.Show();
+    }
+
     void ResetLevel()
     {
         SceneManager.LoadScene("SampleScene");
@@ -154,10 +180,6 @@ public class GameManager : MonoBehaviour
 
         if (Input.touchCount > 0)
         {
-            foreach (var t in touchList)
-            {
-                t.Updated = false;
-            }
             foreach (var touch in Input.touches)
             {
                 if (touch.phase == TouchPhase.Began)
@@ -196,7 +218,6 @@ public class GameManager : MonoBehaviour
                             continue;
                         t.ElaspsedTime += Time.deltaTime;
                         t.CurrPos = touch.position;
-                        t.Updated = true;
                     }
                 }
                 else if (touch.phase == TouchPhase.Canceled || touch.phase == TouchPhase.Ended)
@@ -207,17 +228,6 @@ public class GameManager : MonoBehaviour
                             continue;
                         t.Ended = true;
                     }
-                }
-            }
-            {
-                foreach (var t in touchList)
-                {
-                    if (t.Updated)
-                        continue;
-                    t.Ended = true;
-                    var debugText = t.ID + "Touch lifted:";
-                    debugText += " Removed";
-                    ScreenLogger.Log(debugText);
                 }
             }
         }
@@ -241,7 +251,7 @@ public class GameManager : MonoBehaviour
             if (!hasHit)
             {
                 touchList.Add(new TouchData(-1, Input.mousePosition));
-                ScreenLogger.Log("Touch down:" + Input.mousePosition);
+                //ScreenLogger.Log("Touch down:" + Input.mousePosition);
             }
         }
         else if(Input.GetMouseButton(0))
@@ -261,7 +271,7 @@ public class GameManager : MonoBehaviour
                 if (t.ID != -1)
                     continue;
                 t.Ended = true;
-                ScreenLogger.Log("Touch up:" + Input.mousePosition);
+                //ScreenLogger.Log("Touch up:" + Input.mousePosition);
             }
         }
 #endif
@@ -279,40 +289,42 @@ public class GameManager : MonoBehaviour
         {
             sector = 1;
         }
-        BarList[sector].AddScoop();
+
+        RaycastHit2D rayHit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(touchData.CurrPos), Vector2.zero);
+        if (rayHit.collider != null)
+        {
+            BarList[sector].AddScoop(rayHit.collider.gameObject.name);
+        }
 
         var go = GameObject.Instantiate(IceCreamResources.Instance.TapSparkPrefab);
         go.transform.position = Camera.main.ScreenToWorldPoint(touchData.CurrPos);
     }
 
-    public void UpdateProfit(float amount)
+    public void UpdateProfit(float amount, int creamCount)
     {
-        var before = (int)(currentMoney / 10.0f);
         currentMoney += amount;
-        var after = (int)(currentMoney / 10.0f);
         MoneyText.text = "$" + currentMoney.ToString("F2");
 
-        if(before != after)
+        var before = creamCounter / 40;
+        creamCounter += creamCount;
+        var after = creamCounter / 40;
+        if (before != after)
         {
-            ableToFreeze = true;
+            ActivateFreeze();
         }
     }
 
     public void ServePressed()
     {
-        if (BarList.All(bar => bar.CanServe() || bar.HasFinishedExiting()))
+        if (BarList.All(bar => bar.CanServe() || bar.CantBeAddedAnymore()))
         {
             BarList.ForEach(bar => bar.DoServeAnimation());
             waitingForOrder = false;
         }
     }
 
-    public void FreezePressed()
+    public void ActivateFreeze()
     {
-        if (!ableToFreeze)
-            return;
-        ableToFreeze = false;
-
         currHour -= 2;
         ExtraTimeText.transform.position = ExtraTimeStartPos;
         DOTween.Sequence()
@@ -320,10 +332,5 @@ public class GameManager : MonoBehaviour
             .AppendInterval(1)
             .Append(ExtraTimeText.DOFade(0, 0.8f));
         ExtraTimeText.transform.DOMoveY(50, 2).SetDelay(0.2f).SetRelative(true);
-    }
-
-    public void OnScreenPressed()
-    {
-
     }
 }

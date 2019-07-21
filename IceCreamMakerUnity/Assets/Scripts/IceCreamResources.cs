@@ -9,6 +9,7 @@ public class IceCreamResources : ScriptableObject
     public GameObject DottedPrefab;
 
     public List<Sprite> IceCreamFlavours;
+    public List<string> IceCreamFlavourNames;
     public Texture DottedLineIceCream;
 
     public GameObject TapSparkPrefab;
