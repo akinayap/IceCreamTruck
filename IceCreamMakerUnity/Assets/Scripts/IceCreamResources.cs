@@ -2,6 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public interface IManager
+{
+    void UpdateProfit(float cents, int count);
+}
+
 [CreateAssetMenu(fileName = "icr", menuName = "ScriptableObjects/IceCreamResources", order = 1)]
 public class IceCreamResources : ScriptableObject
 {
@@ -12,9 +17,14 @@ public class IceCreamResources : ScriptableObject
     public List<string> IceCreamFlavourNames;
     public Texture DottedLineIceCream;
 
+    public List<Sprite> ChosenFlavours;
+
+    public List<Sprite> CustomerSprites;
+    public List<Sprite> CustomerEmojis;
+
     public GameObject TapSparkPrefab;
 
-    public GameManager Manager;
+    public IManager ManagerInterface;
     public static IceCreamResources Instance
     {
         get

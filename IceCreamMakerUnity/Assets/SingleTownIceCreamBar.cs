@@ -5,12 +5,7 @@ using IceCreamMakerExtensions;
 using DG.Tweening;
 using TMPro;
 
-public interface IScoopData
-{
-    List<int> GetScoops();
-}
-
-public class IceCreamBar : MonoBehaviour, IScoopData
+public class SingleTownIceCreamBar : MonoBehaviour
 {
     private SpriteRenderer cone;
     private SpriteRenderer cream1;
@@ -20,6 +15,7 @@ public class IceCreamBar : MonoBehaviour, IScoopData
 
     private List<SpriteRenderer> dottedList = new List<SpriteRenderer>();
     private List<SpriteRenderer> creamList = new List<SpriteRenderer>();
+    private List<SpriteRenderer> fadeList = new List<SpriteRenderer>();
 
     public TextMeshProUGUI IncomeText;
     private Vector3 IncomeTextStartPos;
@@ -39,11 +35,6 @@ public class IceCreamBar : MonoBehaviour, IScoopData
 
     public List<int> ScoopCount { get { return totalScoopCount; } }
 
-    public List<int> GetScoops()
-    {
-        return ScoopCount;
-    }
-
     // Start is called before the first frame update
     void Start()
     {
@@ -61,7 +52,7 @@ public class IceCreamBar : MonoBehaviour, IScoopData
         IncomeTextStartPos = IncomeText.transform.position;
 
         IceCreamResources.Load();
-        for(int i=0;i<IceCreamResources.Instance.IceCreamFlavourNames.Count;++i)
+        for (int i = 0; i < IceCreamResources.Instance.IceCreamFlavourNames.Count; ++i)
         {
             totalScoopCount.Add(0);
             currentScoopCount.Add(0);
@@ -81,10 +72,10 @@ public class IceCreamBar : MonoBehaviour, IScoopData
 
         var basePos = this.cream1.transform.position;
 
-        for (int i=0;i<count;++i)
+        for (int i = 0; i < count; ++i)
         {
             var dottedCream = GameObject.Instantiate(IceCreamResources.Instance.DottedPrefab);
-            var dottedPos = new Vector3(basePos.x, basePos.y + distBetweenCream*i, basePos.z);
+            var dottedPos = new Vector3(basePos.x, basePos.y + distBetweenCream * i, basePos.z);
             dottedCream.transform.position = dottedPos;
 
             var originalScale = dottedCream.transform.localScale;
@@ -95,13 +86,31 @@ public class IceCreamBar : MonoBehaviour, IScoopData
             dottedSprite.color = dottedSprite.color.ChangeA(0);
             dottedSprite.DOFade(1, fadeInTimePerCream);
 
+            var fadedCream = GameObject.Instantiate(IceCreamResources.Instance.CreamPrefab);
+            var fadedPos = new Vector3(basePos.x, basePos.y + distBetweenCream * i, basePos.z);
+            fadedCream.transform.position = fadedPos;
+
+            originalScale = fadedCream.transform.localScale;
+            fadedCream.transform.localScale = new Vector3(0.001f, 0.001f, 0.001f);
+            fadedCream.transform.DOScale(originalScale, fadeInTimePerCream).SetEase(Ease.InOutBounce);
+
+            var fadeCreamSprite = fadedCream.GetComponent<SpriteRenderer>();
+            fadeCreamSprite.sprite = IceCreamResources.Instance.IceCreamFlavours.RandomSprite();
+            while (fadeCreamSprite.sprite.name == "cream3" || fadeCreamSprite.sprite.name == "cream4")
+            {
+                fadeCreamSprite.sprite = IceCreamResources.Instance.IceCreamFlavours.RandomSprite();
+            }
+            fadeCreamSprite.color = fadeCreamSprite.color.ChangeA(0);
+            fadeCreamSprite.DOFade(0.8f, fadeInTimePerCream);
+            
             dottedList.Add(dottedSprite);
+            fadeList.Add(fadeCreamSprite);
         }
     }
 
-    public void AddScoop(Sprite flavourTexture)
+    public void AddScoop(string flavourName)
     {
-        if ( (currentState != State.WaitingToFinish && currentState != State.Match) || dottedList.Count < creamList.Count)
+        if ((currentState != State.WaitingToFinish && currentState != State.Match) || dottedList.Count < creamList.Count)
         {
             return;
         }
@@ -119,8 +128,15 @@ public class IceCreamBar : MonoBehaviour, IScoopData
             iceCream.transform.DOMoveY(finalY, Mathf.Abs(finalY - creamPos.y) * fallSpeed).SetEase(Ease.InOutSine).OnComplete(MakeIceCreamFall);
 
             var iceCreamSprite = iceCream.GetComponent<SpriteRenderer>();
-            iceCreamSprite.sprite = flavourTexture;
-           
+            iceCreamSprite.sprite = IceCreamResources.Instance.IceCreamFlavours.RandomSprite();
+            for (int i = 0; i < IceCreamResources.Instance.IceCreamFlavours.Count; ++i)
+            {
+                if (IceCreamResources.Instance.IceCreamFlavourNames[i] == flavourName)
+                {
+                    iceCreamSprite.sprite = IceCreamResources.Instance.IceCreamFlavours[i];
+                    currentScoopCount[i]++;
+                }
+            }
             creamList.Add(iceCreamSprite);
 
             currentState = State.Falling;
@@ -132,7 +148,7 @@ public class IceCreamBar : MonoBehaviour, IScoopData
 
             var basePos = cream1.transform.position;
             var creamPos = basePos.ChangeY(basePos.y + distBetweenCream * 10);
-            creamPos.z = basePos.z - 0.01f * creamList.Count;
+            creamPos.z = basePos.z - 0.01f * creamList.Count - 0.1f;
 
             var finalY = basePos.y + distBetweenCream * creamList.Count;
             var timeToFall = Mathf.Abs(finalY - creamPos.y) * fallSpeed;
@@ -140,13 +156,13 @@ public class IceCreamBar : MonoBehaviour, IScoopData
             iceCream.transform.DOMoveY(finalY, timeToFall).SetEase(Ease.InOutSine);
 
             var iceCreamSprite = iceCream.GetComponent<SpriteRenderer>();
-            iceCreamSprite.sprite = flavourTexture;
+            iceCreamSprite.sprite = IceCreamResources.Instance.IceCreamFlavours.RandomSprite();
             for (int i = 0; i < IceCreamResources.Instance.IceCreamFlavours.Count; ++i)
             {
-                if (IceCreamResources.Instance.IceCreamFlavours[i] == flavourTexture)
+                if (IceCreamResources.Instance.IceCreamFlavourNames[i] == flavourName)
                 {
-                    currentScoopCount[i]++;
                     iceCreamSprite.sprite = IceCreamResources.Instance.IceCreamFlavours[i];
+                    currentScoopCount[i]++;
                 }
             }
             creamList.Add(iceCreamSprite);
@@ -154,7 +170,12 @@ public class IceCreamBar : MonoBehaviour, IScoopData
             var currentCount = creamList.Count;
             DOTween.Sequence().AppendInterval(timeToFall).AppendCallback(()=>
             {
-                if(currentCount == creamList.Count)
+                if(creamList[currentCount-1].sprite != fadeList[currentCount-1].sprite)
+                {
+                    currentState = State.Falling;
+                    MakeIceCreamFall();
+                }
+                else if (currentCount == creamList.Count)
                 {
                     currentState = currentCount == dottedList.Count ? State.Match : State.WaitingToFinish;
                 }
@@ -164,12 +185,18 @@ public class IceCreamBar : MonoBehaviour, IScoopData
 
     void MakeIceCreamFall()
     {
-        foreach(var dotted in dottedList)
+        foreach (var dotted in dottedList)
         {
             dotted.gameObject.SetActive(false);
         }
 
-        foreach(var cream in creamList)
+        foreach(var faded in fadeList)
+        {
+            faded.transform.SetParent(cone.transform);
+            faded.DOFade(0, 1);
+        }
+
+        foreach (var cream in creamList)
         {
             cream.transform.SetParent(cone.transform);
             cream.DOFade(0, 1);
@@ -183,6 +210,12 @@ public class IceCreamBar : MonoBehaviour, IScoopData
 
     private void Reset()
     {
+        foreach (var faded in fadeList)
+        {
+            GameObject.Destroy(faded.gameObject);
+        }
+        fadeList.Clear();
+
         foreach (var cream in creamList)
         {
             GameObject.Destroy(cream.gameObject);
@@ -218,7 +251,7 @@ public class IceCreamBar : MonoBehaviour, IScoopData
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public bool IsReadyToTakeNewOrder()
@@ -249,6 +282,11 @@ public class IceCreamBar : MonoBehaviour, IScoopData
             dotted.gameObject.SetActive(false);
         }
 
+        foreach (var faded in fadeList)
+        {
+            faded.gameObject.SetActive(false);
+        }
+
         foreach (var cream in creamList)
         {
             cream.transform.SetParent(cone.transform);
@@ -256,7 +294,7 @@ public class IceCreamBar : MonoBehaviour, IScoopData
         }
 
         float cents = 0;
-        for(int i=0;i< currentScoopCount.Count;++i)
+        for (int i = 0; i < currentScoopCount.Count; ++i)
         {
             cents += 25 * currentScoopCount[i];
             totalScoopCount[i] += currentScoopCount[i];
@@ -267,7 +305,7 @@ public class IceCreamBar : MonoBehaviour, IScoopData
         cone.DOFade(0, 1).OnComplete(Reset);
 
         currentState = State.Exiting;
-        
+
         if (cents >= 100)
         {
             IncomeText.text = "$" + (cents / 100.0f).ToString("F2");
@@ -279,7 +317,7 @@ public class IceCreamBar : MonoBehaviour, IScoopData
 
         IncomeText.transform.position = IncomeTextStartPos;
         IncomeText.transform.DOMoveY(20, 1).SetRelative(true).SetEase(Ease.InOutSine);
-        IncomeText.DOFade(1, 0.2f).OnComplete(()=>IncomeText.DOFade(0, 0.8f));
+        IncomeText.DOFade(1, 0.2f).OnComplete(() => IncomeText.DOFade(0, 0.8f));
 
         IceCreamResources.Instance.ManagerInterface.UpdateProfit(cents / 100.0f, creamList.Count);
     }

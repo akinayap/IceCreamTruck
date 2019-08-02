@@ -14,6 +14,12 @@ namespace IceCreamMakerExtensions
         {
             return new Vector3(vec.x, y, vec.z);
         }
+
+        public static T RandomElem<T>(this List<T> list)
+        {
+            return list[Random.Range(0, list.Count)];
+        }
+
         public static Sprite RandomSprite(this List<Sprite> spriteList)
         {
             return spriteList[Random.Range(0, spriteList.Count)];
