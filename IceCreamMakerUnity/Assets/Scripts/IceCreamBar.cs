@@ -61,11 +61,11 @@ public class IceCreamBar : MonoBehaviour, IScoopData
         IncomeTextStartPos = IncomeText.transform.position;
 
         IceCreamResources.Load();
-        for(int i=0;i<IceCreamResources.Instance.IceCreamFlavourNames.Count;++i)
-        {
-            totalScoopCount.Add(0);
-            currentScoopCount.Add(0);
-        }
+        //for(int i=0;i<IceCreamResources.Instance.IceCreamFlavourNames.Count;++i)
+        //{
+        //    totalScoopCount.Add(0);
+        //    currentScoopCount.Add(0);
+        //}
     }
 
     public void TakeInNewOrder(int count)
@@ -99,7 +99,7 @@ public class IceCreamBar : MonoBehaviour, IScoopData
         }
     }
 
-    public void AddScoop(Sprite flavourTexture)
+    public void AddScoop(CustomersAndFlavours.Flavour flavour)
     {
         if ( (currentState != State.WaitingToFinish && currentState != State.Match) || dottedList.Count < creamList.Count)
         {
@@ -119,7 +119,7 @@ public class IceCreamBar : MonoBehaviour, IScoopData
             iceCream.transform.DOMoveY(finalY, Mathf.Abs(finalY - creamPos.y) * fallSpeed).SetEase(Ease.InOutSine).OnComplete(MakeIceCreamFall);
 
             var iceCreamSprite = iceCream.GetComponent<SpriteRenderer>();
-            iceCreamSprite.sprite = flavourTexture;
+            iceCreamSprite.sprite = flavour.sprite;
            
             creamList.Add(iceCreamSprite);
 
@@ -140,15 +140,16 @@ public class IceCreamBar : MonoBehaviour, IScoopData
             iceCream.transform.DOMoveY(finalY, timeToFall).SetEase(Ease.InOutSine);
 
             var iceCreamSprite = iceCream.GetComponent<SpriteRenderer>();
-            iceCreamSprite.sprite = flavourTexture;
-            for (int i = 0; i < IceCreamResources.Instance.IceCreamFlavours.Count; ++i)
-            {
-                if (IceCreamResources.Instance.IceCreamFlavours[i] == flavourTexture)
-                {
-                    currentScoopCount[i]++;
-                    iceCreamSprite.sprite = IceCreamResources.Instance.IceCreamFlavours[i];
-                }
-            }
+            iceCreamSprite.sprite = flavour.sprite;
+            //for (int i = 0; i < IceCreamResources.Instance.IceCreamFlavours.Count; ++i)
+            //{
+            //    if (IceCreamResources.Instance.IceCreamFlavours[i] == flavourTexture)
+            //    {
+            //        currentScoopCount[i]++;
+            //        iceCreamSprite.sprite = IceCreamResources.Instance.IceCreamFlavours[i];
+            //    }
+            //}
+            flavour.served_count++;
             creamList.Add(iceCreamSprite);
 
             var currentCount = creamList.Count;
@@ -255,13 +256,15 @@ public class IceCreamBar : MonoBehaviour, IScoopData
             cream.DOFade(0, 1);
         }
 
+        //float cents = 0;
+        //for(int i=0;i< currentScoopCount.Count;++i)
+        //{
+        //    cents += 25 * currentScoopCount[i];
+        //    totalScoopCount[i] += currentScoopCount[i];
+        //    currentScoopCount[i] = 0;
+        //}
         float cents = 0;
-        for(int i=0;i< currentScoopCount.Count;++i)
-        {
-            cents += 25 * currentScoopCount[i];
-            totalScoopCount[i] += currentScoopCount[i];
-            currentScoopCount[i] = 0;
-        }
+        cents = 25 * creamList.Count;
 
         cone.transform.DOMoveX(10, 1).SetRelative(true);
         cone.DOFade(0, 1).OnComplete(Reset);

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 namespace IceCreamMakerExtensions
 {
@@ -18,6 +19,10 @@ namespace IceCreamMakerExtensions
         public static T RandomElem<T>(this List<T> list)
         {
             return list[Random.Range(0, list.Count)];
+        }
+        public static KeyValuePair<TKey, TValue> RandomElem<TKey, TValue>(this SortedDictionary<TKey, TValue> dict)
+        {
+            return dict.ElementAt(Random.Range(0, dict.Count));
         }
 
         public static Sprite RandomSprite(this List<Sprite> spriteList)

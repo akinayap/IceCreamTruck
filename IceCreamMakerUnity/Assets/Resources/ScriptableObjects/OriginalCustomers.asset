@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66d41387b6bbd8747964bc6184362273, type: 3}
+  m_Name: OriginalCustomers
+  m_EditorClassIdentifier: 
+  CustomerList:
+  - name: Tom
+    sprite: {fileID: 21300000, guid: d4aef3db5c8710a44968cbc2bc0c23e3, type: 3}
+    favouriteFlavour: chocolate
+  - name: Jerry
+    sprite: {fileID: 21300000, guid: dc712cbb6751d704f8130a52b165d0f8, type: 3}
+    favouriteFlavour: vanilla
+  - name: Dick
+    sprite: {fileID: 21300000, guid: c8c72bf3b9f0e554fbe0e60169fcdbc8, type: 3}
+    favouriteFlavour: strawberry
+  - name: Harry
+    sprite: {fileID: 21300000, guid: 94fad2d7097cdc54289b22f0db03d954, type: 3}
+    favouriteFlavour: mint
+  - name: David
+    sprite: {fileID: 21300000, guid: 60bf086d98f449548b109ef576fceb98, type: 3}
+    favouriteFlavour: corn
+  FlavourList: []

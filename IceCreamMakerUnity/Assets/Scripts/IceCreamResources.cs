@@ -13,13 +13,13 @@ public class IceCreamResources : ScriptableObject
     public GameObject CreamPrefab;
     public GameObject DottedPrefab;
 
-    public List<Sprite> IceCreamFlavours;
-    public List<string> IceCreamFlavourNames;
+    //public List<Sprite> IceCreamFlavours;
+    //public List<string> IceCreamFlavourNames;
     public Texture DottedLineIceCream;
 
-    public List<Sprite> ChosenFlavours;
+    public List<Sprite> DayChosenFlavours;
 
-    public List<Sprite> CustomerSprites;
+    //public List<Sprite> CustomerSprites;
     public List<Sprite> CustomerEmojis;
 
     public GameObject TapSparkPrefab;

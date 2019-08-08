@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66d41387b6bbd8747964bc6184362273, type: 3}
+  m_Name: OriginalFlavours
+  m_EditorClassIdentifier: 
+  CustomerList: []
+  FlavourList:
+  - name: vanilla
+    sprite: {fileID: 21300000, guid: ea625f15c2d76fd4b88a0489ed061f22, type: 3}
+    requires: []
+    merge_money: 10
+    merge_diamond: 0
+  - name: strawberry
+    sprite: {fileID: 21300000, guid: 39eb003918ae9044794520f57288774f, type: 3}
+    requires: []
+    merge_money: 10
+    merge_diamond: 0
+  - name: mint
+    sprite: {fileID: 21300000, guid: 492b0a3eda131204f8ec70ad3d29b606, type: 3}
+    requires: []
+    merge_money: 10
+    merge_diamond: 0
+  - name: corn
+    sprite: {fileID: 21300000, guid: 096582e15426f3147b167c619bd2f6de, type: 3}
+    requires: []
+    merge_money: 10
+    merge_diamond: 0
+  - name: chocolate
+    sprite: {fileID: 21300000, guid: cda261bed854ce14197c179026168bd8, type: 3}
+    requires: []
+    merge_money: 10
+    merge_diamond: 0

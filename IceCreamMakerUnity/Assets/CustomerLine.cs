@@ -24,19 +24,19 @@ public class CustomerLine : MonoBehaviour
 
         private Transform speechBubble;
         private SpriteRenderer bubbleThoughts;
-        public Sprite ChosenFlavour { private set; get; }
+        public CustomersAndFlavours.Flavour ChosenFlavour { private set; get; }
 
 
         public CustomerData(Transform t)
         {
             transform = t;
             spriteRenderer = transform.GetComponent<SpriteRenderer>();
-            spriteRenderer.sprite = IceCreamResources.Instance.CustomerSprites.RandomSprite();
-            ChosenFlavour = IceCreamResources.Instance.ChosenFlavours.RandomSprite();
+            spriteRenderer.sprite = CustomersAndFlavours.Instance.allCustomers.RandomElem().Value.sprite;
+            ChosenFlavour = BetweenScenesData.Instance.FlavoursToUse.RandomElem();
 
             speechBubble = transform.Find("speech");
             bubbleThoughts = speechBubble.Find("icon").GetComponent<SpriteRenderer>();
-            bubbleThoughts.sprite = ChosenFlavour;
+            bubbleThoughts.sprite = ChosenFlavour.sprite;
         }
 
         public void ClearMovSeq()
@@ -170,12 +170,12 @@ public class CustomerLine : MonoBehaviour
         }
     }
 
-    public Sprite GetFirstCustomerRequest()
+    public CustomersAndFlavours.Flavour GetFirstCustomerRequest()
     {
         if(customers.Count > 0)
         {
             return customers[0].ChosenFlavour;
         }
-        return IceCreamResources.Instance.ChosenFlavours.RandomSprite();
+        return BetweenScenesData.Instance.FlavoursToUse.RandomElem();
     }
 }

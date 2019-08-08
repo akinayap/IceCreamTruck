@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66d41387b6bbd8747964bc6184362273, type: 3}
+  m_Name: ExtendedFlavours
+  m_EditorClassIdentifier: 
+  CustomerList: []
+  FlavourList:
+  - name: bubble gum
+    sprite: {fileID: 21300000, guid: ea625f15c2d76fd4b88a0489ed061f22, type: 3}
+    requires:
+    - name: chocolate
+      require_count: 1
+    merge_money: 10
+    merge_diamond: 0
+  - name: blue moon
+    sprite: {fileID: 21300000, guid: ea625f15c2d76fd4b88a0489ed061f22, type: 3}
+    requires: []
+    merge_money: 0
+    merge_diamond: 0
+  - name: beer
+    sprite: {fileID: 21300000, guid: ea625f15c2d76fd4b88a0489ed061f22, type: 3}
+    requires: []
+    merge_money: 0
+    merge_diamond: 0
+  - name: bacon
+    sprite: {fileID: 21300000, guid: ea625f15c2d76fd4b88a0489ed061f22, type: 3}
+    requires: []
+    merge_money: 0
+    merge_diamond: 0
+  - name: cherry
+    sprite: {fileID: 21300000, guid: ea625f15c2d76fd4b88a0489ed061f22, type: 3}
+    requires: []
+    merge_money: 0
+    merge_diamond: 0
+  - name: grape
+    sprite: {fileID: 21300000, guid: ea625f15c2d76fd4b88a0489ed061f22, type: 3}
+    requires: []
+    merge_money: 0
+    merge_diamond: 0
+  - name: crab
+    sprite: {fileID: 21300000, guid: ea625f15c2d76fd4b88a0489ed061f22, type: 3}
+    requires: []
+    merge_money: 0
+    merge_diamond: 0
+  - name: green tea
+    sprite: {fileID: 21300000, guid: ea625f15c2d76fd4b88a0489ed061f22, type: 3}
+    requires: []
+    merge_money: 0
+    merge_diamond: 0
+  - name: mango
+    sprite: {fileID: 21300000, guid: ea625f15c2d76fd4b88a0489ed061f22, type: 3}
+    requires: []
+    merge_money: 0
+    merge_diamond: 0
+  - name: rocky road
+    sprite: {fileID: 21300000, guid: ea625f15c2d76fd4b88a0489ed061f22, type: 3}
+    requires: []
+    merge_money: 0
+    merge_diamond: 0
