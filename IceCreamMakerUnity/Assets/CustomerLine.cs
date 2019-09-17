@@ -31,7 +31,9 @@ public class CustomerLine : MonoBehaviour
         {
             transform = t;
             spriteRenderer = transform.GetComponent<SpriteRenderer>();
-            spriteRenderer.sprite = CustomersAndFlavours.Instance.allCustomers.RandomElem().Value.sprite;
+
+            var randomCustomerData = CustomersAndFlavours.Instance.allCustomers.RandomElem();
+            spriteRenderer.sprite = randomCustomerData.Value.sprite;
             ChosenFlavour = BetweenScenesData.Instance.FlavoursToUse.RandomElem();
 
             speechBubble = transform.Find("speech");

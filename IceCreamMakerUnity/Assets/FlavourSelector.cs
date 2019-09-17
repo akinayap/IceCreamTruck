@@ -11,16 +11,24 @@ public class FlavourSelector : MonoBehaviour {
 
     public Transform ScrollView;
     public Vector3 ScrollViewCenterPos;
-    public List<Button> ButtonList;
     public Button StartButton;
     public Button FlavourTopLeft;
     public Button FlavourTopLeftOffsetRight;
     public Button FlavourTopLeftOffsetBtm;
 
-    private Vector3 scrollViewStartPos;
-    private Button currentButton;
+    public Text CurrentModeDescriptor;
+    public Button ChangeSelectMode;
+    private bool isInSelectMode = true;
 
-    private List<Button> OkList = new List<Button>();
+    public IceCreamBuyer IceCreamShop;
+    public FlavourShop FlavourShop;
+    
+
+    private Vector3 scrollViewStartPos;
+    private Transform currentButton;
+    private float moveDist = 0;
+
+    private List<Transform> OkList = new List<Transform>();
 
     class FlavourButton
     {
@@ -36,6 +44,8 @@ public class FlavourSelector : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         scrollViewStartPos = ScrollView.localPosition;
+        moveDist = ScrollViewCenterPos.x - scrollViewStartPos.x;
+
         CustomersAndFlavours.GetInstance();
         SetupFlavours();
     }
@@ -78,14 +88,14 @@ public class FlavourSelector : MonoBehaviour {
 
                 if (flavour.own_count <= 0)
                 {
-                    flavourButton.image.color *= 0.3f;
+                    flavourButton.image.color = Color.gray;
                     flavourButton.button.enabled = false;
                 }
             }
             else
             {
-                flavourButton.count.text = "";
-                flavourButton.name.text = "";
+                flavourButton.count.text = "x0";
+                flavourButton.name.text = "???";
 
                 flavourButton.image.sprite = dottedSprite;
                 flavourButton.button.GetComponent<Button>().enabled = false;
@@ -104,17 +114,12 @@ public class FlavourSelector : MonoBehaviour {
         ScrollView.DOLocalMove(ScrollViewCenterPos, moveInTime);
 
         var deltaX = ScrollViewCenterPos.x - ScrollView.localPosition.x;
-        foreach (var b in ButtonList)
-        {
-            b.transform.DOLocalMoveX(deltaX, moveInTime).SetRelative(true);
-        }
-        currentButton = pressedButton;
+        currentButton = pressedButton.transform.parent;
     }
 
     private void UpdateCount(FlavourButton flavourButton)
     {
-        Debug.Log(flavourButton);
-        Debug.Log(flavourButton.flavour);
+        Debug.Log(flavourButton.name + " " + flavourButton.flavour.name);
         int count = flavourButton.flavour.own_count;
         BetweenScenesData.Instance.FlavoursToUse.ForEach(f => { if (f.index == flavourButton.flavour.index) { count--; } });
         
@@ -134,36 +139,44 @@ public class FlavourSelector : MonoBehaviour {
 
     public void OnFlavourPressed(Button pressedButton)
     {
-        float moveOutTime = 0.7f;
-        ScrollView.DOLocalMove(scrollViewStartPos, moveOutTime);
-
-        var flavourButton = flavourButtons.Find(f => f.button == pressedButton);
-        BetweenScenesData.Instance.FlavoursToUse.Add(flavourButton.flavour);
-        UpdateCount(flavourButton);
-
-        var oldFlavourButton = flavourButtons.Find(f => f.flavour.sprite == currentButton.transform.GetChild(0).GetComponent<Image>().sprite);
-        if (oldFlavourButton != null)
+        if (isInSelectMode)
         {
-            BetweenScenesData.Instance.FlavoursToUse.Remove(oldFlavourButton.flavour);
-            UpdateCount(oldFlavourButton);
-        }
+            float moveOutTime = 0.7f;
+            ScrollView.DOLocalMove(scrollViewStartPos, moveOutTime);
 
-        currentButton.transform.GetChild(0).GetComponent<Image>().sprite = pressedButton.transform.Find("Image").GetComponent<Image>().sprite;
+            var flavourButton = flavourButtons.Find(f => f.button == pressedButton);
+            BetweenScenesData.Instance.FlavoursToUse.Add(flavourButton.flavour);
+            UpdateCount(flavourButton);
 
-        var deltaX = scrollViewStartPos.x - ScrollView.localPosition.x;
-        foreach (var b in ButtonList)
-        {
-            b.transform.DOLocalMoveX(deltaX, moveOutTime).SetRelative(true);
-        }
-
-        if(!OkList.Contains(currentButton))
-        {
-            OkList.Add(currentButton);
-            if (OkList.Count == 3)
+            var oldFlavourButton = flavourButtons.Find(f => f.image.sprite == currentButton.transform.GetChild(0).GetComponent<Image>().sprite);
+            if (oldFlavourButton != null)
             {
-                StartButton.interactable = true;
-                StartButton.GetComponent<Image>().DOFade(1, 0.7f).SetDelay(0.5f);
+                BetweenScenesData.Instance.FlavoursToUse.Remove(oldFlavourButton.flavour);
+                UpdateCount(oldFlavourButton);
             }
+
+            currentButton.transform.GetChild(0).GetComponent<Image>().sprite = pressedButton.transform.Find("Image").GetComponent<Image>().sprite;
+
+            var deltaX = scrollViewStartPos.x - ScrollView.localPosition.x;
+
+            if (!OkList.Contains(currentButton))
+            {
+                OkList.Add(currentButton);
+                if (OkList.Count == 3)
+                {
+                    StartButton.interactable = true;
+                    StartButton.GetComponent<Image>().DOFade(1, 0.7f).SetDelay(0.5f);
+                }
+            }
+        }
+        else
+        {
+            var flavourButton = flavourButtons.Find(f => f.button == pressedButton);
+            //IceCreamShop.ShowFlavour(flavourButton.flavour, moveDist);
+
+            float moveInTime = 0.7f;
+            ScrollView.DOLocalMoveX(moveDist, moveInTime).SetRelative(true);
+            
         }
     }
 
@@ -171,10 +184,6 @@ public class FlavourSelector : MonoBehaviour {
     {
         float moveOutTime = 0.7f;
         var deltaX = scrollViewStartPos.x - ScrollViewCenterPos.x;
-        foreach (var b in ButtonList)
-        {
-            b.transform.DOLocalMoveX(deltaX, moveOutTime).SetRelative(true);
-        }
 
         //BetweenScenesData.Instance.FlavoursToUse.Clear();
         //for (int i=0;i<3;++i)
@@ -187,5 +196,90 @@ public class FlavourSelector : MonoBehaviour {
         {
             SceneManager.LoadScene("SampleScene");
         });
+    }
+
+    public void OnChangeSelectMode()
+    {
+        if(isInSelectMode)
+        {
+            isInSelectMode = false;
+            CurrentModeDescriptor.text = "Buy a flavour!";
+            ChangeSelectMode.GetComponentInChildren<Text>().text = "Change to Select Mode";
+            foreach(var b in this.flavourButtons)
+            {
+                if (!b.flavour.unlocked)
+                {
+                    b.button.GetComponent<Image>().DOColor(Color.gray, 0.3f);
+                    b.button.enabled = false;
+                }
+                else
+                {
+                    b.button.enabled = true;
+                }
+            }
+        }
+        else
+        {
+            isInSelectMode = true;
+            CurrentModeDescriptor.text = "Choose a flavour!";
+            ChangeSelectMode.GetComponentInChildren<Text>().text = "Change to Buy Mode";
+            foreach (var b in this.flavourButtons)
+            {
+                if (!b.flavour.unlocked)
+                {
+                    b.button.GetComponent<Image>().DOColor(Color.white, 0.3f);
+                }
+
+                b.button.enabled = b.flavour.own_count > 0;
+            }
+        }
+    }
+
+    public void OnFinishShopping()
+    {
+        //IceCreamShop.Close(-moveDist);
+
+        float moveInTime = 0.7f;
+        ScrollView.DOLocalMoveX(-moveDist, moveInTime).SetRelative(true);
+        
+    }
+
+    public void OnBuy()
+    {
+        //IceCreamShop.BuyAndClose(-moveDist);
+
+        float moveInTime = 0.7f;
+        ScrollView.DOLocalMoveX(-moveDist, moveInTime).SetRelative(true);
+        
+        foreach( var flavourButton in flavourButtons)
+        {
+            if (flavourButton.flavour.unlocked)
+            {
+//                flavourButton.count.text = "x" + flavourButton.flavour.own_count.ToString();
+                UpdateCount(flavourButton);
+
+                if (flavourButton.flavour.own_count <= 0)
+                {
+                    flavourButton.image.color = Color.gray;
+                    flavourButton.button.enabled = true;
+                }
+                else
+                {
+                    flavourButton.image.color = Color.white;
+                    flavourButton.button.enabled = true;
+                }
+            }
+        }
+    }
+
+    public void HideRight()
+    {
+
+    }
+
+    public void ShopButtonPressed()
+    {
+        this.HideRight();
+        FlavourShop.Show();
     }
 }

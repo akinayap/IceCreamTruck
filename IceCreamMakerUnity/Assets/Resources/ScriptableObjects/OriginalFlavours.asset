@@ -30,7 +30,9 @@ MonoBehaviour:
     merge_diamond: 0
   - name: corn
     sprite: {fileID: 21300000, guid: 096582e15426f3147b167c619bd2f6de, type: 3}
-    requires: []
+    requires:
+    - name: chocolate
+      require_count: 2
     merge_money: 10
     merge_diamond: 0
   - name: chocolate

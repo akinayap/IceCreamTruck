@@ -24,6 +24,8 @@ public class IceCreamResources : ScriptableObject
 
     public GameObject TapSparkPrefab;
 
+    public Sprite CoinSprite;
+
     public IManager ManagerInterface;
     public static IceCreamResources Instance
     {

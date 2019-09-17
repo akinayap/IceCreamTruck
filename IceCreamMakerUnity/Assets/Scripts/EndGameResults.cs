@@ -31,6 +31,8 @@ public class EndGameResults : MonoBehaviour {
     private float currentEarning = 0;
     private float targetEarning;
 
+    private bool canReturn = false;
+
     // Use this for initialization
     void Start () {
         isShowing = false;
@@ -40,7 +42,7 @@ public class EndGameResults : MonoBehaviour {
     void Update () {
         if (!isShowing)
             return;
-        if(Input.anyKey)
+        if(canReturn && Input.anyKey)
         {
             ResetLevel();
         }
@@ -89,12 +91,13 @@ public class EndGameResults : MonoBehaviour {
         {
             currentEarning = x;
             Earning.text = "Earnings\n$" + currentEarning.ToString("F2");
-        }, targetEarning, 2).SetDelay(2);
+        }, targetEarning, 2).SetDelay(2).OnComplete(()=>canReturn=true);
     }
 
 
     void ResetLevel()
     {
+        BetweenScenesData.Instance.Coin += (int)currentEarning;
         SceneManager.LoadScene("Gallery");
     }
 }

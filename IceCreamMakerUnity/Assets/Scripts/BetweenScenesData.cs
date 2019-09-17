@@ -15,5 +15,6 @@ public class BetweenScenesData {
         } }
 
     public List<CustomersAndFlavours.Flavour> FlavoursToUse = new List<CustomersAndFlavours.Flavour>();
+    public int Coin = 50;
     
 }

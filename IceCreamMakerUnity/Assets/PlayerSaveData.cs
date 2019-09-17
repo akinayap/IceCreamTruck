@@ -40,11 +40,13 @@ public class PlayerSaveData
     
     public List<FlavourData> flavours;
     public List<Person> served_customers;
+    public int coin;
 
     public PlayerSaveData(PlayerSaveData rhs)
     {
         flavours = new List<FlavourData>(rhs.flavours);
         served_customers = new List<Person>(rhs.served_customers);
+        coin = rhs.coin;
     }
 
     public PlayerSaveData()
@@ -90,10 +92,14 @@ public class PlayerSaveDataManager
             SaveData.flavours.Add(new PlayerSaveData.FlavourData("strawberry", 1, 0));
             SaveData.flavours.Add(new PlayerSaveData.FlavourData("mint", 0, 0));
             SaveData.flavours.Add(new PlayerSaveData.FlavourData("corn", 0, 0));
+            SaveData.coin = 50;
+            BetweenScenesData.Instance.Coin = SaveData.coin;
+
             string data = JsonUtility.ToJson(SaveData, true);
             File.WriteAllText(jsonPath, data);
             return;
         }
+
 
         // If file exist, do blocking load
         string loadedJsonDataString = File.ReadAllText(jsonPath);
@@ -102,6 +108,8 @@ public class PlayerSaveDataManager
         // Sanity check for no duplicates
         SaveData.served_customers = SaveData.served_customers.GroupBy(x => x.name).Select(y => y.First()).ToList();
         SaveData.flavours = SaveData.flavours.GroupBy(x => x.name).Select(y => y.First()).ToList();
+
+        BetweenScenesData.Instance.Coin = SaveData.coin;
 
         //TODO: Make sure at least 3 flavours
     }

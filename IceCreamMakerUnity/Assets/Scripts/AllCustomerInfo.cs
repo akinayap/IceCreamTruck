@@ -28,6 +28,8 @@ public class CustomersAndFlavours {
             public int flavourCount;
         };
         public List<Require> requires;
+        public int coinCost;
+
         public Sprite sprite;
         public bool unlocked = false;
     };
@@ -100,6 +102,7 @@ public class CustomersAndFlavours {
                 f.sprite = flavour.sprite;
                 f.index = allFlavours.Count;
                 f.own_count = f.served_count = 0;
+                f.coinCost = flavour.merge_money;
 
                 flavourNameMapping[f.name] = f.index;
                 allFlavours.Add(f);
