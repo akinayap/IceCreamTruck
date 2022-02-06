@@ -200,6 +200,7 @@ public class ChatFrag extends Fragment{
                 keyboard.setVisibility(GONE);
             else
                 keyboard.setVisibility(View.VISIBLE);
+
             InputMethodManager imm = (InputMethodManager) Objects.requireNonNull(getActivity()).getSystemService(Context.INPUT_METHOD_SERVICE);
             if(imm.isAcceptingText())
                 imm.hideSoftInputFromWindow(Objects.requireNonNull(getActivity().getCurrentFocus()).getWindowToken(), 0);

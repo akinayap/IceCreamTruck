@@ -156,7 +156,6 @@ public class SplashActivity extends AppCompatActivity {
                 // Init userrole
                 db.getReference("users/" + userId).addValueEventListener(userListener);
             }
-
         } catch (Exception e) {
             stickerStorage = st.getReference(STICKERS).child(filename);
             stickerStorage.getBytes(IMAGE_GIF).addOnSuccessListener(bytes -> {

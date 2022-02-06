@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/gif_title"
+        android:padding="5dp"
+        android:layout_width="@dimen/gif_size"
+        android:layout_height="@dimen/gif_size"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_load"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+    <TextView
+        android:id="@+id/folder_title"
+        android:padding="5dp"
+        android:layout_width="@dimen/gif_size"
+        android:layout_height="@dimen/gif_size"
+        android:gravity="center"
+        android:textSize="12sp"
+        android:textColor="@android:color/white"
+        android:background="@color/half_transparent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+</androidx.constraintlayout.widget.ConstraintLayout>

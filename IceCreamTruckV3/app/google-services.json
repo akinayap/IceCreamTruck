@@ -1,0 +1,143 @@
+{
+  "project_info": {
+    "project_number": "315351737614",
+    "firebase_url": "https://icecreamtruck-d7f4c.firebaseio.com",
+    "project_id": "icecreamtruck-d7f4c",
+    "storage_bucket": "icecreamtruck-d7f4c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:315351737614:android:1f1a8ce394ef2886",
+        "android_client_info": {
+          "package_name": "akina.pikachat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "315351737614-ob3rbg5vg5qm4iehq8g3mhqeqmar81u5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "akina.pikachat",
+            "certificate_hash": "e17231c6874c5b56c4fd9b38bfaf449d25e42809"
+          }
+        },
+        {
+          "client_id": "315351737614-n5m2p06vdevqbs9njgbp4cle2aaqccg7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUehtHZ2GKbUq1wQ6T8hXSy7twILhv-y0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "315351737614-n5m2p06vdevqbs9njgbp4cle2aaqccg7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:315351737614:android:3c4c944e63f9d047",
+        "android_client_info": {
+          "package_name": "anw.icecreamtruck"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "315351737614-6tmaqb3sditbhoborc3leoe9s25eiu2g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "anw.icecreamtruck",
+            "certificate_hash": "e17231c6874c5b56c4fd9b38bfaf449d25e42809"
+          }
+        },
+        {
+          "client_id": "315351737614-n5m2p06vdevqbs9njgbp4cle2aaqccg7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUehtHZ2GKbUq1wQ6T8hXSy7twILhv-y0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "315351737614-n5m2p06vdevqbs9njgbp4cle2aaqccg7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:315351737614:android:791f96ef4ae335d5e7e35f",
+        "android_client_info": {
+          "package_name": "com.akinayap.icecreamtruck"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "315351737614-n5m2p06vdevqbs9njgbp4cle2aaqccg7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUehtHZ2GKbUq1wQ6T8hXSy7twILhv-y0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "315351737614-n5m2p06vdevqbs9njgbp4cle2aaqccg7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:315351737614:android:e993ba3d3bec7659e7e35f",
+        "android_client_info": {
+          "package_name": "com.anw.icecreamparlour"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "315351737614-n5m2p06vdevqbs9njgbp4cle2aaqccg7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUehtHZ2GKbUq1wQ6T8hXSy7twILhv-y0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "315351737614-n5m2p06vdevqbs9njgbp4cle2aaqccg7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

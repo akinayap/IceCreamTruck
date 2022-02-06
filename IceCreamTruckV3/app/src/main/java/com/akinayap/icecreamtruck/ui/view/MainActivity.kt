@@ -14,6 +14,8 @@ import androidx.navigation.ui.setupWithNavController
 import com.akinayap.icecreamtruck.R
 import com.akinayap.icecreamtruck.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
@@ -25,6 +27,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FirebaseApp.initializeApp(applicationContext)
+
         viewBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
         topLevelDest = setOf(
@@ -62,10 +66,11 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun checkUserExists() {
-/*        val user = sessionStore.getUser()
-        if(user?.unit == null) {
-            navController.navigate(R.id.nav_login)
-        }*/
+        val auth = FirebaseAuth.getInstance()
+        if(auth.currentUser == null){
+            // TODO: Should switch to login fragment
+            auth.signInWithEmailAndPassword("akina.yap@gmail.com", "Akina2N1").addOnCompleteListener(this){}
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {

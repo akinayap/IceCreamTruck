@@ -1,8 +1,20 @@
 package com.akinayap.icecreamtruck.data
 
+import android.content.res.Resources
 import android.graphics.Rect
 import android.view.View
+import android.widget.GridLayout
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.window.layout.DisplayFeature
+
+val Int.pxToDp: Int
+    get() = (this * Resources.getSystem().displayMetrics.density).toInt()
+
+fun RecyclerView.autoFitColumns(currentWindowMetrics: Int, columnWidth: Int) {
+    val noOfColumns = (currentWindowMetrics / columnWidth.pxToDp)
+    this.layoutManager = GridLayoutManager(this.context, noOfColumns, GridLayout.VERTICAL, false)
+}
 
 object Utils {
     /**

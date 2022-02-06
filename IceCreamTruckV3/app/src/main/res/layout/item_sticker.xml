@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="5dp">
+
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/sticker_icon"
+        android:layout_width="@dimen/gif_size"
+        android:layout_height="@dimen/gif_size"
+        android:src="@drawable/ic_load"
+        android:scaleType="fitCenter"/>
+
+</RelativeLayout>
