@@ -3,6 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Zax2N/Desktop/IceCreamTruck/IceCreamTruckV3/app/src/main/res/drawable/bg_input.xml" value="0.202" />
+        <entry key="..\:/Users/Zax2N/Desktop/IceCreamTruck/IceCreamTruckV3/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/Users/Zax2N/Desktop/IceCreamTruck/IceCreamTruckV3/app/src/main/res/layout/fragment_chat.xml" value="0.2" />
+        <entry key="..\:/Users/Zax2N/Desktop/IceCreamTruck/IceCreamTruckV3/app/src/main/res/layout/fragment_login.xml" value="0.1" />
+        <entry key="..\:/Users/Zax2N/Desktop/IceCreamTruck/IceCreamTruckV3/app/src/main/res/layout/fragment_more.xml" value="0.1" />
         <entry key="..\:/Users/Zax2N/Desktop/IceCreamTruckV3/app/src/main/res/layout/activity_main.xml" value="0.20572916666666666" />
         <entry key="..\:/Users/Zax2N/Desktop/IceCreamTruckV3/app/src/main/res/layout/fragment_chat.xml" value="0.16" />
         <entry key="..\:/Users/Zax2N/Desktop/IceCreamTruckV3/app/src/main/res/layout/fragment_login.xml" value="0.11614583333333334" />

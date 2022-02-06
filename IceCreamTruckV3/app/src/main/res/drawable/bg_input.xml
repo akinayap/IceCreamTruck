@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+<item android:state_enabled="true">
+    <ripple android:color="@color/design_default_color_primary_dark">
+        <item android:id="@android:id/mask">
+            <shape android:shape="oval">
+                <solid android:color="@color/design_default_color_primary_dark" />
+            </shape>
+        </item>
+
+        <item android:id="@android:id/background">
+            <shape android:shape="oval">
+                <solid android:color="@color/design_default_color_primary" />
+            </shape>
+        </item>
+    </ripple>
+</item>
+<item android:state_enabled="false">
+    <shape android:padding="10dp" android:shape="oval">
+        <solid android:color="@color/material_on_background_disabled" />
+    </shape>
+</item>
+</selector>

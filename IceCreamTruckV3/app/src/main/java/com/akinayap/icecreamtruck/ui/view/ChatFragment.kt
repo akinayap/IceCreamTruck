@@ -35,12 +35,17 @@ class ChatFragment : Fragment() {
     }
 
     private fun initialize() {
+        initListeners()
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 windowInfoTracker.windowLayoutInfo(requireActivity()).collect(action = { value -> updateUI(value) })
 
             }
         }
+    }
+
+    private fun initListeners(){
+
     }
 
     private fun updateUI(newLayoutInfo: WindowLayoutInfo) {
@@ -67,20 +72,25 @@ class ChatFragment : Fragment() {
             val horizontalFoldingFeatureHeight = (rect.bottom - rect.top).coerceAtLeast(1)
             val verticalFoldingFeatureWidth = (rect.right - rect.left).coerceAtLeast(1)
 
+            set.constrainHeight(R.id.layout_stickers, 0)
+            set.constrainHeight(R.id.layout_chat, 0)
+
             // Sets the view to match the height and width of the folding feature
             set.constrainHeight(R.id.folding_feature, horizontalFoldingFeatureHeight)
             set.constrainWidth(R.id.folding_feature, verticalFoldingFeatureWidth)
-            set.constrainHeight(R.id.layout_stickers, 0)
 
             set.connect(R.id.folding_feature, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START, 0)
             set.connect(R.id.folding_feature, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 0)
 
             if (foldingFeature.orientation == FoldingFeature.Orientation.VERTICAL) {
                 set.setMargin(R.id.folding_feature, ConstraintSet.START, rect.left)
+                set.connect(R.id.layout_input, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM)
                 set.connect(R.id.layout_chat, ConstraintSet.END, R.id.folding_feature, ConstraintSet.START, 0)
-                set.connect(R.id.layout_chat, ConstraintSet.BOTTOM, R.id.folding_feature, ConstraintSet.BOTTOM, 0)
+                set.connect(R.id.layout_chat, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 0)
+                set.connect(R.id.layout_chat, ConstraintSet.BOTTOM, R.id.layout_input, ConstraintSet.TOP, 0)
                 set.connect(R.id.layout_stickers, ConstraintSet.START, R.id.folding_feature, ConstraintSet.END, 0)
-                set.connect(R.id.layout_stickers, ConstraintSet.TOP, R.id.folding_feature, ConstraintSet.TOP, 0)
+                set.connect(R.id.layout_stickers, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, 0)
+                set.connect(R.id.layout_stickers, ConstraintSet.BOTTOM, R.id.layout_input, ConstraintSet.TOP, 0)
             } else {
                 // FoldingFeature is Horizontal
                 set.setMargin(R.id.folding_feature, ConstraintSet.TOP, rect.top)
