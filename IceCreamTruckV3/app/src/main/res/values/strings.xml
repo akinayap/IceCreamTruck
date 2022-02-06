@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Ice Cream Truck</string>
+
+    <string name="title_login">Login</string>
+    <string name="title_chat">Chat</string>
+    <string name="title_more">More</string>
+</resources>
